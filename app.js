@@ -7,7 +7,7 @@
    ============================================================ */
 
 const STORAGE_KEY = "mutmach-insel-profile-v1";
-const APP_VERSION = "v22"; // manuell synchron zu CACHE_NAME in sw.js halten
+const APP_VERSION = "v23"; // manuell synchron zu CACHE_NAME in sw.js halten
 
 /* ---------- Sprachausgabe (Vorlesen für Kinder, die noch nicht lesen können) ---------- */
 let currentSpeakText = "";
@@ -1043,19 +1043,39 @@ const VEHICLE_ITEMS = [
 ];
 
 /* ---------- Modul: Mal-Werkstatt (mit dem Finger nachzeichnen) ---------- */
+/* Jeder Eintrag hat neben dem Anzeigenamen (label, Nominativ) auch eine fertige
+   Akkusativ-Formulierung (akk), da "über" bei Bewegung den Akkusativ verlangt
+   ("über den Kreis", "über das Dreieck", "über die Linie" — nicht "über die Kreis").
+   Bei "Buchstabe" außerdem die schwache Deklination beachtet: den Buchstaben (nicht Buchstabe). */
 const TRACE_ITEMS = [
-  { level:1, glyph:"●", label:"Kreis" },
-  { level:1, glyph:"▲", label:"Dreieck" },
-  { level:1, glyph:"■", label:"Quadrat" },
-  { level:1, glyph:"—", label:"Linie" },
-  { level:2, glyph:"★", label:"Stern" },
-  { level:2, glyph:"♥", label:"Herz" },
-  { level:2, glyph:"O", label:"Buchstabe O" },
-  { level:3, glyph:"1", label:"Zahl 1" },
-  { level:3, glyph:"2", label:"Zahl 2" },
-  { level:3, glyph:"S", label:"Buchstabe S" },
-  { level:4, glyph:"A", label:"Buchstabe A" },
-  { level:4, glyph:"L", label:"Buchstabe L" },
+  { level:1, glyph:"●", label:"Kreis",     akk:"den Kreis" },
+  { level:1, glyph:"▲", label:"Dreieck",   akk:"das Dreieck" },
+  { level:1, glyph:"■", label:"Quadrat",   akk:"das Quadrat" },
+  { level:1, glyph:"—", label:"Linie",     akk:"die Linie" },
+  { level:1, glyph:"∿", label:"Welle",     akk:"die Welle" },
+  { level:1, glyph:"✚", label:"Kreuz",     akk:"das Kreuz" },
+  { level:1, glyph:"•", label:"Punkt",     akk:"den Punkt" },
+  { level:2, glyph:"★", label:"Stern",     akk:"den Stern" },
+  { level:2, glyph:"♥", label:"Herz",      akk:"das Herz" },
+  { level:2, glyph:"◆", label:"Raute",     akk:"die Raute" },
+  { level:2, glyph:"▬", label:"Rechteck",  akk:"das Rechteck" },
+  { level:2, glyph:"☾", label:"Mond",      akk:"den Mond" },
+  { level:2, glyph:"O", label:"Buchstabe O", akk:"den Buchstaben O" },
+  { level:2, glyph:"I", label:"Buchstabe I", akk:"den Buchstaben I" },
+  { level:3, glyph:"1", label:"Zahl 1",    akk:"die Zahl 1" },
+  { level:3, glyph:"2", label:"Zahl 2",    akk:"die Zahl 2" },
+  { level:3, glyph:"3", label:"Zahl 3",    akk:"die Zahl 3" },
+  { level:3, glyph:"⬟", label:"Fünfeck",   akk:"das Fünfeck" },
+  { level:3, glyph:"S", label:"Buchstabe S", akk:"den Buchstaben S" },
+  { level:3, glyph:"C", label:"Buchstabe C", akk:"den Buchstaben C" },
+  { level:3, glyph:"U", label:"Buchstabe U", akk:"den Buchstaben U" },
+  { level:4, glyph:"⬡", label:"Sechseck",  akk:"das Sechseck" },
+  { level:4, glyph:"5", label:"Zahl 5",    akk:"die Zahl 5" },
+  { level:4, glyph:"8", label:"Zahl 8",    akk:"die Zahl 8" },
+  { level:4, glyph:"A", label:"Buchstabe A", akk:"den Buchstaben A" },
+  { level:4, glyph:"L", label:"Buchstabe L", akk:"den Buchstaben L" },
+  { level:4, glyph:"M", label:"Buchstabe M", akk:"den Buchstaben M" },
+  { level:4, glyph:"E", label:"Buchstabe E", akk:"den Buchstaben E" },
 ];
 
 const STICKER_DEFS = [
@@ -1904,7 +1924,7 @@ let traceIdx=0, traceRoundOrder=[], traceCtx=null, traceDrawColor="";
 function renderTraceGame(){
   traceIdx=0;
   const pool = byLevel(TRACE_ITEMS);
-  traceRoundOrder = shuffle(pool).slice(0, Math.min(4, pool.length));
+  traceRoundOrder = shuffle(pool).slice(0, Math.min(roundCountForLevel(), pool.length));
   showTraceScene();
 }
 function showTraceScene(){
@@ -1926,7 +1946,7 @@ function showTraceScene(){
     return;
   }
   const item = traceRoundOrder[traceIdx];
-  const prompt = `Fahr mit dem Finger über die ${item.label}`;
+  const prompt = `Fahr mit dem Finger über ${item.akk}`;
   viewEl.innerHTML = `
     ${backBtn("home")}
     <div class="progress-track"><div class="progress-fill" style="width:${(traceIdx/traceRoundOrder.length)*100}%"></div></div>
