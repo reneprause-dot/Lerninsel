@@ -7,6 +7,7 @@
    ============================================================ */
 
 const STORAGE_KEY = "mutmach-insel-profile-v1";
+const APP_VERSION = "v19"; // manuell synchron zu CACHE_NAME in sw.js halten
 
 /* ---------- Sprachausgabe (Vorlesen für Kinder, die noch nicht lesen können) ---------- */
 let currentSpeakText = "";
@@ -2301,6 +2302,13 @@ function renderParents(){
       <p>Alle Angaben bleiben ausschließlich auf diesem Gerät gespeichert (lokal im Browser). Es gibt keine Werbung, keine externen Konten und keine Datenweitergabe.</p>
     </div>
     <div class="card parent-block">
+      <h3>⬇️ Nach Updates suchen</h3>
+      <p>Als installierte App wird Leo's Lerninsel offlinefähig zwischengespeichert. Damit neue Inhalte und Verbesserungen sicher ankommen, kannst du hier aktiv nach der neuesten Version suchen — die Seite lädt danach automatisch komplett neu.</p>
+      <p style="margin-top:8px; font-size:0.8rem;">Aktuell installierte Version: <strong>${APP_VERSION}</strong></p>
+      <button id="updateCheckBtn" class="btn secondary" style="margin-top:10px;" onclick="checkForUpdates()">🔄 Nach Updates suchen</button>
+      <p id="updateCheckStatus" style="margin-top:8px; font-size:0.8rem;"></p>
+    </div>
+    <div class="card parent-block">
       <h3>⚙️ Profil verwalten</h3>
       <button class="btn secondary" onclick="navigate('profile')">Profil bearbeiten</button>
       <button class="btn secondary" style="margin-left:10px; margin-top:10px;" onclick="if(confirm('Wirklich den gesamten Fortschritt löschen?')){ localStorage.removeItem('${STORAGE_KEY}'); profile=null; navigate('home'); }">Fortschritt zurücksetzen</button>
@@ -2358,11 +2366,41 @@ function toggleAutoRead(){
   renderParents();
 }
 
+/* Sucht aktiv nach einer neuen Version: stößt das Service-Worker-Update an,
+   leert alle bekannten Caches und lädt die Seite dann cache-umgehend neu,
+   damit garantiert die neueste Version aktiv ist. */
+async function checkForUpdates(){
+  const btn = document.getElementById("updateCheckBtn");
+  const statusEl = document.getElementById("updateCheckStatus");
+  if(btn){ btn.disabled = true; btn.textContent = "🔄 Suche läuft …"; }
+  if(statusEl){ statusEl.textContent = "Einen Moment, es wird nach der neuesten Version gesucht …"; }
+  try{
+    if("serviceWorker" in navigator){
+      const regs = await navigator.serviceWorker.getRegistrations();
+      for(const reg of regs){
+        try{ await reg.update(); }catch(e){}
+      }
+    }
+    if("caches" in window){
+      const keys = await caches.keys();
+      await Promise.all(keys.map(k => caches.delete(k)));
+    }
+  }catch(e){ /* auch bei Fehlern trotzdem neu laden versuchen */ }
+  const url = new URL(window.location.href);
+  url.searchParams.set("refresh", Date.now().toString());
+  window.location.replace(url.toString());
+}
+
 /* ============================================================
    INIT
    ============================================================ */
 if("serviceWorker" in navigator){
   window.addEventListener("load", ()=>{ navigator.serviceWorker.register("sw.js").catch(()=>{}); });
+}
+// Aufräumen: den ?refresh=... Parameter (von der Update-Prüfung) wieder aus der Adresszeile entfernen
+if(window.location.search.includes("refresh=") && window.history && window.history.replaceState){
+  const cleanUrl = window.location.pathname + window.location.hash;
+  window.history.replaceState({}, "", cleanUrl);
 }
 if(profile && profile.name){ applyTheme(); navigate("home"); }
 else { renderOnboarding(); }
