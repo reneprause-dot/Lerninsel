@@ -7,7 +7,7 @@
    ============================================================ */
 
 const STORAGE_KEY = "mutmach-insel-profile-v1";
-const APP_VERSION = "v23"; // manuell synchron zu CACHE_NAME in sw.js halten
+const APP_VERSION = "v24"; // manuell synchron zu CACHE_NAME in sw.js halten
 
 /* ---------- Sprachausgabe (Vorlesen für Kinder, die noch nicht lesen können) ---------- */
 let currentSpeakText = "";
@@ -1118,8 +1118,9 @@ function saveProfile(p){ localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); }
 function freshProfile(){
   return {
     name:"", age:"", avatar:"🚗", color:"peach",
-    stars:0, stickers:[], lastVisit:null, streak:0, toddlerSet:"primary", toddlerRandomSet:[], autoRead:true, speechRate:0.92,
+    stars:0, stickers:[], lastVisit:null, streak:0, toddlerSet:"primary", toddlerRandomSet:[], autoRead:true, speechRate:0.92, reviewMode:"week",
     progress:{ feelingsDone:0, wordsGood:0, wordsTotal:0, calmSessions:0, storiesDone:[], stressGood:0, stressTotal:0, colorsGood:0, colorsTotal:0, shapesGood:0, shapesTotal:0, countGood:0, countTotal:0, soundsGood:0, soundsTotal:0, vehiclesGood:0, vehiclesTotal:0, tracesDone:0 },
+    activityLog:{}, // { "YYYY-MM-DD": { stars:Zahl, sessions:Zahl } } - fürs Wochen-/Monatsrückblick
   };
 }
 let profile = loadProfile();
@@ -1129,7 +1130,28 @@ function applyTheme(){
   document.documentElement.style.setProperty("--accent-deep", c.hex);
   document.documentElement.style.setProperty("--accent", c.hex);
 }
-function addStars(n){ profile.stars += n; persist(); }
+/* ---------- Aktivitäts-Log für den Eltern-Rückblick ---------- */
+function dateKey(d){
+  const date = d || new Date();
+  return date.toISOString().slice(0,10); // "YYYY-MM-DD"
+}
+function logActivity(starsEarned){
+  if(!profile.activityLog) profile.activityLog = {};
+  const key = dateKey();
+  if(!profile.activityLog[key]) profile.activityLog[key] = { stars:0, sessions:0 };
+  profile.activityLog[key].stars += starsEarned;
+  profile.activityLog[key].sessions += 1;
+  // Alte Einträge begrenzen, damit der lokale Speicher nicht unbegrenzt wächst
+  const keys = Object.keys(profile.activityLog);
+  if(keys.length > 400){
+    keys.sort().slice(0, keys.length-400).forEach(k=> delete profile.activityLog[k]);
+  }
+}
+function addStars(n){
+  profile.stars += n;
+  if(n>0) logActivity(n);
+  persist();
+}
 function unlockSticker(id){
   if(!profile.stickers.includes(id)){ profile.stickers.push(id); addStars(3); }
 }
@@ -2325,6 +2347,19 @@ function renderParents(){
     ${toddlerToggle}
     ${speechToggle}
     <div class="card parent-block">
+      <h3>📈 Rückblick</h3>
+      <p>Verfolge, wie aktiv ${profile.name||"dein Kind"} in der App lernt — als kleine Lernkurve über die Zeit.</p>
+      <div style="display:flex; align-items:center; gap:14px; margin:14px 0 18px; flex-wrap:wrap;">
+        <button class="toggle-track ${profile.reviewMode==='month'?'on':''}" onclick="toggleReviewMode()" aria-label="Monatsrückblick umschalten" aria-pressed="${profile.reviewMode==='month'}">
+          <span class="toggle-thumb"></span>
+        </button>
+        <div style="font-weight:700; font-size:0.85rem; color:var(--ink-soft);">
+          ${profile.reviewMode==='month' ? "Monatsrückblick" : "Wochenrückblick"}
+        </div>
+      </div>
+      ${renderReviewChart()}
+    </div>
+    <div class="card parent-block">
       <h3>📊 Fortschritt von ${profile.name} (${profile.age||"–"} Jahre)</h3>
       <p>Gefühle-Runden gespielt: ${profile.progress.feelingsDone}<br>
       Klare Sätze geübt: ${profile.progress.wordsGood} von ${profile.progress.wordsTotal}<br>
@@ -2401,6 +2436,59 @@ function reshuffleToddlerSet(){
   persist();
   renderParents();
 }
+/* ---------- Eltern-Rückblick (Wochen-/Monatsansicht der Lernaktivität) ---------- */
+function buildReviewBars(mode){
+  const log = profile.activityLog || {};
+  const days = ["So","Mo","Di","Mi","Do","Fr","Sa"];
+  const bars = [];
+  if(mode === "month"){
+    for(let w=4; w>=0; w--){
+      let stars=0, sessions=0;
+      for(let i=0;i<7;i++){
+        const d = new Date();
+        d.setDate(d.getDate() - (w*7+i));
+        const entry = log[dateKey(d)];
+        if(entry){ stars += entry.stars; sessions += entry.sessions; }
+      }
+      bars.push({ label: w===0 ? "Diese Wo." : `vor ${w} Wo.`, stars, sessions });
+    }
+  } else {
+    for(let i=6; i>=0; i--){
+      const d = new Date();
+      d.setDate(d.getDate()-i);
+      const entry = log[dateKey(d)] || { stars:0, sessions:0 };
+      bars.push({ label: days[d.getDay()], stars: entry.stars, sessions: entry.sessions });
+    }
+  }
+  return bars;
+}
+function renderReviewChart(){
+  const mode = profile.reviewMode === "month" ? "month" : "week";
+  const bars = buildReviewBars(mode);
+  const maxStars = Math.max(1, ...bars.map(b=>b.stars));
+  const totalStars = bars.reduce((s,b)=>s+b.stars,0);
+  const totalSessions = bars.reduce((s,b)=>s+b.sessions,0);
+  return `
+    <p style="margin-bottom:12px; font-weight:700; font-size:0.85rem; color:var(--ink-soft);">
+      ${mode==='month' ? 'Letzte 5 Wochen' : 'Letzte 7 Tage'}: ⭐ ${totalStars} Sterne in ${totalSessions} Lerneinheiten
+    </p>
+    <div class="review-chart">
+      ${bars.map(b=>`
+        <div class="review-bar-col">
+          <div class="review-bar-track">
+            <div class="review-bar" style="height:${Math.max(6,(b.stars/maxStars)*100)}%;" title="${b.stars} Sterne, ${b.sessions} Einheiten"></div>
+          </div>
+          <div class="review-bar-value">${b.stars}</div>
+          <div class="review-bar-label">${b.label}</div>
+        </div>`).join("")}
+    </div>`;
+}
+function toggleReviewMode(){
+  profile.reviewMode = profile.reviewMode === "month" ? "week" : "month";
+  persist();
+  renderParents();
+}
+
 function toggleAutoRead(){
   profile.autoRead = profile.autoRead === false ? true : false;
   persist();
