@@ -7,7 +7,7 @@
    ============================================================ */
 
 const STORAGE_KEY = "mutmach-insel-profile-v1";
-const APP_VERSION = "v21"; // manuell synchron zu CACHE_NAME in sw.js halten
+const APP_VERSION = "v22"; // manuell synchron zu CACHE_NAME in sw.js halten
 
 /* ---------- Sprachausgabe (Vorlesen für Kinder, die noch nicht lesen können) ---------- */
 let currentSpeakText = "";
@@ -17,10 +17,17 @@ function speak(text){
     window.speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
     u.lang = "de-DE";
-    u.rate = 0.92;
+    u.rate = (profile && profile.speechRate) || 0.92;
     u.pitch = 1.05;
     window.speechSynthesis.speak(u);
   }catch(e){ /* Sprachausgabe im Browser nicht verfügbar - kein Problem, still weitermachen */ }
+}
+function speechRateLabel(rate){
+  if(rate <= 0.72) return "Sehr langsam";
+  if(rate <= 0.88) return "Langsam";
+  if(rate <= 1.02) return "Normal";
+  if(rate <= 1.16) return "Schnell";
+  return "Sehr schnell";
 }
 function speakerBtn(extraStyle){
   return `<button class="speak-btn" style="${extraStyle||''}" onclick="speak(currentSpeakText)" aria-label="Vorlesen">🔊</button>`;
@@ -1091,7 +1098,7 @@ function saveProfile(p){ localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); }
 function freshProfile(){
   return {
     name:"", age:"", avatar:"🚗", color:"peach",
-    stars:0, stickers:[], lastVisit:null, streak:0, toddlerSet:"primary", toddlerRandomSet:[], autoRead:true,
+    stars:0, stickers:[], lastVisit:null, streak:0, toddlerSet:"primary", toddlerRandomSet:[], autoRead:true, speechRate:0.92,
     progress:{ feelingsDone:0, wordsGood:0, wordsTotal:0, calmSessions:0, storiesDone:[], stressGood:0, stressTotal:0, colorsGood:0, colorsTotal:0, shapesGood:0, shapesTotal:0, countGood:0, countTotal:0, soundsGood:0, soundsTotal:0, vehiclesGood:0, vehiclesTotal:0, tracesDone:0 },
   };
 }
@@ -2263,6 +2270,7 @@ function renderParents(){
       </div>
       ${profile.toddlerSet==='random' ? `<button class="btn secondary" style="margin-top:14px;" onclick="reshuffleToddlerSet()">🔀 Neu mischen</button>` : ``}
     </div>` : ``;
+  const rate = profile.speechRate || 0.92;
   const speechToggle = `
     <div class="card parent-block">
       <h3>🔊 Fragen vorlesen</h3>
@@ -2273,6 +2281,19 @@ function renderParents(){
         </button>
         <div style="font-weight:700; font-size:0.85rem; color:var(--ink-soft);">
           ${profile.autoRead!==false ? "Automatisches Vorlesen ist an" : "Automatisches Vorlesen ist aus"}
+        </div>
+      </div>
+      <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--line);">
+        <span class="field-label" style="margin-bottom:8px; display:block;">Vorlesegeschwindigkeit</span>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <span style="font-size:0.85rem;">🐢</span>
+          <input type="range" id="speechRateSlider" min="0.6" max="1.3" step="0.05" value="${rate}"
+                 oninput="updateSpeechRate(this.value)" style="flex:1; accent-color:var(--accent-deep);" aria-label="Vorlesegeschwindigkeit">
+          <span style="font-size:0.85rem;">🐇</span>
+        </div>
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-top:10px;">
+          <span id="speechRateLabel" style="font-weight:700; font-size:0.85rem; color:var(--ink-soft);">${speechRateLabel(rate)}</span>
+          <button class="btn secondary" style="padding:8px 16px; font-size:0.85rem;" onclick="testSpeechRate()">🔊 Testen</button>
         </div>
       </div>
     </div>`;
@@ -2364,6 +2385,15 @@ function toggleAutoRead(){
   profile.autoRead = profile.autoRead === false ? true : false;
   persist();
   renderParents();
+}
+function updateSpeechRate(value){
+  profile.speechRate = parseFloat(value);
+  persist();
+  const label = document.getElementById("speechRateLabel");
+  if(label) label.textContent = speechRateLabel(profile.speechRate);
+}
+function testSpeechRate(){
+  speak("So klingt die Vorlesestimme in dieser Geschwindigkeit.");
 }
 
 /* Sucht aktiv nach einer neuen Version: stößt das Service-Worker-Update an,
