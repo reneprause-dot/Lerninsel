@@ -1,4 +1,4 @@
-const CACHE_NAME = "leo-lerninsel-v20";
+const CACHE_NAME = "leo-lerninsel-v21";
 const ASSETS = [
   "./",
   "./index.html",
@@ -7,6 +7,7 @@ const ASSETS = [
   "./icon-192.png",
   "./icon-512.png",
   "./icon-apple-touch.png",
+  "./background.jpg",
 ];
 
 self.addEventListener("install", (event) => {
