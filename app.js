@@ -87,6 +87,36 @@ const FEELING_SCENES = [
   { level:5, text:"Opa hat extra für Selma ihr Lieblingsessen gekocht, und sie bedankt sich mit einer Umarmung.", correct:"dankbar" },
   { level:5, text:"Als die beste Freundin mit jemand anderem spielt, spürt Leni ein komisches Ziehen im Bauch.", correct:"eifersucht" },
   { level:5, text:"Als Milo im Diktat einen Fehler entdeckt, den alle sehen können, wird ihm ganz heiß im Gesicht.", correct:"scham" },
+  { level:1, text:"Der bunte Luftballon fliegt hoch in den Himmel davon.", correct:"traurig" },
+  { level:1, text:"Papa liest ein lustiges Buch vor und macht komische Stimmen.", correct:"freude" },
+  { level:1, text:"Der Teddy fällt vom Bett und landet auf dem Boden.", correct:"traurig" },
+  { level:1, text:"Ein großer Bagger fährt ganz laut an Ben vorbei.", correct:"angst" },
+  { level:1, text:"Mama kommt nach der Arbeit endlich nach Hause.", correct:"freude" },
+  { level:2, text:"Beim Verstecken findet niemand Timo, obwohl er hinter dem Vorhang steht.", correct:"ueberr" },
+  { level:2, text:"In der Turnstunde klatschen alle Kinder für Mias Rolle vorwärts.", correct:"freude" },
+  { level:2, text:"Nele muss ihr Eis abgeben, weil es zu tropfen beginnt.", correct:"traurig" },
+  { level:2, text:"Beim Abendessen erzählt Opa eine spannende Gutenachtgeschichte.", correct:"ueberr" },
+  { level:3, text:"Beim Vorlesen vor der Klasse verhaspelt sich Ben an einem schwierigen Wort.", correct:"nervoes" },
+  { level:3, text:"Nach dem Schwimmkurs bekommt Lina ihr erstes Seepferdchen-Abzeichen.", correct:"stolz" },
+  { level:3, text:"Beim Wandertag zieht plötzlich ein Gewitter auf und alle müssen schnell rein.", correct:"angst" },
+  { level:3, text:"Obwohl Finn sich riesig auf das Fußballturnier gefreut hat, fällt es wegen Sturm aus.", correct:"enttaeuscht" },
+  { level:4, text:"Als alle den neuen Schuhen der Mitschülerin Aufmerksamkeit schenken, fühlt Mara ein komisches Ziehen.", correct:"eifersucht" },
+  { level:4, text:"Nach dem Sturz vor der ganzen Pausenhofgruppe lacht kurz jemand.", correct:"scham" },
+  { level:4, text:"Zum Abschied schenkt die Oma ein selbstgemachtes Geschenk, und alle sind gerührt.", correct:"dankbar" },
+  { level:5, text:"In den Ferien vermisst Noah heimlich seine Klasse, obwohl er sich so sehr auf die freie Zeit gefreut hatte.", correct:"traurig" },
+  { level:5, text:"Nach dem Streit entschuldigt sich die Freundin ehrlich, und der Ärger verfliegt langsam.", correct:"ruhe" },
+  { level:1, text:"Ein Schmetterling landet auf Linas Hand.", correct:"ueberr" },
+  { level:1, text:"Papa macht Kitzel-Spiele mit Ben.", correct:"freude" },
+  { level:1, text:"Mia darf nicht mit dem Ball nach draußen.", correct:"wut" },
+  { level:1, text:"Es donnert laut am Himmel.", correct:"angst" },
+  { level:1, text:"Oma singt ein leises Schlaflied.", correct:"ruhe" },
+  { level:1, text:"Nele bekommt ihr Lieblingsessen zum Mittag.", correct:"freude" },
+  { level:1, text:"Bens Turm aus Bauklötzen fällt laut scheppernd um.", correct:"traurig" },
+  { level:1, text:"Das Eis fällt Mia von der Waffel.", correct:"traurig" },
+  { level:1, text:"Finn muss sein Dreirad mit der Schwester teilen.", correct:"wut" },
+  { level:1, text:"Ein fremder Hund knurrt ganz laut.", correct:"angst" },
+  { level:1, text:"Beim Öffnen der Box hüpft ein kleiner Springteufel heraus.", correct:"ueberr" },
+  { level:1, text:"Beim Kuscheln mit der Katze schnurrt sie ganz leise.", correct:"ruhe" },
 ];
 
 /* ---------- Modul 2: Ich sag's mit Worten ---------- */
@@ -221,6 +251,76 @@ const WORD_SCENES = [
       { text:"„Hört auf damit, das ist nicht nett.“ und dem Kind Gesellschaft leisten.", good:true },
       { text:"Mitlachen, damit man selbst dazugehört.", good:false },
       { text:"Wegschauen, weil es einen nichts angeht.", good:false } ] },
+  { level:2, text:"Ein anderes Kind schneidet dir beim Anstehen die Reihe ab. Was sagst du?",
+    options:[
+      { text:"„Entschuldige, ich glaube ich war zuerst dran.“", good:true },
+      { text:"Es einfach hinnehmen und leise ärgern.", good:false },
+      { text:"Laut schreien und schubsen.", good:false } ] },
+  { level:2, text:"Du möchtest, dass dein Freund beim Fangenspielen langsamer rennt. Was sagst du?",
+    options:[
+      { text:"„Kannst du bitte etwas langsamer rennen, ich komme nicht mit?“", good:true },
+      { text:"Einfach aufhören mitzuspielen, ohne etwas zu sagen.", good:false },
+      { text:"Ihn wütend anschreien.", good:false } ] },
+  { level:2, text:"Beim Basteln geht dir der Kleber aus. Was sagst du?",
+    options:[
+      { text:"„Hast du noch etwas Kleber für mich übrig?“", good:true },
+      { text:"Den Kleber von einem anderen Kind wegnehmen.", good:false },
+      { text:"Aufgeben und nicht weiterbasteln.", good:false } ] },
+  { level:2, text:"Du hast dich verlaufen und findest deine Gruppe nicht mehr. Was sagst du?",
+    options:[
+      { text:"„Entschuldigung, ich habe meine Gruppe verloren. Können Sie mir helfen?“", good:true },
+      { text:"Einfach allein weitersuchen, ohne jemanden zu fragen.", good:false },
+      { text:"Sich verstecken, bis jemand einen findet.", good:false } ] },
+  { level:3, text:"Ein Mitschüler behauptet, deine Zeichnung sei hässlich. Was sagst du?",
+    options:[
+      { text:"„Das trifft mich. Ich habe mir viel Mühe gegeben.“", good:true },
+      { text:"Seine Zeichnung auch schlechtmachen.", good:false },
+      { text:"Weinend die Zeichnung zerreißen.", good:false } ] },
+  { level:3, text:"In der Gruppenarbeit will niemand die unangenehme Aufgabe übernehmen. Was schlägst du vor?",
+    options:[
+      { text:"„Sollen wir losen, wer die Aufgabe übernimmt? Dann ist es fair.“", good:true },
+      { text:"Einfach schweigen und hoffen, jemand anderes macht es.", good:false },
+      { text:"Bestimmen, dass ein bestimmtes Kind es machen muss.", good:false } ] },
+  { level:3, text:"Du merkst, dass du beim Streit lauter wirst, als du eigentlich willst. Was sagst du?",
+    options:[
+      { text:"„Ich brauche kurz eine Pause, bevor wir weiterreden.“", good:true },
+      { text:"Trotzdem einfach weiterschreien.", good:false },
+      { text:"Wortlos wegrennen und tagelang schmollen.", good:false } ] },
+  { level:3, text:"Ein Freund erzählt ein Geheimnis von dir weiter, das er versprochen hatte. Was sagst du ihm?",
+    options:[
+      { text:"„Das hat mich verletzt, du hattest es versprochen.“", good:true },
+      { text:"Ihm sofort auch ein Geheimnis wegnehmen, um sich zu rächen.", good:false },
+      { text:"Nie wieder mit ihm reden, ohne einen Grund zu nennen.", good:false } ] },
+  { level:4, text:"Du hast eine gute Idee, traust dich aber nicht, sie in der Klasse zu sagen. Was hilft dir?",
+    options:[
+      { text:"„Ich atme kurz durch und melde mich, auch wenn es mich Mut kostet.“", good:true },
+      { text:"Die Idee einfach für sich behalten, um kein Risiko einzugehen.", good:false },
+      { text:"Die Idee einem Freund zuflüstern, statt sie selbst zu sagen.", good:false } ] },
+  { level:4, text:"Ein Freund braucht deine Hilfe, aber du bist selbst gerade im Stress. Was sagst du?",
+    options:[
+      { text:"„Ich helfe dir gern, aber erst in 10 Minuten, ist das okay?“", good:true },
+      { text:"Einfach ignorieren, ohne etwas zu sagen.", good:false },
+      { text:"Genervt ablehnen, ohne einen Grund zu nennen.", good:false } ] },
+  { level:4, text:"Du hast gemerkt, dass eine Regel in der Gruppe unfair ist. Was sagst du?",
+    options:[
+      { text:"„Ich finde diese Regel unfair, können wir das gemeinsam besprechen?“", good:true },
+      { text:"Sich einfach nicht mehr an die Regel halten, ohne etwas zu sagen.", good:false },
+      { text:"Laut vor allen schimpfen, ohne einen Vorschlag zu machen.", good:false } ] },
+  { level:5, text:"Du merkst, dass ein Freund öfter traurig wirkt, spricht aber nicht darüber. Was sagst du?",
+    options:[
+      { text:"„Ich hab gemerkt, dass es dir in letzter Zeit nicht so gut geht. Magst du mir davon erzählen?“", good:true },
+      { text:"Nichts sagen, es ist ja nicht dein Problem.", good:false },
+      { text:"Hinter seinem Rücken mit anderen darüber reden.", good:false } ] },
+  { level:5, text:"In einer Diskussion hat jemand eine ganz andere Meinung als du. Was sagst du?",
+    options:[
+      { text:"„Ich sehe das anders, aber ich verstehe, warum du das so siehst.“", good:true },
+      { text:"Laut behaupten, die eigene Meinung sei die einzig richtige.", good:false },
+      { text:"Beleidigt schweigen, weil man nicht recht bekommt.", good:false } ] },
+  { level:5, text:"Du hast eine wichtige Deadline verpasst, weil du dich verplant hast. Was sagst du?",
+    options:[
+      { text:"„Das tut mir leid, ich habe mich verplant. Wie können wir das jetzt lösen?“", good:true },
+      { text:"Eine Ausrede erfinden, die nicht stimmt.", good:false },
+      { text:"Das Thema einfach ignorieren und hoffen, es fällt niemandem auf.", good:false } ] },
 ];
 
 /* ---------- Modul: Stress-Helfer (gesunder Umgang mit Stress) ---------- */
@@ -325,6 +425,66 @@ const STRESS_SCENES = [
       { text:"Ich sage einem Erwachsenen ruhig, wie ich mich fühle.", good:true },
       { text:"Ich lasse meine Wut an einem Haustier oder Geschwisterkind aus.", good:false },
       { text:"Ich rede mit niemandem darüber und ziehe mich völlig zurück.", good:false } ] },
+  { level:2, text:"Du sollst zum ersten Mal allein im Kindergarten ein Lied vor allen singen.",
+    options:[
+      { text:"Ich übe das Lied vorher leise für mich, das macht mich sicherer.", good:true },
+      { text:"Ich weigere mich ganz und renne weg.", good:false },
+      { text:"Ich werde die ganze Zeit zittrig, ohne etwas zu sagen.", good:false } ] },
+  { level:2, text:"Ein Spiel läuft nicht so, wie du es dir vorgestellt hast, und du wirst schnell frustriert.",
+    options:[
+      { text:"Ich atme kurz durch und probiere es noch einmal.", good:true },
+      { text:"Ich werfe die Spielsachen durch die Gegend.", good:false },
+      { text:"Ich gebe sofort ganz auf.", good:false } ] },
+  { level:2, text:"Im Wartezimmer beim Arzt wird dir die Zeit lang und du wirst unruhig.",
+    options:[
+      { text:"Ich schaue mir ein Buch an oder male, während ich warte.", good:true },
+      { text:"Ich renne laut schreiend durchs Wartezimmer.", good:false },
+      { text:"Ich werde zappelig und störe andere Wartende.", good:false } ] },
+  { level:2, text:"Beim Umziehen für den Kindergarten klemmt der Reißverschluss und du wirst ungeduldig.",
+    options:[
+      { text:"Ich hole mir Hilfe, statt mich zu ärgern.", good:true },
+      { text:"Ich reiße wütend an der Jacke.", good:false },
+      { text:"Ich weine, ohne um Hilfe zu bitten.", good:false } ] },
+  { level:3, text:"Du hast eine wichtige Präsentation in der Schule und dein Bauch kribbelt vor Aufregung.",
+    options:[
+      { text:"Ich übe kurz vor dem Spiegel und erinnere mich, dass ich vorbereitet bin.", good:true },
+      { text:"Ich melde mich krank, obwohl mir nichts fehlt.", good:false },
+      { text:"Ich denke die ganze Zeit nur an das Schlimmste, was passieren könnte.", good:false } ] },
+  { level:3, text:"Zwei Freunde streiten sich, und du steckst mittendrin.",
+    options:[
+      { text:"Ich sage: „Lasst uns in Ruhe reden, ich will nicht zwischen euch stehen.“", good:true },
+      { text:"Ich nehme heimlich für eine Seite Partei.", good:false },
+      { text:"Ich schreie beide an, damit sie aufhören.", good:false } ] },
+  { level:3, text:"Beim Sport klappt eine Übung einfach nicht, egal wie oft du es versuchst.",
+    options:[
+      { text:"Ich mache eine kurze Pause und versuche es dann noch mal.", good:true },
+      { text:"Ich werfe wütend die Sportsachen weg.", good:false },
+      { text:"Ich sage mir, dass ich das sowieso nie können werde.", good:false } ] },
+  { level:3, text:"Du hast dein Hausaufgabenheft verloren und weißt nicht, was aufgegeben wurde.",
+    options:[
+      { text:"Ich frage in Ruhe einen Mitschüler oder die Lehrerin nach den Aufgaben.", good:true },
+      { text:"Ich mache mir große Sorgen, ohne etwas zu unternehmen.", good:false },
+      { text:"Ich behaupte, es gäbe keine Hausaufgaben.", good:false } ] },
+  { level:4, text:"Du hast das Gefühl, dass du in der Gruppe nicht mehr mitkommst, weil alles sehr schnell geht.",
+    options:[
+      { text:"Ich bitte kurz darum, dass wir das Tempo etwas verlangsamen.", good:true },
+      { text:"Ich tue so, als würde ich alles verstehen, obwohl das nicht stimmt.", good:false },
+      { text:"Ich gebe innerlich auf und höre auf mitzumachen.", good:false } ] },
+  { level:4, text:"Beim Wettkampf merkst du, wie dein Herz vor Nervosität schneller schlägt.",
+    options:[
+      { text:"Ich atme bewusst langsamer und erinnere mich an mein Training.", good:true },
+      { text:"Ich rede mir ein, dass ich sowieso verlieren werde.", good:false },
+      { text:"Ich breche kurzfristig ab, ohne es zu versuchen.", good:false } ] },
+  { level:5, text:"Du hast mehrere Aufgaben gleichzeitig zu erledigen und weißt nicht, wo du anfangen sollst.",
+    options:[
+      { text:"Ich schreibe eine kurze Liste und erledige eine Sache nach der anderen.", good:true },
+      { text:"Ich springe hektisch zwischen allem hin und her.", good:false },
+      { text:"Ich schiebe alles auf und mache gar nichts.", good:false } ] },
+  { level:5, text:"Ein Streit mit einem Freund beschäftigt dich noch tagelang.",
+    options:[
+      { text:"Ich suche das Gespräch, sobald ich mich beruhigt habe, um es zu klären.", good:true },
+      { text:"Ich rede tagelang schlecht über die Person zu anderen.", good:false },
+      { text:"Ich tue so, als wäre nichts, obwohl es mich sehr beschäftigt.", good:false } ] },
 ];
 
 /* ---------- Ruhe-Übungen (mehrere Varianten für Abwechslung) ---------- */
@@ -336,6 +496,13 @@ const CALM_EXERCISES = [
   { id:"kuscheltier", level:3, icon:"🧸", title:"Kuscheltier-Atmung", desc:"Ein Kuscheltier auf dem Bauch beim Wippen beobachten", type:"breath", inLabel:"Kuscheltier steigt …", outLabel:"Kuscheltier sinkt …", inMs:4000, outMs:4000, rounds:4 },
   { id:"sinne", level:4, icon:"🔎", title:"5-Sinne-Pause", desc:"Die Welt um dich herum entdecken", type:"grounding" },
   { id:"wackeln", level:4, icon:"🍃", title:"Anspannen & Loslassen", desc:"Muskeln kurz anspannen, dann locker lassen", type:"muscle" },
+  { id:"wolkenreise", level:1, icon:"☁️", title:"Wolkenreise", desc:"Mit den Augen einer Wolke am Himmel folgen", type:"breath", inLabel:"Wolke schwebt hoch …", outLabel:"Wolke sinkt sanft …", inMs:3500, outMs:3500, rounds:4 },
+  { id:"mondschein", level:2, icon:"🌙", title:"Mondschein-Atmung", desc:"Ruhig werden wie eine stille Nacht", type:"breath", inLabel:"Mond geht auf …", outLabel:"Mond sinkt …", inMs:4000, outMs:5000, rounds:4 },
+  { id:"rakete", level:3, icon:"🚀", title:"Raketen-Countdown", desc:"Mit einem Countdown zur Ruhe starten", type:"breath", inLabel:"Countdown … einatmen", outLabel:"Start! Ausatmen", inMs:3000, outMs:3000, rounds:5 },
+  { id:"bremsweg", level:4, icon:"🚗", title:"Sanft bremsen", desc:"Wie ein Auto langsam zum Stehen kommen", type:"breath", inLabel:"Gas geben … einatmen", outLabel:"Sanft bremsen … ausatmen", inMs:4000, outMs:4500, rounds:5 },
+  { id:"schmetterling", level:1, icon:"🦋", title:"Schmetterlings-Atmung", desc:"Flügel sanft auf- und zuklappen", type:"breath", inLabel:"Flügel öffnen …", outLabel:"Flügel schließen …", inMs:3000, outMs:3000, rounds:3 },
+  { id:"blume", level:1, icon:"🌸", title:"Blumen-Duft", desc:"An einer Blume schnuppern, dann eine Kerze auspusten", type:"breath", inLabel:"An der Blume riechen …", outLabel:"Kerze auspusten …", inMs:3000, outMs:2500, rounds:3 },
+  { id:"teddy", level:1, icon:"🧸", title:"Teddy-Wiege", desc:"Den Teddy sanft in den Armen wiegen", type:"breath", inLabel:"Teddy hoch wiegen …", outLabel:"Teddy sanft senken …", inMs:3500, outMs:3500, rounds:3 },
 ];
 
 const GROUNDING_STEPS = [
@@ -455,6 +622,88 @@ const STORIES = [
       { scene:"🙂", text:"Leo atmet durch und setzt sich wieder — es ist schon halb so schlimm." } ],
     question:"Was hat Leo an der Tafel gespürt?", options:["scham","freude","ruhe"], correct:"scham",
     tip:"Sich zu schämen ist unangenehm, geht aber vorbei. Fehler machen gehört zum Lernen dazu." },
+  { id:"nasser-hund", level:1, title:"Der nasse Hund", cover:"🐶",
+    pages:[
+      { scene:"🐶", text:"Leo streichelt einen nassen Hund im Garten." },
+      { scene:"💦", text:"Platsch! Der Hund schüttelt sich und Leo wird nass." },
+      { scene:"😆", text:"Leo lacht, weil es so kitzlig war." } ],
+    question:"Wie hat sich Leo gefühlt, als das Wasser spritzte?", options:["ueberr","freude","wut"], correct:"ueberr",
+    tip:"Kleine Überraschungen können erst komisch und dann lustig sein." },
+  { id:"verlorene-muetze", level:2, title:"Die verlorene Mütze", cover:"🧢",
+    pages:[
+      { scene:"🧢", text:"Leo hat seine Lieblingsmütze im Park verloren." },
+      { scene:"😟", text:"Er sucht überall, aber sie ist nicht da." },
+      { scene:"🧑‍🤝‍🧑", text:"Ein anderes Kind findet sie und bringt sie zurück." },
+      { scene:"😊", text:"Leo bedankt sich riesig und strahlt vor Freude." } ],
+    question:"Wie hat sich Leo gefühlt, als die Mütze weg war?", options:["traurig","freude","wut"], correct:"traurig",
+    tip:"Etwas zu verlieren fühlt sich unangenehm an. Wiederzufinden macht umso glücklicher." },
+  { id:"gruppenprojekt", level:3, title:"Das Gruppenprojekt", cover:"📋",
+    pages:[
+      { scene:"📋", text:"Leo soll mit drei anderen Kindern ein Plakat gestalten." },
+      { scene:"😤", text:"Ein Kind will alles allein bestimmen, das ärgert Leo." },
+      { scene:"💬", text:"Leo sagt ruhig: „Lasst uns abstimmen, was jeder gern machen möchte.“" },
+      { scene:"🎉", text:"Am Ende ist das Plakat bunt und alle haben mitgeholfen." } ],
+    question:"Was hat Leo gefühlt, als ein Kind alles bestimmen wollte?", options:["wut","freude","ruhe"], correct:"wut",
+    tip:"Bei Gruppenarbeit hilft es, alle Meinungen zu hören, auch wenn man kurz ärgerlich wird." },
+  { id:"verpasster-bus", level:3, title:"Der verpasste Bus", cover:"🚌",
+    pages:[
+      { scene:"🚌", text:"Leo kommt zu spät zur Bushaltestelle, der Bus fährt gerade ab." },
+      { scene:"😩", text:"Er ist genervt und ein bisschen ängstlich, weil er zu spät zur Schule kommt." },
+      { scene:"📞", text:"Leo ruft Mama an und erklärt ruhig, was passiert ist." },
+      { scene:"🚗", text:"Mama bringt ihn mit dem Auto, alles wird gut." } ],
+    question:"Wie hat sich Leo gefühlt, als der Bus abfuhr?", options:["nervoes","freude","ruhe"], correct:"nervoes",
+    tip:"Wenn etwas schiefgeht, hilft es, ruhig zu bleiben und sich Hilfe zu holen." },
+  { id:"geburtstagseinladung", level:4, title:"Die Geburtstagseinladung", cover:"🎂",
+    pages:[
+      { scene:"🎉", text:"Alle in der Klasse werden zur Geburtstagsfeier eingeladen — außer Leo." },
+      { scene:"😞", text:"Das fühlt sich richtig unfair und traurig an." },
+      { scene:"💬", text:"Leo erzählt seiner besten Freundin davon, wie sehr ihn das verletzt hat." },
+      { scene:"🤗", text:"Sie lädt Leo spontan zu sich zum Spielen ein, das tröstet." } ],
+    question:"Was hat Leo gefühlt, als er nicht eingeladen wurde?", options:["enttaeuscht","freude","stolz"], correct:"enttaeuscht",
+    tip:"Ausgeschlossen zu werden tut weh. Sich jemandem anzuvertrauen hilft, den Schmerz zu teilen." },
+  { id:"notluege", level:5, title:"Die ehrliche Antwort", cover:"🖍️",
+    pages:[
+      { scene:"🖍️", text:"Leo hat aus Versehen den Lieblingsstift der Schwester kaputt gemacht." },
+      { scene:"😰", text:"Er überlegt kurz, ob er es einfach abstreiten soll." },
+      { scene:"💬", text:"Stattdessen sagt er ehrlich: „Das war ich, es tut mir leid.“" },
+      { scene:"🙂", text:"Die Schwester ist zwar kurz sauer, aber froh über die Ehrlichkeit." } ],
+    question:"Was hat Leo gespürt, bevor er die Wahrheit gesagt hat?", options:["nervoes","freude","ruhe"], correct:"nervoes",
+    tip:"Ehrlich zu sein kostet manchmal Mut, fühlt sich aber am Ende meist besser an." },
+  { id:"seifenblase", level:1, title:"Die Seifenblase", cover:"🫧",
+    pages:[
+      { scene:"🫧", text:"Ben pustet eine große Seifenblase." },
+      { scene:"💥", text:"Zack! Die Blase platzt auf seiner Nase." },
+      { scene:"😄", text:"Ben lacht und pustet gleich die nächste." } ],
+    question:"Wie fühlt sich Ben, als die Blase platzt?", options:["ueberr","traurig","wut"], correct:"ueberr",
+    tip:"Kleine Überraschungen gehören zum Spielen dazu und sind oft lustig." },
+  { id:"tuermchen", level:1, title:"Das Bauklötze-Türmchen", cover:"🧱",
+    pages:[
+      { scene:"🧱", text:"Mia baut ein kleines Türmchen." },
+      { scene:"🙌", text:"Ganz oben setzt sie den letzten Stein drauf." },
+      { scene:"😊", text:"Stolz zeigt sie es Mama." } ],
+    question:"Wie fühlt sich Mia, als der Turm fertig ist?", options:["freude","traurig","angst"], correct:"freude",
+    tip:"Etwas geschafft zu haben macht kleine und große Baumeister glücklich." },
+  { id:"regenbogen", level:1, title:"Der Regenbogen", cover:"🌈",
+    pages:[
+      { scene:"🌧️", text:"Es hat geregnet, und Lea schaut traurig aus dem Fenster." },
+      { scene:"🌈", text:"Plötzlich erscheint ein bunter Regenbogen am Himmel." },
+      { scene:"😍", text:"Lea strahlt und zeigt mit dem Finger darauf." } ],
+    question:"Wie fühlt sich Lea, als sie den Regenbogen sieht?", options:["ueberr","wut","traurig"], correct:"ueberr",
+    tip:"Nach dem Regen kommt oft etwas Schönes — das ist eine kleine Überraschung." },
+  { id:"gewitter-klein", level:1, title:"Das laute Gewitter", cover:"⛈️",
+    pages:[
+      { scene:"⛈️", text:"Draußen blitzt und donnert es laut." },
+      { scene:"😦", text:"Ben kuschelt sich ganz fest an Mama." },
+      { scene:"🤗", text:"Mama hält ihn fest, bis das Gewitter vorbei ist." } ],
+    question:"Wie fühlt sich Ben beim lauten Donner?", options:["angst","freude","ruhe"], correct:"angst",
+    tip:"Bei lauten Geräuschen hilft Nähe und ein fester Arm zum Anlehnen." },
+  { id:"mittagsschlaf", level:1, title:"Der Mittagsschlaf", cover:"😴",
+    pages:[
+      { scene:"🛏️", text:"Nele soll jetzt schlafen, will aber noch spielen." },
+      { scene:"😤", text:"Erst ist sie ein bisschen bockig." },
+      { scene:"📖", text:"Nach einer kleinen Geschichte wird sie ganz müde und ruhig." } ],
+    question:"Wie fühlt sich Nele zuerst, als sie schlafen soll?", options:["wut","freude","ruhe"], correct:"wut",
+    tip:"Vom Spielen zum Schlafen zu wechseln ist manchmal schwer. Ein Ritual hilft beim Runterkommen." },
 ];
 
 /* ---------- Modul: Lack-Werkstatt (Farben erkennen, mit Piktogramm + Farbhinweis) ---------- */
@@ -467,6 +716,8 @@ const COLOR_NAMES = {
   lila:  { label:"Lila",  hue:"#B39DDB" },
   rosa:  { label:"Rosa",  hue:"#F7A8C4" },
   braun: { label:"Braun", hue:"#B5835A" },
+  grau:  { label:"Grau",  hue:"#AEB4BD" },
+  schwarz:{ label:"Schwarz", hue:"#4A4358" },
 };
 const COLOR_ITEMS = [
   { level:1, icon:"🍋", text:"Welche Farbe hat die Zitrone?", correct:"gelb" },
@@ -483,6 +734,25 @@ const COLOR_ITEMS = [
   { level:2, icon:"🐷", text:"Welche Farbe hat das Schweinchen?", correct:"rosa" },
   { level:3, icon:"🍫", text:"Welche Farbe hat die Schokolade?", correct:"braun" },
   { level:3, icon:"🌳", text:"Welche Farbe hat der Baum?", correct:"gruen" },
+  { level:1, icon:"🍊", text:"Welche Farbe hat die Orange?", correct:"orange" },
+  { level:1, icon:"🫐", text:"Welche Farbe hat die Heidelbeere?", correct:"blau" },
+  { level:1, icon:"🌻", text:"Welche Farbe hat die Sonnenblume?", correct:"gelb" },
+  { level:1, icon:"🍉", text:"Welche Farbe ist die Melone innen?", correct:"rot" },
+  { level:2, icon:"🐝", text:"Welche Farbe hat die Biene?", correct:"gelb" },
+  { level:2, icon:"🦋", text:"Welche Farbe hat dieser Schmetterling?", correct:"blau" },
+  { level:2, icon:"🐘", text:"Welche Farbe hat der Elefant?", correct:"grau" },
+  { level:3, icon:"🍆", text:"Welche Farbe hat die Aubergine?", correct:"lila" },
+  { level:3, icon:"🐧", text:"Welche Farbe hat der Rücken des Pinguins?", correct:"schwarz" },
+  { level:3, icon:"🚜", text:"Welche Farbe hat der Traktor?", correct:"gruen" },
+  { level:1, icon:"🍎", text:"Welche Farbe hat der Apfel?", correct:"rot" },
+  { level:1, icon:"🐤", text:"Welche Farbe hat das Küken?", correct:"gelb" },
+  { level:1, icon:"🐻", text:"Welche Farbe hat der Bär?", correct:"braun" },
+  { level:1, icon:"🐳", text:"Welche Farbe hat der Wal?", correct:"blau" },
+  { level:1, icon:"🎃", text:"Welche Farbe hat der Kürbis?", correct:"orange" },
+  { level:1, icon:"🍒", text:"Welche Farbe hat die Kirsche?", correct:"rot" },
+  { level:1, icon:"🌼", text:"Welche Farbe hat die Blüte?", correct:"gelb" },
+  { level:1, icon:"🐹", text:"Welche Farbe hat das Hamsterfell?", correct:"braun" },
+  { level:1, icon:"🦋", text:"Welche Farbe hat dieser Schmetterling?", correct:"lila" },
 ];
 
 const STICKER_DEFS = [
