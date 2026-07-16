@@ -1198,19 +1198,20 @@ function onboardNext(){
 /* ============================================================
    HOME
    ============================================================ */
-/* Alle Insel-Stationen an festen, organisch verteilten Punkten (Kreis-Layout).
-   So bleibt die Anordnung stabil, aber nicht starr-gitterförmig. */
+/* Alle Insel-Stationen an handgezeichneten, unregelmäßig verteilten Punkten
+   (kein perfekter Kreis/Raster) — wirkt dadurch natürlicher, bleibt aber
+   überlappungsfrei, egal welche Teilmenge gerade sichtbar ist. */
 const STATIONS = [
-  { key:"feelings", icon:"🚦", label:"Gefühls-Tankstelle",   bubble:"var(--mint)",       x:50.0, y:16.0, minLevel:1 },
-  { key:"stress",   icon:"🏁", label:"Mutmach-Rennstrecke",  bubble:"var(--sun-deep)",   x:74.7, y:22.5, minLevel:2 },
-  { key:"words",    icon:"🔧", label:"Wort-Werkstatt",       bubble:"var(--berry)",      x:89.9, y:39.5, minLevel:2 },
-  { key:"sounds",   icon:"🔊", label:"Tier-Laute-Werkstatt", bubble:"var(--mint-deep)",  x:89.9, y:60.5, minLevel:1 },
-  { key:"vehicles", icon:"🚙", label:"Fahrzeug-Kunde",       bubble:"var(--peach-deep)", x:74.7, y:77.5, minLevel:1 },
-  { key:"calm",     icon:"🅿️", label:"Boxenstopp",           bubble:"var(--sky)",        x:50.0, y:84.0, minLevel:1 },
-  { key:"colors",   icon:"🎨", label:"Lack-Werkstatt",       bubble:"var(--peach)",      x:25.3, y:77.5, minLevel:1 },
-  { key:"count",    icon:"🔢", label:"Zähl-Werkstatt",       bubble:"var(--berry-deep)", x:10.1, y:60.5, minLevel:1 },
-  { key:"shapes",   icon:"🔺", label:"Formen-Werkstatt",     bubble:"var(--sky-deep)",   x:10.1, y:39.5, minLevel:1 },
-  { key:"stories",  icon:"🛣️", label:"Geschichten-Autobahn", bubble:"var(--sun)",        x:25.3, y:22.5, minLevel:1 },
+  { key:"feelings", icon:"🚦", label:"Gefühls-Tankstelle",   bubble:"var(--mint)",       x:48, y:10, minLevel:1 },
+  { key:"stress",   icon:"🏁", label:"Mutmach-Rennstrecke",  bubble:"var(--sun-deep)",   x:77, y:16, minLevel:2 },
+  { key:"words",    icon:"🔧", label:"Wort-Werkstatt",       bubble:"var(--berry)",      x:91, y:40, minLevel:2 },
+  { key:"sounds",   icon:"🔊", label:"Tier-Laute-Werkstatt", bubble:"var(--mint-deep)",  x:84, y:65, minLevel:1 },
+  { key:"vehicles", icon:"🚙", label:"Fahrzeug-Kunde",       bubble:"var(--peach-deep)", x:64, y:83, minLevel:1 },
+  { key:"calm",     icon:"🅿️", label:"Boxenstopp",           bubble:"var(--sky)",        x:38, y:91, minLevel:1 },
+  { key:"colors",   icon:"🎨", label:"Lack-Werkstatt",       bubble:"var(--peach)",      x:17, y:79, minLevel:1 },
+  { key:"count",    icon:"🔢", label:"Zähl-Werkstatt",       bubble:"var(--berry-deep)", x:8,  y:54, minLevel:1 },
+  { key:"shapes",   icon:"🔺", label:"Formen-Werkstatt",     bubble:"var(--sky-deep)",   x:9,  y:31, minLevel:1 },
+  { key:"stories",  icon:"🛣️", label:"Geschichten-Autobahn", bubble:"var(--sun)",        x:28, y:13, minLevel:1 },
 ];
 
 /* Erzeugt einen sanft geschwungenen, gepunkteten Pfad, der GENAU die
