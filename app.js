@@ -518,6 +518,7 @@ const STRESS_SCENES = [
 */
 const CALM_EXERCISES = [
   { id:"wellen", level:1, icon:"🌊", title:"Wellen-Atmung", desc:"Ruhig ein- und ausatmen wie sanfte Wellen", type:"breath", inLabel:"Einatmen …", outLabel:"Ausatmen …", inMs:4000, outMs:4000, rounds:4 },
+  { id:"blume", level:1, icon:"🌸", title:"Blumen-Duft", desc:"An einer Blume schnuppern, dann eine Kerze auspusten", type:"breath", inLabel:"An der Blume riechen …", outLabel:"Kerze auspusten …", inMs:3000, outMs:2500, rounds:3 },
   { id:"biene", level:2, icon:"🐝", title:"Bienen-Atmung", desc:"Leise summen beim Ausatmen", type:"breath", inLabel:"Einatmen …", outLabel:"Summmm …", inMs:3000, outMs:4000, rounds:4 },
   { id:"ballon", level:2, icon:"🎈", title:"Ballon-Bauch", desc:"Den Bauch wie einen Ballon füllen und leeren", type:"breath", inLabel:"Bauch füllt sich …", outLabel:"Bauch wird leicht …", inMs:4000, outMs:5000, rounds:4 },
   { id:"mondschein", level:3, icon:"🌙", title:"Mondschein-Atmung", desc:"Ruhig werden wie eine stille Nacht", type:"breath", inLabel:"Mond geht auf …", outLabel:"Mond sinkt …", inMs:4000, outMs:5000, rounds:4 },
@@ -531,6 +532,8 @@ const CALM_EXERCISES = [
 
   { id:"tierwackeln", level:1, icon:"🦒", title:"Tier-Wackeln", desc:"Wie verschiedene Tiere bewegen", type:"steps",
     steps:["Streck dich groß wie eine Giraffe.","Wackle wie ein Fisch im Wasser.","Kuschle dich klein zusammen wie eine Schnecke.","Schüttle dich locker aus wie ein Hund nach dem Baden."] },
+  { id:"teddyreise", level:1, icon:"🧸", title:"Teddybär-Reise", desc:"Eine kleine Kuschel-Reise mit dem Teddy", type:"steps",
+    steps:["Nimm deinen Teddy ganz fest in den Arm.","Stellt euch vor, ihr fliegt über eine bunte Blumenwiese.","Der Wind ist ganz sanft und warm.","Ihr landet weich auf einer Wolke aus Kissen."] },
   { id:"yogareise", level:3, icon:"🧘", title:"Kleine Yoga-Reise", desc:"Ruhige Posen wie in einer kleinen Reise", type:"steps",
     steps:["Strecke dich groß wie ein Baum, die Arme wie Äste nach oben.","Roll dich klein zusammen wie ein Igel.","Steh fest und ruhig wie ein Berg.","Atme tief durch und lächle — du bist stark und ruhig."] },
   { id:"wackelpudding", level:4, icon:"🍮", title:"Wackelpudding", desc:"Spannung abschütteln wie ein Pudding", type:"steps",
@@ -775,6 +778,27 @@ const STORIES = [
       { scene:"🤝", text:"Sie einigen sich, abwechselnd damit zu bauen." } ],
     question:"Was braucht es, damit beide zufrieden sind?", options:["ruhe","wut","angst"], correct:"ruhe",
     tip:"Abwechseln beim Teilen macht das Spielen für beide Kinder angenehmer." },
+  { id:"luftballon-fahrt", level:1, title:"Die Ballonfahrt", cover:"🎈",
+    pages:[
+      { scene:"🎈", text:"Tom bekommt auf dem Jahrmarkt einen Luftballon geschenkt." },
+      { scene:"💨", text:"Ein Windstoß reißt ihn kurz aus der Hand." },
+      { scene:"🤗", text:"Papa hält ihn schnell wieder fest." } ],
+    question:"Wie fühlt sich Tom, als der Ballon wegfliegen will?", options:["angst","freude","ruhe"], correct:"angst",
+    tip:"Ein kurzer Schreck ist schnell vorbei, wenn jemand hilft." },
+  { id:"neue-schuhe", level:1, title:"Die neuen Schuhe", cover:"👟",
+    pages:[
+      { scene:"👟", text:"Lea bekommt tolle neue Schuhe mit Blinklicht." },
+      { scene:"🏃", text:"Sie rennt aufgeregt im Kreis, um sie leuchten zu sehen." },
+      { scene:"😄", text:"Alle bewundern die blinkenden Schuhe." } ],
+    question:"Wie fühlt sich Lea mit ihren neuen Schuhen?", options:["freude","traurig","angst"], correct:"freude",
+    tip:"Kleine Dinge können große Freude machen." },
+  { id:"kuscheltier-suche", level:1, title:"Die Kuscheltier-Suche", cover:"🧸",
+    pages:[
+      { scene:"🧸", text:"Beim Schlafengehen fehlt plötzlich der Teddy." },
+      { scene:"😟", text:"Ben sucht unter dem Bett und im Schrank." },
+      { scene:"😊", text:"Er findet ihn unter der Decke, ganz warm und gemütlich." } ],
+    question:"Wie fühlt sich Ben, als er den Teddy nicht findet?", options:["traurig","freude","wut"], correct:"traurig",
+    tip:"Etwas Vertrautes wiederzufinden ist ein beruhigendes Gefühl." },
 ];
 
 /* ---------- Modul: Lack-Werkstatt (Farben erkennen, mit Piktogramm + Farbhinweis) ---------- */
@@ -859,6 +883,12 @@ const SHAPE_ITEMS = [
   { level:1, icon:"🎪", text:"Welche Form hat das Zirkuszelt-Dach?", correct:"dreieck" },
   { level:1, icon:"🧇", text:"Welche Form hat die Waffel?", correct:"quadrat" },
   { level:1, icon:"🌕", text:"Welche Form hat der Vollmond?", correct:"kreis" },
+  { level:1, icon:"🍪", text:"Welche Form hat der Keks?", correct:"kreis" },
+  { level:1, icon:"🎩", text:"Welche Form hat der Hexenhut?", correct:"dreieck" },
+  { level:1, icon:"📺", text:"Welche Form hat der Fernseher?", correct:"quadrat" },
+  { level:1, icon:"🍕", text:"Welche Form hat das andere Pizzastück?", correct:"dreieck" },
+  { level:1, icon:"🧊", text:"Welche Form hat der Eiswürfel?", correct:"quadrat" },
+  { level:1, icon:"⚽", text:"Welche Form hat der Fußball?", correct:"kreis" },
   { level:2, icon:"🚪", text:"Welche Form hat die Tür?", correct:"rechteck" },
   { level:2, icon:"⭐", text:"Welche Form hat der Stern am Himmel?", correct:"stern" },
   { level:2, icon:"📱", text:"Welche Form hat das Handy?", correct:"rechteck" },
@@ -883,6 +913,12 @@ const COUNT_ITEMS = [
   { level:1, emoji:"🎈", noun:"Luftballons", count:1 },
   { level:1, emoji:"🐟", noun:"Fische", count:3 },
   { level:1, emoji:"🌼", noun:"Blumen", count:2 },
+  { level:1, emoji:"🐻", noun:"Bären", count:1 },
+  { level:1, emoji:"🦆", noun:"Enten", count:2 },
+  { level:1, emoji:"🎁", noun:"Geschenke", count:3 },
+  { level:1, emoji:"🧦", noun:"Socken", count:2 },
+  { level:1, emoji:"🥕", noun:"Karotten", count:3 },
+  { level:1, emoji:"🚙", noun:"Autos", count:1 },
   { level:2, emoji:"🏍️", noun:"Motorräder", count:3 },
   { level:2, emoji:"🌼", noun:"Blumen", count:4 },
   { level:2, emoji:"🐤", noun:"Küken", count:2 },
@@ -898,6 +934,82 @@ const COUNT_ITEMS = [
   { level:5, emoji:"🚙", noun:"Autos", count:9 },
   { level:5, emoji:"🎈", noun:"Luftballons", count:10 },
   { level:5, emoji:"🍓", noun:"Erdbeeren", count:7 },
+];
+
+/* ---------- Modul: Tier-Laute-Werkstatt (Tierlaute zuordnen) ---------- */
+const ANIMAL_SOUNDS = {
+  kuh:      { label:"Kuh",      emoji:"🐄" },
+  hund:     { label:"Hund",     emoji:"🐶" },
+  katze:    { label:"Katze",    emoji:"🐱" },
+  ente:     { label:"Ente",     emoji:"🦆" },
+  schaf:    { label:"Schaf",    emoji:"🐑" },
+  pferd:    { label:"Pferd",    emoji:"🐴" },
+  schwein:  { label:"Schwein",  emoji:"🐷" },
+  loewe:    { label:"Löwe",     emoji:"🦁" },
+  hahn:     { label:"Hahn",     emoji:"🐓" },
+  frosch:   { label:"Frosch",   emoji:"🐸" },
+  biene:    { label:"Biene",    emoji:"🐝" },
+  eule:     { label:"Eule",     emoji:"🦉" },
+  esel:     { label:"Esel",     emoji:"🫏" },
+  vogel:    { label:"Vogel",    emoji:"🐦" },
+  schlange: { label:"Schlange", emoji:"🐍" },
+  elefant:  { label:"Elefant",  emoji:"🐘" },
+};
+const SOUND_ITEMS = [
+  { level:1, sound:"„Muh“", correct:"kuh" },
+  { level:1, sound:"„Wau, wau“", correct:"hund" },
+  { level:1, sound:"„Miau“", correct:"katze" },
+  { level:1, sound:"„Mäh“", correct:"schaf" },
+  { level:1, sound:"„Oink, oink“", correct:"schwein" },
+  { level:1, sound:"„Kikeriki“", correct:"hahn" },
+  { level:1, sound:"„Schnatter, schnatter“", correct:"ente" },
+  { level:1, sound:"„Iiiäh“", correct:"pferd" },
+  { level:2, sound:"„Quak, quak“", correct:"frosch" },
+  { level:2, sound:"„Summ, summ“", correct:"biene" },
+  { level:2, sound:"„Huhu“", correct:"eule" },
+  { level:2, sound:"„Grrr“", correct:"loewe" },
+  { level:3, sound:"„Iah, iah“", correct:"esel" },
+  { level:3, sound:"„Zwitscher, zwitscher“", correct:"vogel" },
+  { level:3, sound:"„Zisssch“", correct:"schlange" },
+  { level:3, sound:"„Tröööt“", correct:"elefant" },
+];
+
+/* ---------- Modul: Fahrzeug-Kunde (Fahrzeuge erkennen) ---------- */
+const VEHICLE_NAMES = {
+  auto:           { label:"Auto",           emoji:"🚗" },
+  motorrad:       { label:"Motorrad",       emoji:"🏍️" },
+  boot:           { label:"Boot",           emoji:"⛵" },
+  zug:            { label:"Zug",            emoji:"🚂" },
+  fahrrad:        { label:"Fahrrad",        emoji:"🚲" },
+  flugzeug:       { label:"Flugzeug",       emoji:"✈️" },
+  traktor:        { label:"Traktor",        emoji:"🚜" },
+  feuerwehrauto:  { label:"Feuerwehrauto",  emoji:"🚒" },
+  krankenwagen:   { label:"Krankenwagen",   emoji:"🚑" },
+  bus:            { label:"Bus",            emoji:"🚌" },
+  taxi:           { label:"Taxi",           emoji:"🚕" },
+  polizeiauto:    { label:"Polizeiauto",    emoji:"🚓" },
+  hubschrauber:   { label:"Hubschrauber",   emoji:"🚁" },
+  rakete:         { label:"Rakete",         emoji:"🚀" },
+  laster:         { label:"Laster",         emoji:"🚛" },
+  bagger:         { label:"Bagger",         emoji:"🏗️" },
+};
+const VEHICLE_ITEMS = [
+  { level:1, icon:"🚗", text:"Wie heißt dieses Fahrzeug?", correct:"auto" },
+  { level:1, icon:"🏍️", text:"Wie heißt dieses Fahrzeug?", correct:"motorrad" },
+  { level:1, icon:"⛵", text:"Wie heißt dieses Fahrzeug?", correct:"boot" },
+  { level:1, icon:"🚂", text:"Wie heißt dieses Fahrzeug?", correct:"zug" },
+  { level:1, icon:"🚲", text:"Wie heißt dieses Fahrzeug?", correct:"fahrrad" },
+  { level:1, icon:"✈️", text:"Wie heißt dieses Fahrzeug?", correct:"flugzeug" },
+  { level:2, icon:"🚜", text:"Wie heißt dieses Fahrzeug?", correct:"traktor" },
+  { level:2, icon:"🚒", text:"Wie heißt dieses Fahrzeug?", correct:"feuerwehrauto" },
+  { level:2, icon:"🚑", text:"Wie heißt dieses Fahrzeug?", correct:"krankenwagen" },
+  { level:2, icon:"🚌", text:"Wie heißt dieses Fahrzeug?", correct:"bus" },
+  { level:2, icon:"🚕", text:"Wie heißt dieses Fahrzeug?", correct:"taxi" },
+  { level:2, icon:"🚓", text:"Wie heißt dieses Fahrzeug?", correct:"polizeiauto" },
+  { level:3, icon:"🚁", text:"Wie heißt dieses Fahrzeug?", correct:"hubschrauber" },
+  { level:3, icon:"🚀", text:"Wie heißt dieses Fahrzeug?", correct:"rakete" },
+  { level:3, icon:"🚛", text:"Wie heißt dieses Fahrzeug?", correct:"laster" },
+  { level:3, icon:"🏗️", text:"Wie heißt dieses Fahrzeug?", correct:"bagger" },
 ];
 
 const STICKER_DEFS = [
@@ -917,6 +1029,10 @@ const STICKER_DEFS = [
   { id:"all_shapes",    emoji:"🔷", label:"Formen-Meister" },
   { id:"first_count",   emoji:"🔢", label:"Zähl-Talent" },
   { id:"all_count",     emoji:"🏎️", label:"Zähl-Champion" },
+  { id:"first_sound",   emoji:"🔊", label:"Tier-Kenner" },
+  { id:"all_sounds",    emoji:"🦁", label:"Tier-Meister" },
+  { id:"first_vehicle", emoji:"🚦", label:"Fahrzeug-Fan" },
+  { id:"all_vehicles",  emoji:"🏁", label:"Fahrzeug-Profi" },
 ];
 
 const AVATARS = ["🚗","🚙","🚕","🏎️","🚓","🚑","🚒","🏍️"];
@@ -936,7 +1052,7 @@ function freshProfile(){
   return {
     name:"", age:"", avatar:"🚗", color:"peach",
     stars:0, stickers:[], lastVisit:null, streak:0,
-    progress:{ feelingsDone:0, wordsGood:0, wordsTotal:0, calmSessions:0, storiesDone:[], stressGood:0, stressTotal:0, colorsGood:0, colorsTotal:0, shapesGood:0, shapesTotal:0, countGood:0, countTotal:0 },
+    progress:{ feelingsDone:0, wordsGood:0, wordsTotal:0, calmSessions:0, storiesDone:[], stressGood:0, stressTotal:0, colorsGood:0, colorsTotal:0, shapesGood:0, shapesTotal:0, countGood:0, countTotal:0, soundsGood:0, soundsTotal:0, vehiclesGood:0, vehiclesTotal:0 },
   };
 }
 let profile = loadProfile();
@@ -990,6 +1106,8 @@ function navigate(name, param){
     case "colors": setNavActive(""); renderColorGame(); break;
     case "shapes": setNavActive(""); renderShapeGame(); break;
     case "count": setNavActive(""); renderCountGame(); break;
+    case "sounds": setNavActive(""); renderSoundGame(); break;
+    case "vehicles": setNavActive(""); renderVehicleGame(); break;
     case "calm": setNavActive(""); renderCalmMenu(); break;
     case "stories": setNavActive(""); renderStoriesList(); break;
     case "story": setNavActive(""); renderStoryPlayer(param); break;
@@ -1002,8 +1120,8 @@ function backBtn(target){
 }
 function surpriseMe(){
   const choices = currentLevel()>=2
-    ? ["feelings","words","stress","calm","stories","colors","shapes","count"]
-    : ["feelings","calm","stories","colors","shapes","count"];
+    ? ["feelings","words","stress","calm","stories","colors","shapes","count","sounds","vehicles"]
+    : ["feelings","calm","stories","colors","shapes","count","sounds","vehicles"];
   navigate(choices[Math.floor(Math.random()*choices.length)]);
   unlockSticker("explorer");
 }
@@ -1080,34 +1198,57 @@ function onboardNext(){
 /* ============================================================
    HOME
    ============================================================ */
-function islandSvg(){
+/* Alle Insel-Stationen an festen, organisch verteilten Punkten (Kreis-Layout).
+   So bleibt die Anordnung stabil, aber nicht starr-gitterförmig. */
+const STATIONS = [
+  { key:"feelings", icon:"🚦", label:"Gefühls-Tankstelle",   bubble:"var(--mint)",       x:50.0, y:16.0, minLevel:1 },
+  { key:"stress",   icon:"🏁", label:"Mutmach-Rennstrecke",  bubble:"var(--sun-deep)",   x:74.7, y:22.5, minLevel:2 },
+  { key:"words",    icon:"🔧", label:"Wort-Werkstatt",       bubble:"var(--berry)",      x:89.9, y:39.5, minLevel:2 },
+  { key:"sounds",   icon:"🔊", label:"Tier-Laute-Werkstatt", bubble:"var(--mint-deep)",  x:89.9, y:60.5, minLevel:1 },
+  { key:"vehicles", icon:"🚙", label:"Fahrzeug-Kunde",       bubble:"var(--peach-deep)", x:74.7, y:77.5, minLevel:1 },
+  { key:"calm",     icon:"🅿️", label:"Boxenstopp",           bubble:"var(--sky)",        x:50.0, y:84.0, minLevel:1 },
+  { key:"colors",   icon:"🎨", label:"Lack-Werkstatt",       bubble:"var(--peach)",      x:25.3, y:77.5, minLevel:1 },
+  { key:"count",    icon:"🔢", label:"Zähl-Werkstatt",       bubble:"var(--berry-deep)", x:10.1, y:60.5, minLevel:1 },
+  { key:"shapes",   icon:"🔺", label:"Formen-Werkstatt",     bubble:"var(--sky-deep)",   x:10.1, y:39.5, minLevel:1 },
+  { key:"stories",  icon:"🛣️", label:"Geschichten-Autobahn", bubble:"var(--sun)",        x:25.3, y:22.5, minLevel:1 },
+];
+
+/* Erzeugt einen sanft geschwungenen, gepunkteten Pfad, der GENAU die
+   aktuell sichtbaren Stationen in ihrer Reihenfolge verbindet. */
+function buildTrailPath(stations){
+  if(stations.length < 2) return "";
+  const pts = stations.map(s => ({ x:s.x*4, y:s.y*3 })); // % -> viewBox 400x300
+  let d = `M ${pts[0].x.toFixed(1)},${pts[0].y.toFixed(1)}`;
+  for(let i=1; i<pts.length-1; i++){
+    const midX = (pts[i].x + pts[i+1].x)/2;
+    const midY = (pts[i].y + pts[i+1].y)/2;
+    d += ` Q ${pts[i].x.toFixed(1)},${pts[i].y.toFixed(1)} ${midX.toFixed(1)},${midY.toFixed(1)}`;
+  }
+  const last = pts[pts.length-1];
+  d += ` L ${last.x.toFixed(1)},${last.y.toFixed(1)}`;
+  return d;
+}
+
+function islandSvg(trailD){
   return `
   <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
-    <path d="M60,150 C40,95 105,45 180,48 C245,20 325,50 352,105 C382,155 360,215 298,238 C245,262 178,256 128,230 C68,208 55,192 60,150 Z" fill="var(--mint)" opacity="0.95"/>
-    <circle cx="345" cy="42" r="34" fill="var(--sun)" opacity="0.25"/>
-    <circle cx="345" cy="42" r="23" fill="var(--sun)"/>
+    <path d="M40,150 C40,58 140,18 200,18 C268,18 360,58 360,150 C360,246 264,282 200,282 C118,282 40,242 40,150 Z" fill="var(--mint)" opacity="0.9"/>
+    <circle cx="352" cy="36" r="30" fill="var(--sun)" opacity="0.25"/>
+    <circle cx="352" cy="36" r="20" fill="var(--sun)"/>
     <g opacity="0.85">
-      <ellipse cx="66" cy="36" rx="22" ry="12" fill="#fff"/>
-      <ellipse cx="86" cy="32" rx="15" ry="10" fill="#fff"/>
-      <ellipse cx="48" cy="33" rx="13" ry="9" fill="#fff"/>
+      <ellipse cx="56" cy="30" rx="20" ry="11" fill="#fff"/>
+      <ellipse cx="74" cy="26" rx="14" ry="9" fill="#fff"/>
+      <ellipse cx="40" cy="27" rx="12" ry="8" fill="#fff"/>
     </g>
-    <path d="M88,72 L200,78 L320,138 L296,216 L96,180" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-dasharray="1 15" opacity="0.6"/>
+    ${trailD ? `<path d="${trailD}" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-dasharray="1 15" opacity="0.6"/>` : ""}
   </svg>`;
 }
 
 function renderHome(){
   bumpStreak();
   topbarSub.textContent = `Hallo, ${profile.name}!`;
-  const stations = [
-    { key:"stress",   icon:"🏁", label:"Mutmach-Rennstrecke",  bubble:"var(--sun-deep)", x:12, y:28, minLevel:2 },
-    { key:"feelings", icon:"🚦", label:"Gefühls-Tankstelle",   bubble:"var(--mint)",     x:38, y:28, minLevel:1 },
-    { key:"stories",  icon:"🛣️", label:"Geschichten-Autobahn", bubble:"var(--sun)",      x:64, y:28, minLevel:1 },
-    { key:"words",    icon:"🔧", label:"Wort-Werkstatt",       bubble:"var(--berry)",    x:90, y:28, minLevel:2 },
-    { key:"shapes",   icon:"🔺", label:"Formen-Werkstatt",     bubble:"var(--sky-deep)", x:12, y:80, minLevel:1 },
-    { key:"colors",   icon:"🎨", label:"Lack-Werkstatt",       bubble:"var(--peach)",    x:38, y:80, minLevel:1 },
-    { key:"calm",     icon:"🅿️", label:"Boxenstopp",           bubble:"var(--sky)",      x:64, y:80, minLevel:1 },
-    { key:"count",    icon:"🔢", label:"Zähl-Werkstatt",       bubble:"var(--berry-deep)", x:90, y:80, minLevel:1 },
-  ].filter(s => s.minLevel <= currentLevel());
+  const stations = STATIONS.filter(s => s.minLevel <= currentLevel());
+  const trailD = buildTrailPath(stations);
 
   viewEl.innerHTML = `
     <div class="stage" style="margin:12px 0 14px;">
@@ -1117,9 +1258,9 @@ function renderHome(){
     </div>
     <p class="section-sub" style="text-align:center; margin-bottom:10px;">Tippe auf einen Ort auf der Insel!</p>
     <div class="island-map">
-      <div class="island-bg">${islandSvg()}</div>
+      <div class="island-bg">${islandSvg(trailD)}</div>
       ${stations.map((s,i)=>`
-        <button class="station" style="left:${s.x}%; top:${s.y}%; animation-delay:${(i*0.35).toFixed(2)}s;" onclick="navigate('${s.key}')" aria-label="${s.label}">
+        <button class="station" style="left:${s.x}%; top:${s.y}%; animation-delay:${(i*0.3).toFixed(2)}s;" onclick="navigate('${s.key}')" aria-label="${s.label}">
           <span class="station-bubble" style="background:${s.bubble};">${s.icon}</span>
           <span class="station-label">${s.label}</span>
         </button>`).join("")}
@@ -1543,6 +1684,139 @@ function pickCount(pickedN, correctN){
 }
 
 /* ============================================================
+   MODUL: TIER-LAUTE-WERKSTATT (Tierlaute zuordnen)
+   ============================================================ */
+let soundIdx=0, soundGoodCount=0, soundRoundOrder=[];
+function renderSoundGame(){
+  soundIdx=0; soundGoodCount=0;
+  const pool = byLevel(SOUND_ITEMS);
+  soundRoundOrder = shuffle(pool).slice(0, roundCountForLevel());
+  showSoundScene();
+}
+function showSoundScene(){
+  if(soundIdx >= soundRoundOrder.length){
+    profile.progress.soundsGood += soundGoodCount;
+    profile.progress.soundsTotal += soundRoundOrder.length;
+    unlockSticker("first_sound");
+    if(soundGoodCount===soundRoundOrder.length) unlockSticker("all_sounds");
+    addStars(soundGoodCount);
+    viewEl.innerHTML = `
+      ${backBtn("home")}
+      <div class="stage">
+        <div class="mascot-lg">${profile.avatar}</div>
+        <h2>Gut gehört!</h2>
+        <p style="margin-top:8px; color:var(--ink-soft); font-weight:700;">Du hast ${soundGoodCount} von ${soundRoundOrder.length} Tierlauten richtig erkannt.</p>
+        <div style="display:flex; gap:10px; justify-content:center; margin-top:20px; flex-wrap:wrap;">
+          <button class="btn secondary" onclick="renderSoundGame()">Nochmal, neue Laute</button>
+          <button class="btn" onclick="navigate('home')">Zurück zur Insel</button>
+        </div>
+      </div>`;
+    return;
+  }
+  const scene = soundRoundOrder[soundIdx];
+  const correctId = scene.correct;
+  const otherIds = Object.keys(ANIMAL_SOUNDS).filter(id=>id!==correctId);
+  const distractorIds = shuffle(otherIds).slice(0, optionCountForLevel()-1);
+  const optionIds = shuffle([correctId, ...distractorIds]);
+  viewEl.innerHTML = `
+    ${backBtn("home")}
+    <div class="progress-track"><div class="progress-fill" style="width:${(soundIdx/soundRoundOrder.length)*100}%"></div></div>
+    <div class="card" style="text-align:center;">
+      <div style="font-size:2.6rem; margin-bottom:6px;">🔊</div>
+      <p class="section-title" style="font-size:1.3rem;">${scene.sound}</p>
+      <p class="section-sub">Wer sagt das?</p>
+      <div class="choice-grid" id="soundChoices">
+        ${optionIds.map(id=>`
+          <button class="choice" data-id="${id}" onclick="pickSound('${id}','${correctId}')">
+            <span class="emoji">${ANIMAL_SOUNDS[id].emoji}</span>${ANIMAL_SOUNDS[id].label}
+          </button>`).join("")}
+      </div>
+      <div id="soundFeedback"></div>
+    </div>`;
+}
+function pickSound(pickedId, correctId){
+  const buttons = document.querySelectorAll("#soundChoices .choice");
+  buttons.forEach(b=> b.onclick=null);
+  const isCorrect = pickedId === correctId;
+  buttons.forEach(b=>{
+    if(b.dataset.id===correctId) b.classList.add("correct");
+    else if(b.dataset.id===pickedId) b.classList.add("wrong");
+  });
+  if(isCorrect) soundGoodCount++;
+  document.getElementById("soundFeedback").innerHTML = `
+    <div class="feedback-banner ${isCorrect?'good':'gentle'}">
+      ${isCorrect ? "🎉 Genau richtig!" : `Das war „${ANIMAL_SOUNDS[correctId].label}“.`}
+    </div>
+    <button class="btn block" style="margin-top:14px;" onclick="soundIdx++; showSoundScene();">Weiter</button>`;
+}
+
+/* ============================================================
+   MODUL: FAHRZEUG-KUNDE (Fahrzeuge erkennen)
+   ============================================================ */
+let vehicleIdx=0, vehicleGoodCount=0, vehicleRoundOrder=[];
+function renderVehicleGame(){
+  vehicleIdx=0; vehicleGoodCount=0;
+  const pool = byLevel(VEHICLE_ITEMS);
+  vehicleRoundOrder = shuffle(pool).slice(0, roundCountForLevel());
+  showVehicleScene();
+}
+function showVehicleScene(){
+  if(vehicleIdx >= vehicleRoundOrder.length){
+    profile.progress.vehiclesGood += vehicleGoodCount;
+    profile.progress.vehiclesTotal += vehicleRoundOrder.length;
+    unlockSticker("first_vehicle");
+    if(vehicleGoodCount===vehicleRoundOrder.length) unlockSticker("all_vehicles");
+    addStars(vehicleGoodCount);
+    viewEl.innerHTML = `
+      ${backBtn("home")}
+      <div class="stage">
+        <div class="mascot-lg">${profile.avatar}</div>
+        <h2>Fahrzeug-Kenner!</h2>
+        <p style="margin-top:8px; color:var(--ink-soft); font-weight:700;">Du hast ${vehicleGoodCount} von ${vehicleRoundOrder.length} Fahrzeugen richtig erkannt.</p>
+        <div style="display:flex; gap:10px; justify-content:center; margin-top:20px; flex-wrap:wrap;">
+          <button class="btn secondary" onclick="renderVehicleGame()">Nochmal, neue Fahrzeuge</button>
+          <button class="btn" onclick="navigate('home')">Zurück zur Insel</button>
+        </div>
+      </div>`;
+    return;
+  }
+  const scene = vehicleRoundOrder[vehicleIdx];
+  const correctId = scene.correct;
+  const otherIds = Object.keys(VEHICLE_NAMES).filter(id=>id!==correctId);
+  const distractorIds = shuffle(otherIds).slice(0, optionCountForLevel()-1);
+  const optionIds = shuffle([correctId, ...distractorIds]);
+  viewEl.innerHTML = `
+    ${backBtn("home")}
+    <div class="progress-track"><div class="progress-fill" style="width:${(vehicleIdx/vehicleRoundOrder.length)*100}%"></div></div>
+    <div class="card" style="text-align:center;">
+      <div style="font-size:3.4rem; margin-bottom:6px;">${scene.icon}</div>
+      <p class="section-title" style="font-size:1.1rem;">${scene.text}</p>
+      <div class="choice-grid" id="vehicleChoices">
+        ${optionIds.map(id=>`
+          <button class="choice" data-id="${id}" onclick="pickVehicle('${id}','${correctId}')">
+            <span class="emoji">${VEHICLE_NAMES[id].emoji}</span>${VEHICLE_NAMES[id].label}
+          </button>`).join("")}
+      </div>
+      <div id="vehicleFeedback"></div>
+    </div>`;
+}
+function pickVehicle(pickedId, correctId){
+  const buttons = document.querySelectorAll("#vehicleChoices .choice");
+  buttons.forEach(b=> b.onclick=null);
+  const isCorrect = pickedId === correctId;
+  buttons.forEach(b=>{
+    if(b.dataset.id===correctId) b.classList.add("correct");
+    else if(b.dataset.id===pickedId) b.classList.add("wrong");
+  });
+  if(isCorrect) vehicleGoodCount++;
+  document.getElementById("vehicleFeedback").innerHTML = `
+    <div class="feedback-banner ${isCorrect?'good':'gentle'}">
+      ${isCorrect ? "🎉 Genau richtig!" : `Das ist ein „${VEHICLE_NAMES[correctId].label}“.`}
+    </div>
+    <button class="btn block" style="margin-top:14px;" onclick="vehicleIdx++; showVehicleScene();">Weiter</button>`;
+}
+
+/* ============================================================
    MODUL: RUHE-OASE (mehrere Übungen zur Auswahl)
    ============================================================ */
 function renderCalmMenu(){
@@ -1801,6 +2075,8 @@ function renderParents(){
       Farben erkannt: ${profile.progress.colorsGood} von ${profile.progress.colorsTotal}<br>
       Formen erkannt: ${profile.progress.shapesGood} von ${profile.progress.shapesTotal}<br>
       Richtig gezählt: ${profile.progress.countGood} von ${profile.progress.countTotal}<br>
+      Tierlaute erkannt: ${profile.progress.soundsGood} von ${profile.progress.soundsTotal}<br>
+      Fahrzeuge erkannt: ${profile.progress.vehiclesGood} von ${profile.progress.vehiclesTotal}<br>
       Ruheübungen abgeschlossen: ${profile.progress.calmSessions}<br>
       Geschichten gelesen: ${profile.progress.storiesDone.length} von ${STORIES.length}</p>
     </div>
