@@ -1,4 +1,4 @@
-const CACHE_NAME = "mutmach-insel-v5";
+const CACHE_NAME = "leo-lerninsel-v7";
 const ASSETS = [
   "./",
   "./index.html",

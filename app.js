@@ -1,5 +1,5 @@
 /* ============================================================
-   Mutmach-Insel — mit Pelo
+   Leo's Lerninsel — mit Leo
    Kindgerechte Lern-App zu Gefühlen, Kommunikation & Stress.
    Inhalte werden nach Altersstufe gefiltert und bei jedem
    Durchgang neu gemischt — kein starrer Ablauf.
@@ -19,19 +19,20 @@ function shuffle(arr){ return [...arr].sort(()=>Math.random()-0.5); }
 function byLevel(list){ return list.filter(x => x.level <= currentLevel()); }
 
 /* ---------- Gefühle (Basis für alle, erweitert ab 7-8 / 9-10) ---------- */
+/* Jedes Gefühl hat eine eigene, feste Hinweisfarbe (wie ein Farbcode-System). */
 const EMOTIONS = [
-  { id:"freude",       label:"Freude",        emoji:"😊", level:1 },
-  { id:"traurig",      label:"Traurigkeit",   emoji:"😢", level:1 },
-  { id:"wut",          label:"Wut",           emoji:"😠", level:1 },
-  { id:"angst",        label:"Angst",         emoji:"😟", level:1 },
-  { id:"ueberr",       label:"Überraschung",  emoji:"😮", level:1 },
-  { id:"ruhe",         label:"Ruhe",          emoji:"😌", level:1 },
-  { id:"stolz",        label:"Stolz",         emoji:"😌", level:3 },
-  { id:"nervoes",      label:"Nervosität",    emoji:"😬", level:3 },
-  { id:"enttaeuscht",  label:"Enttäuschung",  emoji:"😞", level:3 },
-  { id:"eifersucht",   label:"Eifersucht",    emoji:"😒", level:4 },
-  { id:"scham",        label:"Verlegenheit",  emoji:"😳", level:4 },
-  { id:"dankbar",      label:"Dankbarkeit",   emoji:"🥰", level:4 },
+  { id:"freude",       label:"Freude",        emoji:"😊", level:1, hue:"#FFD966" },
+  { id:"traurig",      label:"Traurigkeit",   emoji:"😢", level:1, hue:"#6FB8E0" },
+  { id:"wut",          label:"Wut",           emoji:"😠", level:1, hue:"#FF6F61" },
+  { id:"angst",        label:"Angst",         emoji:"😟", level:1, hue:"#A78BFA" },
+  { id:"ueberr",       label:"Überraschung",  emoji:"😮", level:1, hue:"#FF9F5B" },
+  { id:"ruhe",         label:"Ruhe",          emoji:"😌", level:1, hue:"#7FD8A6" },
+  { id:"stolz",        label:"Stolz",         emoji:"😌", level:3, hue:"#F2A7D8" },
+  { id:"nervoes",      label:"Nervosität",    emoji:"😬", level:3, hue:"#C9A66B" },
+  { id:"enttaeuscht",  label:"Enttäuschung",  emoji:"😞", level:3, hue:"#9FB4C7" },
+  { id:"eifersucht",   label:"Eifersucht",    emoji:"😒", level:4, hue:"#7C9473" },
+  { id:"scham",        label:"Verlegenheit",  emoji:"😳", level:4, hue:"#F4889C" },
+  { id:"dankbar",      label:"Dankbarkeit",   emoji:"🥰", level:4, hue:"#E0B15C" },
 ];
 // eindeutige Emoji-Icons statt Doppelbelegung
 EMOTIONS.find(e=>e.id==="stolz").emoji = "🙂‍↕️";
@@ -366,37 +367,37 @@ const STORIES = [
       { scene:"😊", text:"Endlich schaukelt Ben ganz hoch." } ],
     question:"Wie fühlt sich Ben beim Warten?", options:["wut","freude","ruhe"], correct:"wut",
     tip:"Warten ist für kleine Kinder oft schwer. Ein Lied singen kann dabei helfen." },
-  { id:"erster-tag", level:2, title:"Pelos erster Tag", cover:"🌤️",
+  { id:"erster-tag", level:2, title:"Leos erster Tag", cover:"🌤️",
     pages:[
-      { scene:"🌱", text:"Pelo geht zum ersten Mal in die neue Gruppe. Im Bauch kribbelt es ganz komisch." },
-      { scene:"🚪", text:"An der Tür bleibt Pelo kurz stehen. So viele neue Gesichter!" },
-      { scene:"🤝", text:"Ein Kind lächelt Pelo an und fragt: „Möchtest du mitspielen?“" },
-      { scene:"😊", text:"Pelo atmet einmal tief durch und sagt: „Ja, gerne!“" } ],
-    question:"Wie hat sich Pelo an der Tür wohl gefühlt?", options:["angst","freude","wut"], correct:"angst",
+      { scene:"🌱", text:"Leo geht zum ersten Mal in die neue Gruppe. Im Bauch kribbelt es ganz komisch." },
+      { scene:"🚪", text:"An der Tür bleibt Leo kurz stehen. So viele neue Gesichter!" },
+      { scene:"🤝", text:"Ein Kind lächelt Leo an und fragt: „Möchtest du mitspielen?“" },
+      { scene:"😊", text:"Leo atmet einmal tief durch und sagt: „Ja, gerne!“" } ],
+    question:"Wie hat sich Leo an der Tür wohl gefühlt?", options:["angst","freude","wut"], correct:"angst",
     tip:"Aufgeregt sein vor etwas Neuem ist ganz normal. Ein tiefer Atemzug hilft, mutig zu bleiben." },
   { id:"turm", level:2, title:"Der umgefallene Turm", cover:"🧱",
     pages:[
-      { scene:"🏗️", text:"Pelo baut einen riesigen Turm aus Bauklötzen. Ganz vorsichtig, Stein für Stein." },
+      { scene:"🏗️", text:"Leo baut einen riesigen Turm aus Bauklötzen. Ganz vorsichtig, Stein für Stein." },
       { scene:"💥", text:"Plötzlich stößt jemand dagegen — der ganze Turm fällt um!" },
-      { scene:"😤", text:"Pelo spürt, wie es im Bauch heiß wird und die Fäuste sich ballen." },
-      { scene:"🌬️", text:"Pelo macht drei ruhige Atemzüge und sagt dann: „Das hat mich richtig geärgert. Können wir zusammen neu bauen?“" } ],
-    question:"Was hat Pelo gespürt, als der Turm umfiel?", options:["wut","ueberr","ruhe"], correct:"wut",
+      { scene:"😤", text:"Leo spürt, wie es im Bauch heiß wird und die Fäuste sich ballen." },
+      { scene:"🌬️", text:"Leo macht drei ruhige Atemzüge und sagt dann: „Das hat mich richtig geärgert. Können wir zusammen neu bauen?“" } ],
+    question:"Was hat Leo gespürt, als der Turm umfiel?", options:["wut","ueberr","ruhe"], correct:"wut",
     tip:"Wut darf sein! Wichtig ist, sie mit Worten statt mit Schubsen zu zeigen." },
   { id:"dunkler-flur", level:2, title:"Der dunkle Flur", cover:"🌙",
     pages:[
-      { scene:"🏠", text:"Es ist Abend. Pelo muss noch einmal durch den dunklen Flur zur Küche." },
+      { scene:"🏠", text:"Es ist Abend. Leo muss noch einmal durch den dunklen Flur zur Küche." },
       { scene:"😨", text:"Das Herz klopft schneller. Was, wenn dort etwas Gruseliges ist?" },
-      { scene:"💬", text:"Pelo geht zu Mama und sagt: „Ich habe Angst im dunklen Flur.“" },
+      { scene:"💬", text:"Leo geht zu Mama und sagt: „Ich habe Angst im dunklen Flur.“" },
       { scene:"🕯️", text:"Gemeinsam machen sie ein kleines Licht an und gehen zusammen los." } ],
-    question:"Was hat Pelo im dunklen Flur gefühlt?", options:["angst","freude","ruhe"], correct:"angst",
+    question:"Was hat Leo im dunklen Flur gefühlt?", options:["angst","freude","ruhe"], correct:"angst",
     tip:"Über Angst zu sprechen macht sie kleiner. Hilfe holen ist immer eine gute Idee." },
   { id:"teilen", level:3, title:"Ein Eis für zwei", cover:"🍦",
     pages:[
-      { scene:"🍦", text:"Pelo bekommt ein großes Eis, aber die Freundin hat gar keins mehr." },
-      { scene:"🤔", text:"Erst denkt Pelo: „Das ist doch mein Eis!“" },
-      { scene:"💡", text:"Dann fällt Pelo ein, wie schön geteilte Freude ist." },
-      { scene:"😊", text:"„Willst du auch probieren?“, fragt Pelo und beide lachen." } ],
-    question:"Wie hat sich Pelo zuerst gefühlt, als die Freundin kein Eis hatte?", options:["freude","enttaeuscht","ruhe"], correct:"freude",
+      { scene:"🍦", text:"Leo bekommt ein großes Eis, aber die Freundin hat gar keins mehr." },
+      { scene:"🤔", text:"Erst denkt Leo: „Das ist doch mein Eis!“" },
+      { scene:"💡", text:"Dann fällt Leo ein, wie schön geteilte Freude ist." },
+      { scene:"😊", text:"„Willst du auch probieren?“, fragt Leo und beide lachen." } ],
+    question:"Wie hat sich Leo zuerst gefühlt, als die Freundin kein Eis hatte?", options:["freude","enttaeuscht","ruhe"], correct:"freude",
     tip:"Es ist völlig okay, sich über etwas Eigenes zu freuen. Teilen macht die Freude oft noch größer." },
   { id:"wackelzahn", level:3, title:"Der Wackelzahn", cover:"🦷",
     pages:[
@@ -408,52 +409,80 @@ const STORIES = [
     tip:"Vor neuen Erfahrungen ein mulmiges Gefühl zu haben ist ganz normal — meistens ist es am Ende halb so wild." },
   { id:"vertretung", level:3, title:"Die neue Erzieherin", cover:"🙋",
     pages:[
-      { scene:"🚪", text:"Heute steht eine Erzieherin in der Tür, die Pelo noch nicht kennt." },
-      { scene:"😯", text:"Pelo bleibt erst mal ganz still am Rand stehen." },
+      { scene:"🚪", text:"Heute steht eine Erzieherin in der Tür, die Leo noch nicht kennt." },
+      { scene:"😯", text:"Leo bleibt erst mal ganz still am Rand stehen." },
       { scene:"🙋", text:"Die neue Erzieherin lächelt und fragt: „Magst du mir zeigen, wo die Bauklötze sind?“" },
-      { scene:"😊", text:"Am Ende des Tages hat Pelo eine neue Freundin gefunden." } ],
-    question:"Wie hat sich Pelo gefühlt, als die neue Erzieherin kam?", options:["angst","freude","ueberr"], correct:"angst",
+      { scene:"😊", text:"Am Ende des Tages hat Leo eine neue Freundin gefunden." } ],
+    question:"Wie hat sich Leo gefühlt, als die neue Erzieherin kam?", options:["angst","freude","ueberr"], correct:"angst",
     tip:"Neue Gesichter können am Anfang ungewohnt sein. Ein kleiner Schritt aufeinander zu hilft oft schon." },
   { id:"uebernachtung", level:3, title:"Die erste Übernachtung", cover:"🧸",
     pages:[
-      { scene:"🎒", text:"Pelo darf zum ersten Mal bei der Oma übernachten." },
+      { scene:"🎒", text:"Leo darf zum ersten Mal bei der Oma übernachten." },
       { scene:"😟", text:"Abends im fremden Bett fühlt sich alles anders an als zu Hause." },
-      { scene:"🧸", text:"Pelo umarmt sein mitgebrachtes Kuscheltier ganz fest." },
-      { scene:"😌", text:"Oma liest noch eine Geschichte vor, und Pelo schläft ganz ruhig ein." } ],
-    question:"Wie hat sich Pelo im fremden Bett zuerst gefühlt?", options:["angst","ruhe","freude"], correct:"angst",
+      { scene:"🧸", text:"Leo umarmt sein mitgebrachtes Kuscheltier ganz fest." },
+      { scene:"😌", text:"Oma liest noch eine Geschichte vor, und Leo schläft ganz ruhig ein." } ],
+    question:"Wie hat sich Leo im fremden Bett zuerst gefühlt?", options:["angst","ruhe","freude"], correct:"angst",
     tip:"Ein vertrautes Kuscheltier oder Ritual kann an neuen Orten Sicherheit geben." },
   { id:"geschwister", level:4, title:"Der kleine Bruder", cover:"👶",
     pages:[
       { scene:"👨‍👩‍👧", text:"Seit der kleine Bruder da ist, dreht sich zu Hause vieles um ihn." },
-      { scene:"😒", text:"Pelo sitzt oft still in der Ecke und fühlt ein komisches Ziehen im Bauch." },
-      { scene:"💬", text:"Eines Abends sagt Pelo zu Mama: „Ich vermisse unsere Zeit zu zweit.“" },
-      { scene:"🤗", text:"Am nächsten Tag gibt es eine extra Pelo-und-Mama-Zeit, nur für die beiden." } ],
-    question:"Was hat Pelo gefühlt, als sich alles um den kleinen Bruder drehte?", options:["eifersucht","ueberr","stolz"], correct:"eifersucht",
+      { scene:"😒", text:"Leo sitzt oft still in der Ecke und fühlt ein komisches Ziehen im Bauch." },
+      { scene:"💬", text:"Eines Abends sagt Leo zu Mama: „Ich vermisse unsere Zeit zu zweit.“" },
+      { scene:"🤗", text:"Am nächsten Tag gibt es eine extra Leo-und-Mama-Zeit, nur für die beiden." } ],
+    question:"Was hat Leo gefühlt, als sich alles um den kleinen Bruder drehte?", options:["eifersucht","ueberr","stolz"], correct:"eifersucht",
     tip:"Eifersucht ist ein ganz normales Gefühl. Darüber zu sprechen hilft, wieder gesehen zu werden." },
   { id:"verlorenes-spiel", level:3, title:"Verloren, aber nicht traurig", cover:"⚽",
     pages:[
-      { scene:"⚽", text:"Pelos Mannschaft verliert das Spiel, obwohl alle ihr Bestes gegeben haben." },
-      { scene:"😞", text:"Pelo hätte so gern gewonnen und ist richtig enttäuscht." },
+      { scene:"⚽", text:"Leos Mannschaft verliert das Spiel, obwohl alle ihr Bestes gegeben haben." },
+      { scene:"😞", text:"Leo hätte so gern gewonnen und ist richtig enttäuscht." },
       { scene:"🫂", text:"Der Trainer sagt: „Ihr habt heute super zusammengespielt.“" },
-      { scene:"🙂", text:"Pelo lächelt wieder und freut sich schon aufs nächste Spiel." } ],
-    question:"Was hat Pelo nach dem verlorenen Spiel gefühlt?", options:["enttaeuscht","dankbar","ueberr"], correct:"enttaeuscht",
+      { scene:"🙂", text:"Leo lächelt wieder und freut sich schon aufs nächste Spiel." } ],
+    question:"Was hat Leo nach dem verlorenen Spiel gefühlt?", options:["enttaeuscht","dankbar","ueberr"], correct:"enttaeuscht",
     tip:"Enttäuschung nach einer Niederlage ist normal. Sie wird kleiner, wenn man sieht, was gut gelaufen ist." },
   { id:"neue-schule", level:4, title:"Der erste Schultag", cover:"🎒",
     pages:[
-      { scene:"🎒", text:"Heute ist Pelos erster Tag in der neuen Schule. Der Ranzen fühlt sich schwer an." },
+      { scene:"🎒", text:"Heute ist Leos erster Tag in der neuen Schule. Der Ranzen fühlt sich schwer an." },
       { scene:"😬", text:"Im Bauch kribbelt es, und die Hände sind ganz zittrig." },
-      { scene:"🧘", text:"Pelo erinnert sich an die Ballon-Atmung und atmet dreimal ruhig." },
-      { scene:"👋", text:"In der Klasse winkt ein Kind und zeigt Pelo den freien Platz neben sich." } ],
-    question:"Wie hat sich Pelo vor der neuen Schule gefühlt?", options:["nervoes","stolz","dankbar"], correct:"nervoes",
+      { scene:"🧘", text:"Leo erinnert sich an die Ballon-Atmung und atmet dreimal ruhig." },
+      { scene:"👋", text:"In der Klasse winkt ein Kind und zeigt Leo den freien Platz neben sich." } ],
+    question:"Wie hat sich Leo vor der neuen Schule gefühlt?", options:["nervoes","stolz","dankbar"], correct:"nervoes",
     tip:"Nervosität vor Neuem verschwindet oft nach den ersten Minuten. Atmen hilft, ruhiger zu werden." },
   { id:"fehler", level:5, title:"Der Fehler an der Tafel", cover:"📝",
     pages:[
-      { scene:"📝", text:"Pelo soll eine Aufgabe an der Tafel lösen — und macht dabei einen Fehler." },
-      { scene:"😳", text:"Ein paar Kinder kichern, und Pelo wird ganz heiß im Gesicht." },
+      { scene:"📝", text:"Leo soll eine Aufgabe an der Tafel lösen — und macht dabei einen Fehler." },
+      { scene:"😳", text:"Ein paar Kinder kichern, und Leo wird ganz heiß im Gesicht." },
       { scene:"🧑‍🏫", text:"Die Lehrerin sagt: „Fehler gehören zum Lernen dazu, das passiert uns allen.“" },
-      { scene:"🙂", text:"Pelo atmet durch und setzt sich wieder — es ist schon halb so schlimm." } ],
-    question:"Was hat Pelo an der Tafel gespürt?", options:["scham","freude","ruhe"], correct:"scham",
+      { scene:"🙂", text:"Leo atmet durch und setzt sich wieder — es ist schon halb so schlimm." } ],
+    question:"Was hat Leo an der Tafel gespürt?", options:["scham","freude","ruhe"], correct:"scham",
     tip:"Sich zu schämen ist unangenehm, geht aber vorbei. Fehler machen gehört zum Lernen dazu." },
+];
+
+/* ---------- Modul: Lack-Werkstatt (Farben erkennen, mit Piktogramm + Farbhinweis) ---------- */
+const COLOR_NAMES = {
+  gelb:  { label:"Gelb",  hue:"#FFD966" },
+  rot:   { label:"Rot",   hue:"#FF6F61" },
+  gruen: { label:"Grün",  hue:"#7FD8A6" },
+  blau:  { label:"Blau",  hue:"#6FB8E0" },
+  orange:{ label:"Orange",hue:"#FFA45B" },
+  lila:  { label:"Lila",  hue:"#B39DDB" },
+  rosa:  { label:"Rosa",  hue:"#F7A8C4" },
+  braun: { label:"Braun", hue:"#B5835A" },
+};
+const COLOR_ITEMS = [
+  { level:1, icon:"🍋", text:"Welche Farbe hat die Zitrone?", correct:"gelb" },
+  { level:1, icon:"🍓", text:"Welche Farbe hat die Erdbeere?", correct:"rot" },
+  { level:1, icon:"🍀", text:"Welche Farbe hat das Kleeblatt?", correct:"gruen" },
+  { level:1, icon:"🌊", text:"Welche Farbe hat das Meer?", correct:"blau" },
+  { level:1, icon:"🍌", text:"Welche Farbe hat die Banane?", correct:"gelb" },
+  { level:1, icon:"🥕", text:"Welche Farbe hat die Karotte?", correct:"orange" },
+  { level:1, icon:"🐸", text:"Welche Farbe hat der Frosch?", correct:"gruen" },
+  { level:2, icon:"🚒", text:"Welche Farbe hat das Feuerwehrauto?", correct:"rot" },
+  { level:2, icon:"🍇", text:"Welche Farbe hat die Traube?", correct:"lila" },
+  { level:2, icon:"🌞", text:"Welche Farbe hat die Sonne?", correct:"gelb" },
+  { level:2, icon:"🚓", text:"Welche Farbe hat das Polizeiauto?", correct:"blau" },
+  { level:2, icon:"🐷", text:"Welche Farbe hat das Schweinchen?", correct:"rosa" },
+  { level:3, icon:"🍫", text:"Welche Farbe hat die Schokolade?", correct:"braun" },
+  { level:3, icon:"🌳", text:"Welche Farbe hat der Baum?", correct:"gruen" },
 ];
 
 const STICKER_DEFS = [
@@ -467,9 +496,11 @@ const STICKER_DEFS = [
   { id:"words_master",  emoji:"👑", label:"Wörter-Meister" },
   { id:"first_stress",  emoji:"💪", label:"Stress-Helfer" },
   { id:"explorer",      emoji:"🎲", label:"Überraschungs-Fan" },
+  { id:"first_color",   emoji:"🎨", label:"Farben-Profi" },
+  { id:"all_colors",    emoji:"🚙", label:"Lack-Meister" },
 ];
 
-const AVATARS = ["🦊","🐻","🐰","🐨","🐸","🦉","🐢","🐼"];
+const AVATARS = ["🚗","🚙","🚕","🏎️","🚓","🚑","🚒","🏍️"];
 const THEME_COLORS = [
   { id:"peach", hex:"#FFC79A" }, { id:"sky", hex:"#8FCBE0" },
   { id:"mint", hex:"#A6DCBB" }, { id:"sun", hex:"#FFE178" },
@@ -484,9 +515,9 @@ function loadProfile(){
 function saveProfile(p){ localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); }
 function freshProfile(){
   return {
-    name:"", age:"", avatar:"🦊", color:"peach",
+    name:"", age:"", avatar:"🚗", color:"peach",
     stars:0, stickers:[], lastVisit:null, streak:0,
-    progress:{ feelingsDone:0, wordsGood:0, wordsTotal:0, calmSessions:0, storiesDone:[], stressGood:0, stressTotal:0 },
+    progress:{ feelingsDone:0, wordsGood:0, wordsTotal:0, calmSessions:0, storiesDone:[], stressGood:0, stressTotal:0, colorsGood:0, colorsTotal:0 },
   };
 }
 let profile = loadProfile();
@@ -537,6 +568,7 @@ function navigate(name, param){
     case "feelings": setNavActive(""); renderFeelingsGame(); break;
     case "words": setNavActive(""); renderWordsGame(); break;
     case "stress": setNavActive(""); renderStressGame(); break;
+    case "colors": setNavActive(""); renderColorGame(); break;
     case "calm": setNavActive(""); renderCalmMenu(); break;
     case "stories": setNavActive(""); renderStoriesList(); break;
     case "story": setNavActive(""); renderStoryPlayer(param); break;
@@ -549,8 +581,8 @@ function backBtn(target){
 }
 function surpriseMe(){
   const choices = currentLevel()>=2
-    ? ["feelings","words","stress","calm","stories"]
-    : ["feelings","calm","stories"];
+    ? ["feelings","words","stress","calm","stories","colors"]
+    : ["feelings","calm","stories","colors"];
   navigate(choices[Math.floor(Math.random()*choices.length)]);
   unlockSticker("explorer");
 }
@@ -559,7 +591,7 @@ function surpriseMe(){
    ONBOARDING
    ============================================================ */
 let onboardStep = 0;
-let draft = { name:"", age:"", avatar:"🦊", color:"peach" };
+let draft = { name:"", age:"", avatar:"🚗", color:"peach" };
 
 function renderOnboarding(){
   bottomNav.classList.add("hidden");
@@ -569,7 +601,7 @@ function renderOnboarding(){
   let html = `<div style="padding-top:24px;">
     <div class="stage" style="margin-bottom:20px;">
       <div class="mascot-lg">🌱</div>
-      <h1 style="font-size:1.4rem;">Willkommen auf der Mutmach-Insel!</h1>
+      <h1 style="font-size:1.4rem;">Willkommen auf der Leo's Lerninsel!</h1>
       <p style="color:var(--ink-soft); font-weight:600; margin-top:6px;">Lass uns dein Profil einrichten.</p>
     </div>
     <div class="card">
@@ -589,7 +621,7 @@ function renderOnboarding(){
       <button class="btn block" style="margin-top:20px;" ${!draft.age?"disabled":""} onclick="onboardNext()">Weiter</button>`;
   } else if(step==="avatar"){
     html += `
-      <span class="field-label">Wähl dein Insel-Tier</span>
+      <span class="field-label">Wähl dein Fahrzeug</span>
       <div class="avatar-grid">
         ${AVATARS.map(a=>`<button class="avatar-pick ${draft.avatar===a?'on':''}" onclick="draft.avatar='${a}'; renderOnboarding();">${a}</button>`).join("")}
       </div>
@@ -646,11 +678,12 @@ function renderHome(){
   bumpStreak();
   topbarSub.textContent = `Hallo, ${profile.name}!`;
   const stations = [
-    { key:"feelings", icon:"🎈", label:"Gefühls-Wiese",    bubble:"var(--mint)",  x:24, y:64, minLevel:1 },
-    { key:"stories",  icon:"📖", label:"Geschichten-Wald", bubble:"var(--sun)",   x:50, y:24, minLevel:1 },
-    { key:"calm",     icon:"🌊", label:"Ruhe-Bucht",       bubble:"var(--sky)",   x:76, y:70, minLevel:1 },
-    { key:"words",    icon:"💬", label:"Wort-Werkstatt",   bubble:"var(--berry)", x:80, y:42, minLevel:2 },
-    { key:"stress",   icon:"💪", label:"Mutmach-Berg",     bubble:"var(--peach)", x:20, y:24, minLevel:2 },
+    { key:"feelings", icon:"🚦", label:"Gefühls-Tankstelle",  bubble:"var(--mint)",  x:20, y:66, minLevel:1 },
+    { key:"stories",  icon:"🛣️", label:"Geschichten-Autobahn", bubble:"var(--sun)",   x:50, y:20, minLevel:1 },
+    { key:"calm",     icon:"🅿️", label:"Boxenstopp",           bubble:"var(--sky)",   x:82, y:64, minLevel:1 },
+    { key:"colors",   icon:"🎨", label:"Lack-Werkstatt",       bubble:"var(--peach)", x:50, y:82, minLevel:1 },
+    { key:"words",    icon:"🔧", label:"Wort-Werkstatt",       bubble:"var(--berry)", x:84, y:32, minLevel:2 },
+    { key:"stress",   icon:"🏁", label:"Mutmach-Rennstrecke",  bubble:"var(--sun-deep)", x:16, y:24, minLevel:2 },
   ].filter(s => s.minLevel <= currentLevel());
 
   viewEl.innerHTML = `
@@ -690,6 +723,22 @@ function renderFeelingsGame(){
   feelingRoundOrder = shuffle(pool).slice(0, roundCountForLevel());
   showFeelingScene();
 }
+/* Verteilt Hinweisfarben: die richtige Antwort bekommt ihre echte Farbe,
+   alle falschen Antworten bekommen eine andere (nicht ihre eigene) Farbe. */
+function assignHintBorders(options, correctId){
+  const correct = options.find(o=>o.id===correctId || o.value===correctId);
+  const wrong = options.filter(o=>o!==correct);
+  let hues = wrong.map(o=>o.hue);
+  for(let t=0;t<20;t++){
+    hues = shuffle(hues);
+    if(wrong.every((o,i)=> hues[i]!==o.hue)) break;
+  }
+  const map = {};
+  map[correct.id||correct.value] = correct.hue;
+  wrong.forEach((o,i)=> map[o.id||o.value] = hues[i]);
+  return map;
+}
+
 function showFeelingScene(){
   if(feelingIdx >= feelingRoundOrder.length){
     profile.progress.feelingsDone++;
@@ -723,7 +772,7 @@ function showFeelingScene(){
       <div class="choice-grid" id="choices">
         ${options.map(o=>`
           <button class="choice" data-id="${o.id}" onclick="pickFeeling('${o.id}','${correct.id}')">
-            <span class="emoji">${o.emoji}</span>${o.label}
+            <span class="emoji emoji-lg">${o.emoji}</span>${o.label}
           </button>`).join("")}
       </div>
       <div id="feelingFeedback"></div>
@@ -867,6 +916,76 @@ function pickStress(idx, good){
 }
 
 /* ============================================================
+   MODUL: LACK-WERKSTATT (Farben erkennen mit Bild + Farbhinweis)
+   ============================================================ */
+let colorIdx=0, colorGoodCount=0, colorRoundOrder=[];
+function renderColorGame(){
+  colorIdx=0; colorGoodCount=0;
+  const pool = byLevel(COLOR_ITEMS);
+  colorRoundOrder = shuffle(pool).slice(0, roundCountForLevel());
+  showColorScene();
+}
+function showColorScene(){
+  if(colorIdx >= colorRoundOrder.length){
+    profile.progress.colorsGood += colorGoodCount;
+    profile.progress.colorsTotal += colorRoundOrder.length;
+    unlockSticker("first_color");
+    if(colorGoodCount===colorRoundOrder.length) unlockSticker("all_colors");
+    addStars(colorGoodCount);
+    viewEl.innerHTML = `
+      ${backBtn("home")}
+      <div class="stage">
+        <div class="mascot-lg">${profile.avatar}</div>
+        <h2>Toll lackiert!</h2>
+        <p style="margin-top:8px; color:var(--ink-soft); font-weight:700;">Du hast ${colorGoodCount} von ${colorRoundOrder.length} Farben richtig erkannt.</p>
+        <div style="display:flex; gap:10px; justify-content:center; margin-top:20px; flex-wrap:wrap;">
+          <button class="btn secondary" onclick="renderColorGame()">Nochmal, neue Dinge</button>
+          <button class="btn" onclick="navigate('home')">Zurück zur Insel</button>
+        </div>
+      </div>`;
+    return;
+  }
+  const scene = colorRoundOrder[colorIdx];
+  const correctId = scene.correct;
+  const otherIds = Object.keys(COLOR_NAMES).filter(id=>id!==correctId);
+  const distractorIds = shuffle(otherIds).slice(0, optionCountForLevel()-1);
+  const optionIds = shuffle([correctId, ...distractorIds]);
+  const options = optionIds.map(id=>({ value:id, hue:COLOR_NAMES[id].hue, label:COLOR_NAMES[id].label }));
+  const hints = assignHintBorders(options, correctId);
+  viewEl.innerHTML = `
+    ${backBtn("home")}
+    <div class="progress-track"><div class="progress-fill" style="width:${(colorIdx/colorRoundOrder.length)*100}%"></div></div>
+    <div class="card" style="text-align:center;">
+      <div style="font-size:3.4rem; margin-bottom:6px;">${scene.icon}</div>
+      <p class="section-title" style="font-size:1.1rem;">${scene.text}</p>
+      <p class="section-sub">Ein Farbrand verrät einen Tipp! 🎨</p>
+      <div class="choice-grid" id="colorChoices">
+        ${options.map(o=>`
+          <button class="choice" data-id="${o.value}" style="border-color:${hints[o.value]};" onclick="pickColor('${o.value}','${correctId}')">
+            <span class="emoji" style="width:34px; height:34px; border-radius:50%; background:${o.hue}; display:inline-block;"></span>${o.label}
+          </button>`).join("")}
+      </div>
+      <div id="colorFeedback"></div>
+    </div>`;
+}
+function pickColor(pickedId, correctId){
+  const buttons = document.querySelectorAll("#colorChoices .choice");
+  buttons.forEach(b=> b.onclick=null);
+  const isCorrect = pickedId === correctId;
+  buttons.forEach(b=>{
+    b.style.borderColor = "";
+    if(b.dataset.id===correctId) b.classList.add("correct");
+    else if(b.dataset.id===pickedId) b.classList.add("wrong");
+  });
+  if(isCorrect) colorGoodCount++;
+  document.getElementById("colorFeedback").innerHTML = `
+    <div class="feedback-banner ${isCorrect?'good':'gentle'}">
+      ${isCorrect ? "🎉 Genau richtig!" : `Das ist eigentlich „${COLOR_NAMES[correctId].label}“.`}
+    </div>
+    <button class="btn block" style="margin-top:14px;" onclick="colorIdx++; showColorScene();">Weiter</button>`;
+}
+
+/* ============================================================
    MODUL: RUHE-OASE (mehrere Übungen zur Auswahl)
    ============================================================ */
 function renderCalmMenu(){
@@ -1007,7 +1126,7 @@ function renderStoriesList(){
   const stories = shuffle(byLevel(STORIES));
   viewEl.innerHTML = `
     ${backBtn("home")}
-    <h2 class="section-title" style="margin-bottom:14px;">Pelos Geschichten</h2>
+    <h2 class="section-title" style="margin-bottom:14px;">Leos Geschichten</h2>
     ${stories.map(s=>`
       <div class="module-card" style="background:#fff;" onclick="navigate('story','${s.id}')">
         <div class="module-icon" style="background:var(--sun)">${s.cover}</div>
@@ -1100,13 +1219,14 @@ function renderParents(){
   viewEl.innerHTML = `
     <div class="card parent-block">
       <h3>💛 Willkommen im Elternbereich</h3>
-      <p>Mutmach-Insel hilft Kindern spielerisch dabei, Gefühle zu erkennen, sie in Worte zu fassen und mit Stress umzugehen — in kurzen, ruhigen Einheiten ohne hektische Effekte oder Zeitdruck. Inhalte und Schwierigkeit passen sich automatisch der eingestellten Altersstufe an, und jede Runde wird neu gemischt.</p>
+      <p>Leo's Lerninsel hilft Kindern spielerisch dabei, Gefühle zu erkennen, sie in Worte zu fassen und mit Stress umzugehen — in kurzen, ruhigen Einheiten ohne hektische Effekte oder Zeitdruck. Inhalte und Schwierigkeit passen sich automatisch der eingestellten Altersstufe an, und jede Runde wird neu gemischt.</p>
     </div>
     <div class="card parent-block">
       <h3>📊 Fortschritt von ${profile.name} (${profile.age||"–"} Jahre)</h3>
       <p>Gefühle-Runden gespielt: ${profile.progress.feelingsDone}<br>
       Klare Sätze geübt: ${profile.progress.wordsGood} von ${profile.progress.wordsTotal}<br>
       Stress-Situationen gemeistert: ${profile.progress.stressGood} von ${profile.progress.stressTotal}<br>
+      Farben erkannt: ${profile.progress.colorsGood} von ${profile.progress.colorsTotal}<br>
       Ruheübungen abgeschlossen: ${profile.progress.calmSessions}<br>
       Geschichten gelesen: ${profile.progress.storiesDone.length} von ${STORIES.length}</p>
     </div>
@@ -1134,7 +1254,7 @@ function renderProfileEdit(){
       <div class="pill-grid">
         ${AGE_ORDER.map(a=>`<button class="pill ${profile.age===a?'on':''}" onclick="profile.age='${a}'; persist(); renderProfileEdit();">${a} Jahre</button>`).join("")}
       </div>
-      <span class="field-label" style="margin-top:18px;">Insel-Tier</span>
+      <span class="field-label" style="margin-top:18px;">Fahrzeug</span>
       <div class="avatar-grid">
         ${AVATARS.map(a=>`<button class="avatar-pick ${profile.avatar===a?'on':''}" onclick="profile.avatar='${a}'; persist(); renderProfileEdit();">${a}</button>`).join("")}
       </div>
