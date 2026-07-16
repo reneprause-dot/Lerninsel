@@ -1048,7 +1048,7 @@ function saveProfile(p){ localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); }
 function freshProfile(){
   return {
     name:"", age:"", avatar:"🚗", color:"peach",
-    stars:0, stickers:[], lastVisit:null, streak:0, toddlerSet:"primary",
+    stars:0, stickers:[], lastVisit:null, streak:0, toddlerSet:"primary", toddlerRandomSet:[],
     progress:{ feelingsDone:0, wordsGood:0, wordsTotal:0, calmSessions:0, storiesDone:[], stressGood:0, stressTotal:0, colorsGood:0, colorsTotal:0, shapesGood:0, shapesTotal:0, countGood:0, countTotal:0, soundsGood:0, soundsTotal:0, vehiclesGood:0, vehiclesTotal:0 },
   };
 }
@@ -1243,14 +1243,29 @@ function islandSvg(trailD){
 }
 
 const TODDLER_SET_PRIMARY = ["feelings","stories","colors","shapes"];
-const TODDLER_SET_SECONDARY = ["calm","count","sounds","vehicles"];
+
+function toddlerPool(){
+  return STATIONS.filter(s => s.minLevel === 1).map(s => s.key);
+}
+function pickRandomToddlerSet(){
+  return shuffle(toddlerPool()).slice(0,4);
+}
 
 function renderHome(){
   bumpStreak();
   topbarSub.textContent = `Hallo, ${profile.name}!`;
   let stations = STATIONS.filter(s => s.minLevel <= currentLevel());
   if(currentLevel() === 1){
-    const activeKeys = profile.toddlerSet === "secondary" ? TODDLER_SET_SECONDARY : TODDLER_SET_PRIMARY;
+    let activeKeys;
+    if(profile.toddlerSet === "random"){
+      if(!profile.toddlerRandomSet || profile.toddlerRandomSet.length !== 4){
+        profile.toddlerRandomSet = pickRandomToddlerSet();
+        persist();
+      }
+      activeKeys = profile.toddlerRandomSet;
+    } else {
+      activeKeys = TODDLER_SET_PRIMARY;
+    }
     stations = stations.filter(s => activeKeys.includes(s.key));
   }
   const trailD = buildTrailPath(stations);
@@ -2067,20 +2082,22 @@ function renderStickers(){
    ELTERNBEREICH
    ============================================================ */
 function renderParents(){
+  const stationLabel = key => (STATIONS.find(s=>s.key===key)||{}).label || key;
   const toddlerToggle = currentLevel()===1 ? `
     <div class="card parent-block">
       <h3>🔄 Kategorien für 2-3 Jahre wechseln</h3>
-      <p>Damit ${profile.name||"dein Kind"} nicht überfordert wird, zeigt die Insel für 2-3-Jährige immer nur 4 Kategorien gleichzeitig. Mit dem Schalter wechselst du, welche vier angezeigt werden.</p>
+      <p>Damit ${profile.name||"dein Kind"} nicht überfordert wird, zeigt die Insel für 2-3-Jährige immer nur 4 Kategorien gleichzeitig. Der Schalter wechselt zwischen der festen Grundauswahl und einer zufälligen Mischung aus allen 8 Kategorien.</p>
       <div style="display:flex; align-items:center; gap:14px; margin-top:14px; flex-wrap:wrap;">
-        <button class="toggle-track ${profile.toddlerSet==='secondary'?'on':''}" onclick="toggleToddlerSet()" aria-label="Kategorien wechseln" aria-pressed="${profile.toddlerSet==='secondary'}">
+        <button class="toggle-track ${profile.toddlerSet==='random'?'on':''}" onclick="toggleToddlerSet()" aria-label="Zufällige Kategorien aktivieren" aria-pressed="${profile.toddlerSet==='random'}">
           <span class="toggle-thumb"></span>
         </button>
         <div style="font-weight:700; font-size:0.85rem; color:var(--ink-soft);">
-          ${profile.toddlerSet==='secondary'
-            ? 'Zeigt gerade: Boxenstopp, Zähl-Werkstatt, Tier-Laute-Werkstatt, Fahrzeug-Kunde'
-            : 'Zeigt gerade: Gefühls-Tankstelle, Geschichten-Autobahn, Lack-Werkstatt, Formen-Werkstatt'}
+          ${profile.toddlerSet==='random'
+            ? `🔀 Zufällig gemischt: ${(profile.toddlerRandomSet||[]).map(stationLabel).join(', ')}`
+            : 'Feste Auswahl: Gefühls-Tankstelle, Geschichten-Autobahn, Lack-Werkstatt, Formen-Werkstatt'}
         </div>
       </div>
+      ${profile.toddlerSet==='random' ? `<button class="btn secondary" style="margin-top:14px;" onclick="reshuffleToddlerSet()">🔀 Neu mischen</button>` : ``}
     </div>` : ``;
   viewEl.innerHTML = `
     <div class="card parent-block">
@@ -2143,7 +2160,17 @@ function saveProfileEdit(){
   navigate("home");
 }
 function toggleToddlerSet(){
-  profile.toddlerSet = profile.toddlerSet === "secondary" ? "primary" : "secondary";
+  if(profile.toddlerSet === "random"){
+    profile.toddlerSet = "primary";
+  } else {
+    profile.toddlerSet = "random";
+    profile.toddlerRandomSet = pickRandomToddlerSet();
+  }
+  persist();
+  renderParents();
+}
+function reshuffleToddlerSet(){
+  profile.toddlerRandomSet = pickRandomToddlerSet();
   persist();
   renderParents();
 }
