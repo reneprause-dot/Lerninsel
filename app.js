@@ -117,6 +117,30 @@ const FEELING_SCENES = [
   { level:1, text:"Ein fremder Hund knurrt ganz laut.", correct:"angst" },
   { level:1, text:"Beim Öffnen der Box hüpft ein kleiner Springteufel heraus.", correct:"ueberr" },
   { level:1, text:"Beim Kuscheln mit der Katze schnurrt sie ganz leise.", correct:"ruhe" },
+  { level:1, text:"Beim Baden platscht Ben fröhlich mit den Händen im Wasser.", correct:"freude" },
+  { level:1, text:"Der Eiswagen spielt eine fröhliche Melodie vor dem Haus.", correct:"freude" },
+  { level:1, text:"Lea darf heute ihr Lieblingskleid anziehen.", correct:"freude" },
+  { level:1, text:"Beim Karussellfahren winkt Tom jedes Mal, wenn er vorbeikommt.", correct:"freude" },
+  { level:1, text:"Der Sandkuchen fällt beim Umdrehen der Förmchen auseinander.", correct:"traurig" },
+  { level:1, text:"Mias Luftballon geht beim Spielen kaputt.", correct:"traurig" },
+  { level:1, text:"Bens bester Freund ist heute nicht im Kindergarten.", correct:"traurig" },
+  { level:1, text:"Der Schneemann von Lina schmilzt in der Sonne.", correct:"traurig" },
+  { level:1, text:"Nele darf ihre Gummistiefel nicht in die Pfütze stellen.", correct:"wut" },
+  { level:1, text:"Ben muss vom Trampolin runter, obwohl er weiterspringen möchte.", correct:"wut" },
+  { level:1, text:"Mias Turm wird von ihrem Bruder umgestoßen.", correct:"wut" },
+  { level:1, text:"Tom soll sein Spielzeugauto weggeben, obwohl er noch länger spielen wollte.", correct:"wut" },
+  { level:1, text:"Ein großer Staubsauger brummt laut durchs Zimmer.", correct:"angst" },
+  { level:1, text:"Im dunklen Kino wird es plötzlich ganz still und dunkel.", correct:"angst" },
+  { level:1, text:"Ein Feuerwerk knallt draußen ganz plötzlich.", correct:"angst" },
+  { level:1, text:"Die Tür fällt mit einem lauten Knall zu.", correct:"angst" },
+  { level:1, text:"Unter dem Kissen findet Ben plötzlich eine kleine Süßigkeit.", correct:"ueberr" },
+  { level:1, text:"Beim Spaziergang hüpft ein Frosch direkt vor Leas Füße.", correct:"ueberr" },
+  { level:1, text:"Aus der Kiste springt beim Öffnen buntes Konfetti heraus.", correct:"ueberr" },
+  { level:1, text:"Am Fenster sitzt plötzlich ein bunter Papagei.", correct:"ueberr" },
+  { level:1, text:"Beim Schaukeln im Garten wird Lina immer ruhiger.", correct:"ruhe" },
+  { level:1, text:"Nach dem Baden kuschelt sich Tom in ein warmes Handtuch.", correct:"ruhe" },
+  { level:1, text:"Beim Betrachten der Fische im Aquarium wird Nele ganz still.", correct:"ruhe" },
+  { level:1, text:"Mit dem Kuscheltier im Arm schläft Ben langsam ein.", correct:"ruhe" },
 ];
 
 /* ---------- Modul 2: Ich sag's mit Worten ---------- */
@@ -503,6 +527,10 @@ const CALM_EXERCISES = [
   { id:"schmetterling", level:1, icon:"🦋", title:"Schmetterlings-Atmung", desc:"Flügel sanft auf- und zuklappen", type:"breath", inLabel:"Flügel öffnen …", outLabel:"Flügel schließen …", inMs:3000, outMs:3000, rounds:3 },
   { id:"blume", level:1, icon:"🌸", title:"Blumen-Duft", desc:"An einer Blume schnuppern, dann eine Kerze auspusten", type:"breath", inLabel:"An der Blume riechen …", outLabel:"Kerze auspusten …", inMs:3000, outMs:2500, rounds:3 },
   { id:"teddy", level:1, icon:"🧸", title:"Teddy-Wiege", desc:"Den Teddy sanft in den Armen wiegen", type:"breath", inLabel:"Teddy hoch wiegen …", outLabel:"Teddy sanft senken …", inMs:3500, outMs:3500, rounds:3 },
+  { id:"hupe", level:1, icon:"🚙", title:"Auto-Hupe", desc:"Sanft ein- und ausatmen wie eine kleine Hupe", type:"breath", inLabel:"Luft holen …", outLabel:"Hup, hup …", inMs:3000, outMs:3000, rounds:3 },
+  { id:"schnecke", level:1, icon:"🐌", title:"Schnecken-Tempo", desc:"Ganz langsam wie eine Schnecke atmen", type:"breath", inLabel:"Langsam einatmen …", outLabel:"Langsam ausatmen …", inMs:4000, outMs:4000, rounds:3 },
+  { id:"stern", level:1, icon:"⭐", title:"Stern-Funkeln", desc:"Wie ein Stern sanft auf- und abschimmern", type:"breath", inLabel:"Funkeln …", outLabel:"Sanft verblassen …", inMs:3200, outMs:3200, rounds:3 },
+  { id:"muschel", level:1, icon:"🐚", title:"Muschel-Rauschen", desc:"Wie das Meer sanft rauschen", type:"breath", inLabel:"Welle kommt …", outLabel:"Welle geht …", inMs:3500, outMs:3500, rounds:3 },
 ];
 
 const GROUNDING_STEPS = [
@@ -704,6 +732,48 @@ const STORIES = [
       { scene:"📖", text:"Nach einer kleinen Geschichte wird sie ganz müde und ruhig." } ],
     question:"Wie fühlt sich Nele zuerst, als sie schlafen soll?", options:["wut","freude","ruhe"], correct:"wut",
     tip:"Vom Spielen zum Schlafen zu wechseln ist manchmal schwer. Ein Ritual hilft beim Runterkommen." },
+  { id:"badewanne", level:1, title:"Badewannen-Zeit", cover:"🛁",
+    pages:[
+      { scene:"🛁", text:"Lea planscht fröhlich in der warmen Badewanne." },
+      { scene:"🧴", text:"Etwas Schaum kommt ihr versehentlich ins Auge." },
+      { scene:"😊", text:"Nach dem Abspülen lacht sie wieder und spielt mit der Ente." } ],
+    question:"Wie fühlt sich Lea, als der Schaum ins Auge kommt?", options:["traurig","freude","ueberr"], correct:"traurig",
+    tip:"Kleine Missgeschicke beim Baden sind schnell vergessen." },
+  { id:"picknick", level:1, title:"Das Picknick", cover:"🧺",
+    pages:[
+      { scene:"🧺", text:"Familie Fuchs macht ein Picknick im Park." },
+      { scene:"🐝", text:"Eine Biene summt ganz nah um Bens Kopf." },
+      { scene:"😌", text:"Sie fliegt weiter, und alle essen in Ruhe weiter." } ],
+    question:"Wie fühlt sich Ben, als die Biene ganz nah ist?", options:["angst","freude","ruhe"], correct:"angst",
+    tip:"Stillhalten und ruhig bleiben lässt Bienen meist von allein weiterfliegen." },
+  { id:"verlorener-schuh", level:1, title:"Der verlorene Schuh", cover:"👟",
+    pages:[
+      { scene:"👟", text:"Beim Spielen verliert Mia einen Schuh im Sand." },
+      { scene:"😟", text:"Sie sucht und sucht, kann ihn aber nicht finden." },
+      { scene:"🎉", text:"Papa gräbt ihn schließlich aus dem Sandkasten aus." } ],
+    question:"Wie fühlt sich Mia, als sie den Schuh sucht?", options:["traurig","freude","wut"], correct:"traurig",
+    tip:"Etwas Verlorenes wiederzufinden ist ein schönes Gefühl der Erleichterung." },
+  { id:"erster-schnee", level:1, title:"Der erste Schnee", cover:"❄️",
+    pages:[
+      { scene:"❄️", text:"Tom wacht auf und draußen liegt der erste Schnee." },
+      { scene:"😲", text:"Er kann es kaum glauben, alles ist weiß." },
+      { scene:"🥳", text:"Schnell zieht er sich an, um im Schnee zu spielen." } ],
+    question:"Wie fühlt sich Tom beim ersten Schnee?", options:["ueberr","traurig","wut"], correct:"ueberr",
+    tip:"Der erste Schnee im Jahr ist für viele Kinder eine große, schöne Überraschung." },
+  { id:"enten-fuettern", level:1, title:"Die Enten füttern", cover:"🦆",
+    pages:[
+      { scene:"🦆", text:"Am Teich füttert Nele die Enten mit Brot." },
+      { scene:"🦆", text:"Auf einmal kommen ganz viele Enten gleichzeitig angeschwommen." },
+      { scene:"😄", text:"Nele freut sich riesig über den Trubel." } ],
+    question:"Wie fühlt sich Nele, als so viele Enten kommen?", options:["ueberr","wut","angst"], correct:"ueberr",
+    tip:"Manchmal ist Überraschung mit einem Lächeln verbunden." },
+  { id:"sandkasten", level:1, title:"Der Sandkasten", cover:"🏖️",
+    pages:[
+      { scene:"🏖️", text:"Ben und Lina spielen zusammen im Sandkasten." },
+      { scene:"🪣", text:"Lina möchte den Eimer, den Ben gerade benutzt." },
+      { scene:"🤝", text:"Sie einigen sich, abwechselnd damit zu bauen." } ],
+    question:"Was braucht es, damit beide zufrieden sind?", options:["ruhe","wut","angst"], correct:"ruhe",
+    tip:"Abwechseln beim Teilen macht das Spielen für beide Kinder angenehmer." },
 ];
 
 /* ---------- Modul: Lack-Werkstatt (Farben erkennen, mit Piktogramm + Farbhinweis) ---------- */
@@ -753,6 +823,80 @@ const COLOR_ITEMS = [
   { level:1, icon:"🌼", text:"Welche Farbe hat die Blüte?", correct:"gelb" },
   { level:1, icon:"🐹", text:"Welche Farbe hat das Hamsterfell?", correct:"braun" },
   { level:1, icon:"🦋", text:"Welche Farbe hat dieser Schmetterling?", correct:"lila" },
+  { level:1, icon:"🍅", text:"Welche Farbe hat die Tomate?", correct:"rot" },
+  { level:1, icon:"🦩", text:"Welche Farbe hat der Flamingo?", correct:"rosa" },
+  { level:1, icon:"🐬", text:"Welche Farbe hat der Delfin?", correct:"blau" },
+  { level:1, icon:"🍑", text:"Welche Farbe hat der Pfirsich?", correct:"orange" },
+  { level:1, icon:"🐨", text:"Welche Farbe hat der Koala?", correct:"grau" },
+  { level:1, icon:"🍁", text:"Welche Farbe hat das Herbstblatt?", correct:"orange" },
+  { level:1, icon:"🐴", text:"Welche Farbe hat das Pferd?", correct:"braun" },
+  { level:1, icon:"🦆", text:"Welche Farbe hat die Ente?", correct:"gelb" },
+  { level:1, icon:"🍄", text:"Welche Farbe hat der Pilzhut?", correct:"rot" },
+  { level:1, icon:"🚗", text:"Welche Farbe hat Leos Rennauto?", correct:"rot" },
+  { level:1, icon:"🏍️", text:"Welche Farbe hat Leos Motorrad?", correct:"blau" },
+  { level:1, icon:"🐞", text:"Welche Farbe hat der Marienkäfer?", correct:"rot" },
+  { level:1, icon:"🦁", text:"Welche Farbe hat die Löwenmähne?", correct:"gelb" },
+  { level:1, icon:"🐷", text:"Welche Farbe hat das Ferkel?", correct:"rosa" },
+  { level:1, icon:"🍐", text:"Welche Farbe hat die Birne?", correct:"gruen" },
+];
+
+/* ---------- Modul: Formen-Werkstatt (Formen erkennen) ---------- */
+const SHAPE_NAMES = {
+  kreis:   { label:"Kreis",    glyph:"●" },
+  dreieck: { label:"Dreieck",  glyph:"▲" },
+  quadrat: { label:"Quadrat",  glyph:"■" },
+  rechteck:{ label:"Rechteck", glyph:"▬" },
+  stern:   { label:"Stern",    glyph:"★" },
+  herz:    { label:"Herz",     glyph:"♥" },
+  raute:   { label:"Raute",    glyph:"♦" },
+};
+const SHAPE_ITEMS = [
+  { level:1, icon:"🛞", text:"Welche Form hat das Rad?", correct:"kreis" },
+  { level:1, icon:"🍕", text:"Welche Form hat ein Stück Pizza?", correct:"dreieck" },
+  { level:1, icon:"🪟", text:"Welche Form hat das Fenster?", correct:"quadrat" },
+  { level:1, icon:"🔴", text:"Welche Form hat der Ball?", correct:"kreis" },
+  { level:1, icon:"🎪", text:"Welche Form hat das Zirkuszelt-Dach?", correct:"dreieck" },
+  { level:1, icon:"🧇", text:"Welche Form hat die Waffel?", correct:"quadrat" },
+  { level:1, icon:"🌕", text:"Welche Form hat der Vollmond?", correct:"kreis" },
+  { level:2, icon:"🚪", text:"Welche Form hat die Tür?", correct:"rechteck" },
+  { level:2, icon:"⭐", text:"Welche Form hat der Stern am Himmel?", correct:"stern" },
+  { level:2, icon:"📱", text:"Welche Form hat das Handy?", correct:"rechteck" },
+  { level:2, icon:"🚦", text:"Welche Form haben die Ampellichter?", correct:"kreis" },
+  { level:2, icon:"🎫", text:"Welche Form hat das Ticket?", correct:"rechteck" },
+  { level:3, icon:"💌", text:"Welche Form hat das Herz auf dem Brief?", correct:"herz" },
+  { level:3, icon:"🍉", text:"Welche Form hat die Wassermelonenscheibe?", correct:"dreieck" },
+  { level:3, icon:"🚩", text:"Welche Form hat die Wimpel-Flagge?", correct:"dreieck" },
+  { level:3, icon:"🧱", text:"Welche Form hat der Baustein?", correct:"quadrat" },
+  { level:4, icon:"🔶", text:"Welche Form hat das Vorfahrtsschild?", correct:"raute" },
+  { level:4, icon:"🎏", text:"Welche Form hat die Wimpelkette?", correct:"dreieck" },
+  { level:5, icon:"🀄", text:"Welche Form hat diese Spielkarte?", correct:"rechteck" },
+  { level:5, icon:"🔷", text:"Welche Form hat dieses Verkehrsschild?", correct:"raute" },
+];
+
+/* ---------- Modul: Zähl-Werkstatt (Zählen üben) ---------- */
+const COUNT_ITEMS = [
+  { level:1, emoji:"🚗", noun:"Autos", count:2 },
+  { level:1, emoji:"🐶", noun:"Hunde", count:1 },
+  { level:1, emoji:"🍎", noun:"Äpfel", count:3 },
+  { level:1, emoji:"⭐", noun:"Sterne", count:2 },
+  { level:1, emoji:"🎈", noun:"Luftballons", count:1 },
+  { level:1, emoji:"🐟", noun:"Fische", count:3 },
+  { level:1, emoji:"🌼", noun:"Blumen", count:2 },
+  { level:2, emoji:"🏍️", noun:"Motorräder", count:3 },
+  { level:2, emoji:"🌼", noun:"Blumen", count:4 },
+  { level:2, emoji:"🐤", noun:"Küken", count:2 },
+  { level:2, emoji:"🍪", noun:"Kekse", count:4 },
+  { level:2, emoji:"🚲", noun:"Fahrräder", count:3 },
+  { level:3, emoji:"🚓", noun:"Polizeiautos", count:5 },
+  { level:3, emoji:"🍇", noun:"Trauben", count:6 },
+  { level:3, emoji:"⚽", noun:"Bälle", count:4 },
+  { level:3, emoji:"🦋", noun:"Schmetterlinge", count:5 },
+  { level:4, emoji:"🚒", noun:"Feuerwehrautos", count:7 },
+  { level:4, emoji:"🌟", noun:"Sterne", count:6 },
+  { level:4, emoji:"🍩", noun:"Donuts", count:8 },
+  { level:5, emoji:"🚙", noun:"Autos", count:9 },
+  { level:5, emoji:"🎈", noun:"Luftballons", count:10 },
+  { level:5, emoji:"🍓", noun:"Erdbeeren", count:7 },
 ];
 
 const STICKER_DEFS = [
@@ -768,6 +912,10 @@ const STICKER_DEFS = [
   { id:"explorer",      emoji:"🎲", label:"Überraschungs-Fan" },
   { id:"first_color",   emoji:"🎨", label:"Farben-Profi" },
   { id:"all_colors",    emoji:"🚙", label:"Lack-Meister" },
+  { id:"first_shape",   emoji:"🔺", label:"Formen-Entdecker" },
+  { id:"all_shapes",    emoji:"🔷", label:"Formen-Meister" },
+  { id:"first_count",   emoji:"🔢", label:"Zähl-Talent" },
+  { id:"all_count",     emoji:"🏎️", label:"Zähl-Champion" },
 ];
 
 const AVATARS = ["🚗","🚙","🚕","🏎️","🚓","🚑","🚒","🏍️"];
@@ -787,7 +935,7 @@ function freshProfile(){
   return {
     name:"", age:"", avatar:"🚗", color:"peach",
     stars:0, stickers:[], lastVisit:null, streak:0,
-    progress:{ feelingsDone:0, wordsGood:0, wordsTotal:0, calmSessions:0, storiesDone:[], stressGood:0, stressTotal:0, colorsGood:0, colorsTotal:0 },
+    progress:{ feelingsDone:0, wordsGood:0, wordsTotal:0, calmSessions:0, storiesDone:[], stressGood:0, stressTotal:0, colorsGood:0, colorsTotal:0, shapesGood:0, shapesTotal:0, countGood:0, countTotal:0 },
   };
 }
 let profile = loadProfile();
@@ -839,6 +987,8 @@ function navigate(name, param){
     case "words": setNavActive(""); renderWordsGame(); break;
     case "stress": setNavActive(""); renderStressGame(); break;
     case "colors": setNavActive(""); renderColorGame(); break;
+    case "shapes": setNavActive(""); renderShapeGame(); break;
+    case "count": setNavActive(""); renderCountGame(); break;
     case "calm": setNavActive(""); renderCalmMenu(); break;
     case "stories": setNavActive(""); renderStoriesList(); break;
     case "story": setNavActive(""); renderStoryPlayer(param); break;
@@ -851,8 +1001,8 @@ function backBtn(target){
 }
 function surpriseMe(){
   const choices = currentLevel()>=2
-    ? ["feelings","words","stress","calm","stories","colors"]
-    : ["feelings","calm","stories","colors"];
+    ? ["feelings","words","stress","calm","stories","colors","shapes","count"]
+    : ["feelings","calm","stories","colors","shapes","count"];
   navigate(choices[Math.floor(Math.random()*choices.length)]);
   unlockSticker("explorer");
 }
@@ -948,12 +1098,14 @@ function renderHome(){
   bumpStreak();
   topbarSub.textContent = `Hallo, ${profile.name}!`;
   const stations = [
-    { key:"feelings", icon:"🚦", label:"Gefühls-Tankstelle",  bubble:"var(--mint)",  x:20, y:66, minLevel:1 },
-    { key:"stories",  icon:"🛣️", label:"Geschichten-Autobahn", bubble:"var(--sun)",   x:50, y:20, minLevel:1 },
-    { key:"calm",     icon:"🅿️", label:"Boxenstopp",           bubble:"var(--sky)",   x:82, y:64, minLevel:1 },
-    { key:"colors",   icon:"🎨", label:"Lack-Werkstatt",       bubble:"var(--peach)", x:50, y:82, minLevel:1 },
-    { key:"words",    icon:"🔧", label:"Wort-Werkstatt",       bubble:"var(--berry)", x:84, y:32, minLevel:2 },
-    { key:"stress",   icon:"🏁", label:"Mutmach-Rennstrecke",  bubble:"var(--sun-deep)", x:16, y:24, minLevel:2 },
+    { key:"stress",   icon:"🏁", label:"Mutmach-Rennstrecke",  bubble:"var(--sun-deep)", x:12, y:28, minLevel:2 },
+    { key:"feelings", icon:"🚦", label:"Gefühls-Tankstelle",   bubble:"var(--mint)",     x:38, y:28, minLevel:1 },
+    { key:"stories",  icon:"🛣️", label:"Geschichten-Autobahn", bubble:"var(--sun)",      x:64, y:28, minLevel:1 },
+    { key:"words",    icon:"🔧", label:"Wort-Werkstatt",       bubble:"var(--berry)",    x:90, y:28, minLevel:2 },
+    { key:"shapes",   icon:"🔺", label:"Formen-Werkstatt",     bubble:"var(--sky-deep)", x:12, y:80, minLevel:1 },
+    { key:"colors",   icon:"🎨", label:"Lack-Werkstatt",       bubble:"var(--peach)",    x:38, y:80, minLevel:1 },
+    { key:"calm",     icon:"🅿️", label:"Boxenstopp",           bubble:"var(--sky)",      x:64, y:80, minLevel:1 },
+    { key:"count",    icon:"🔢", label:"Zähl-Werkstatt",       bubble:"var(--berry-deep)", x:90, y:80, minLevel:1 },
   ].filter(s => s.minLevel <= currentLevel());
 
   viewEl.innerHTML = `
@@ -1256,6 +1408,140 @@ function pickColor(pickedId, correctId){
 }
 
 /* ============================================================
+   MODUL: FORMEN-WERKSTATT (Formen erkennen)
+   ============================================================ */
+let shapeIdx=0, shapeGoodCount=0, shapeRoundOrder=[];
+function renderShapeGame(){
+  shapeIdx=0; shapeGoodCount=0;
+  const pool = byLevel(SHAPE_ITEMS);
+  shapeRoundOrder = shuffle(pool).slice(0, roundCountForLevel());
+  showShapeScene();
+}
+function showShapeScene(){
+  if(shapeIdx >= shapeRoundOrder.length){
+    profile.progress.shapesGood += shapeGoodCount;
+    profile.progress.shapesTotal += shapeRoundOrder.length;
+    unlockSticker("first_shape");
+    if(shapeGoodCount===shapeRoundOrder.length) unlockSticker("all_shapes");
+    addStars(shapeGoodCount);
+    viewEl.innerHTML = `
+      ${backBtn("home")}
+      <div class="stage">
+        <div class="mascot-lg">${profile.avatar}</div>
+        <h2>Klasse erkannt!</h2>
+        <p style="margin-top:8px; color:var(--ink-soft); font-weight:700;">Du hast ${shapeGoodCount} von ${shapeRoundOrder.length} Formen richtig erkannt.</p>
+        <div style="display:flex; gap:10px; justify-content:center; margin-top:20px; flex-wrap:wrap;">
+          <button class="btn secondary" onclick="renderShapeGame()">Nochmal, neue Formen</button>
+          <button class="btn" onclick="navigate('home')">Zurück zur Insel</button>
+        </div>
+      </div>`;
+    return;
+  }
+  const scene = shapeRoundOrder[shapeIdx];
+  const correctId = scene.correct;
+  const otherIds = Object.keys(SHAPE_NAMES).filter(id=>id!==correctId);
+  const distractorIds = shuffle(otherIds).slice(0, optionCountForLevel()-1);
+  const optionIds = shuffle([correctId, ...distractorIds]);
+  viewEl.innerHTML = `
+    ${backBtn("home")}
+    <div class="progress-track"><div class="progress-fill" style="width:${(shapeIdx/shapeRoundOrder.length)*100}%"></div></div>
+    <div class="card" style="text-align:center;">
+      <div style="font-size:3.4rem; margin-bottom:6px;">${scene.icon}</div>
+      <p class="section-title" style="font-size:1.1rem;">${scene.text}</p>
+      <div class="choice-grid" id="shapeChoices">
+        ${optionIds.map(id=>`
+          <button class="choice" data-id="${id}" onclick="pickShape('${id}','${correctId}')">
+            <span class="emoji">${SHAPE_NAMES[id].glyph}</span>${SHAPE_NAMES[id].label}
+          </button>`).join("")}
+      </div>
+      <div id="shapeFeedback"></div>
+    </div>`;
+}
+function pickShape(pickedId, correctId){
+  const buttons = document.querySelectorAll("#shapeChoices .choice");
+  buttons.forEach(b=> b.onclick=null);
+  const isCorrect = pickedId === correctId;
+  buttons.forEach(b=>{
+    if(b.dataset.id===correctId) b.classList.add("correct");
+    else if(b.dataset.id===pickedId) b.classList.add("wrong");
+  });
+  if(isCorrect) shapeGoodCount++;
+  document.getElementById("shapeFeedback").innerHTML = `
+    <div class="feedback-banner ${isCorrect?'good':'gentle'}">
+      ${isCorrect ? "🎉 Genau richtig!" : `Das ist eigentlich ein „${SHAPE_NAMES[correctId].label}“.`}
+    </div>
+    <button class="btn block" style="margin-top:14px;" onclick="shapeIdx++; showShapeScene();">Weiter</button>`;
+}
+
+/* ============================================================
+   MODUL: ZÄHL-WERKSTATT (Zählen üben)
+   ============================================================ */
+let countIdx=0, countGoodCount=0, countRoundOrder=[];
+function renderCountGame(){
+  countIdx=0; countGoodCount=0;
+  const pool = byLevel(COUNT_ITEMS);
+  countRoundOrder = shuffle(pool).slice(0, roundCountForLevel());
+  showCountScene();
+}
+function showCountScene(){
+  if(countIdx >= countRoundOrder.length){
+    profile.progress.countGood += countGoodCount;
+    profile.progress.countTotal += countRoundOrder.length;
+    unlockSticker("first_count");
+    if(countGoodCount===countRoundOrder.length) unlockSticker("all_count");
+    addStars(countGoodCount);
+    viewEl.innerHTML = `
+      ${backBtn("home")}
+      <div class="stage">
+        <div class="mascot-lg">${profile.avatar}</div>
+        <h2>Prima gezählt!</h2>
+        <p style="margin-top:8px; color:var(--ink-soft); font-weight:700;">Du hast ${countGoodCount} von ${countRoundOrder.length} Mal richtig gezählt.</p>
+        <div style="display:flex; gap:10px; justify-content:center; margin-top:20px; flex-wrap:wrap;">
+          <button class="btn secondary" onclick="renderCountGame()">Nochmal, neue Zahlen</button>
+          <button class="btn" onclick="navigate('home')">Zurück zur Insel</button>
+        </div>
+      </div>`;
+    return;
+  }
+  const scene = countRoundOrder[countIdx];
+  const correct = scene.count;
+  const pool = [];
+  for(let n=Math.max(1,correct-3); n<=correct+3; n++){ if(n!==correct) pool.push(n); }
+  const distractors = shuffle(pool).slice(0, optionCountForLevel()-1);
+  const options = shuffle([correct, ...distractors]);
+  const row = Array(correct).fill(scene.emoji).join(" ");
+  viewEl.innerHTML = `
+    ${backBtn("home")}
+    <div class="progress-track"><div class="progress-fill" style="width:${(countIdx/countRoundOrder.length)*100}%"></div></div>
+    <div class="card" style="text-align:center;">
+      <div style="font-size:2.4rem; line-height:1.5; margin-bottom:10px; word-spacing:6px;">${row}</div>
+      <p class="section-title" style="font-size:1.1rem;">Wie viele ${scene.noun} siehst du?</p>
+      <div class="choice-grid" id="countChoices">
+        ${options.map(n=>`
+          <button class="choice" data-id="${n}" onclick="pickCount(${n},${correct})">
+            <span class="emoji" style="font-size:1.8rem;">${n}</span>
+          </button>`).join("")}
+      </div>
+      <div id="countFeedback"></div>
+    </div>`;
+}
+function pickCount(pickedN, correctN){
+  const buttons = document.querySelectorAll("#countChoices .choice");
+  buttons.forEach(b=> b.onclick=null);
+  const isCorrect = pickedN === correctN;
+  buttons.forEach(b=>{
+    if(parseInt(b.dataset.id)===correctN) b.classList.add("correct");
+    else if(parseInt(b.dataset.id)===pickedN) b.classList.add("wrong");
+  });
+  if(isCorrect) countGoodCount++;
+  document.getElementById("countFeedback").innerHTML = `
+    <div class="feedback-banner ${isCorrect?'good':'gentle'}">
+      ${isCorrect ? "🎉 Genau richtig gezählt!" : `Es waren genau ${correctN}.`}
+    </div>
+    <button class="btn block" style="margin-top:14px;" onclick="countIdx++; showCountScene();">Weiter</button>`;
+}
+
+/* ============================================================
    MODUL: RUHE-OASE (mehrere Übungen zur Auswahl)
    ============================================================ */
 function renderCalmMenu(){
@@ -1497,6 +1783,8 @@ function renderParents(){
       Klare Sätze geübt: ${profile.progress.wordsGood} von ${profile.progress.wordsTotal}<br>
       Stress-Situationen gemeistert: ${profile.progress.stressGood} von ${profile.progress.stressTotal}<br>
       Farben erkannt: ${profile.progress.colorsGood} von ${profile.progress.colorsTotal}<br>
+      Formen erkannt: ${profile.progress.shapesGood} von ${profile.progress.shapesTotal}<br>
+      Richtig gezählt: ${profile.progress.countGood} von ${profile.progress.countTotal}<br>
       Ruheübungen abgeschlossen: ${profile.progress.calmSessions}<br>
       Geschichten gelesen: ${profile.progress.storiesDone.length} von ${STORIES.length}</p>
     </div>
