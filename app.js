@@ -1051,7 +1051,7 @@ function saveProfile(p){ localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); }
 function freshProfile(){
   return {
     name:"", age:"", avatar:"🚗", color:"peach",
-    stars:0, stickers:[], lastVisit:null, streak:0,
+    stars:0, stickers:[], lastVisit:null, streak:0, toddlerSet:"primary",
     progress:{ feelingsDone:0, wordsGood:0, wordsTotal:0, calmSessions:0, storiesDone:[], stressGood:0, stressTotal:0, colorsGood:0, colorsTotal:0, shapesGood:0, shapesTotal:0, countGood:0, countTotal:0, soundsGood:0, soundsTotal:0, vehiclesGood:0, vehiclesTotal:0 },
   };
 }
@@ -1244,10 +1244,17 @@ function islandSvg(trailD){
   </svg>`;
 }
 
+const TODDLER_SET_PRIMARY = ["feelings","stories","colors","shapes"];
+const TODDLER_SET_SECONDARY = ["calm","count","sounds","vehicles"];
+
 function renderHome(){
   bumpStreak();
   topbarSub.textContent = `Hallo, ${profile.name}!`;
-  const stations = STATIONS.filter(s => s.minLevel <= currentLevel());
+  let stations = STATIONS.filter(s => s.minLevel <= currentLevel());
+  if(currentLevel() === 1){
+    const activeKeys = profile.toddlerSet === "secondary" ? TODDLER_SET_SECONDARY : TODDLER_SET_PRIMARY;
+    stations = stations.filter(s => activeKeys.includes(s.key));
+  }
   const trailD = buildTrailPath(stations);
 
   viewEl.innerHTML = `
@@ -2062,11 +2069,27 @@ function renderStickers(){
    ELTERNBEREICH
    ============================================================ */
 function renderParents(){
+  const toddlerToggle = currentLevel()===1 ? `
+    <div class="card parent-block">
+      <h3>🔄 Kategorien für 2-3 Jahre wechseln</h3>
+      <p>Damit ${profile.name||"dein Kind"} nicht überfordert wird, zeigt die Insel für 2-3-Jährige immer nur 4 Kategorien gleichzeitig. Mit dem Schalter wechselst du, welche vier angezeigt werden.</p>
+      <div style="display:flex; align-items:center; gap:14px; margin-top:14px; flex-wrap:wrap;">
+        <button class="toggle-track ${profile.toddlerSet==='secondary'?'on':''}" onclick="toggleToddlerSet()" aria-label="Kategorien wechseln" aria-pressed="${profile.toddlerSet==='secondary'}">
+          <span class="toggle-thumb"></span>
+        </button>
+        <div style="font-weight:700; font-size:0.85rem; color:var(--ink-soft);">
+          ${profile.toddlerSet==='secondary'
+            ? 'Zeigt gerade: Boxenstopp, Zähl-Werkstatt, Tier-Laute-Werkstatt, Fahrzeug-Kunde'
+            : 'Zeigt gerade: Gefühls-Tankstelle, Geschichten-Autobahn, Lack-Werkstatt, Formen-Werkstatt'}
+        </div>
+      </div>
+    </div>` : ``;
   viewEl.innerHTML = `
     <div class="card parent-block">
       <h3>💛 Willkommen im Elternbereich</h3>
       <p>Leo's Lerninsel hilft Kindern spielerisch dabei, Gefühle zu erkennen, sie in Worte zu fassen und mit Stress umzugehen — in kurzen, ruhigen Einheiten ohne hektische Effekte oder Zeitdruck. Inhalte und Schwierigkeit passen sich automatisch der eingestellten Altersstufe an, und jede Runde wird neu gemischt.</p>
     </div>
+    ${toddlerToggle}
     <div class="card parent-block">
       <h3>📊 Fortschritt von ${profile.name} (${profile.age||"–"} Jahre)</h3>
       <p>Gefühle-Runden gespielt: ${profile.progress.feelingsDone}<br>
@@ -2120,6 +2143,11 @@ function saveProfileEdit(){
   if(!profile.name.trim()) return;
   persist();
   navigate("home");
+}
+function toggleToddlerSet(){
+  profile.toddlerSet = profile.toddlerSet === "secondary" ? "primary" : "secondary";
+  persist();
+  renderParents();
 }
 
 /* ============================================================
