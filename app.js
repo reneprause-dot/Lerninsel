@@ -511,40 +511,41 @@ const STRESS_SCENES = [
       { text:"Ich tue so, als wäre nichts, obwohl es mich sehr beschäftigt.", good:false } ] },
 ];
 
-/* ---------- Ruhe-Übungen (mehrere Varianten für Abwechslung) ---------- */
+/* ---------- Ruhe-Übungen: 4 wirklich unterschiedliche Übungsarten ----------
+   1) "breath"    – geführte Atem-Animation (Kreis wächst/schrumpft)
+   2) "steps"     – Schritt-für-Schritt-Impulse zum Antippen (beobachten, bewegen, vorstellen)
+   3) "tap"       – aktive Tipp-Übung (Seifenblasen / Sterne antippen)
+*/
 const CALM_EXERCISES = [
-  { id:"seifenblasen", level:1, icon:"🫧", title:"Seifenblasen-Pusten", desc:"Ganz sanft pusten wie eine Seifenblase", type:"breath", inLabel:"Luft holen …", outLabel:"Puuust …", inMs:3000, outMs:3000, rounds:3 },
-  { id:"wellen", level:2, icon:"🌊", title:"Wellen-Atmung", desc:"Ruhig ein- und ausatmen wie sanfte Wellen", type:"breath", inLabel:"Einatmen …", outLabel:"Ausatmen …", inMs:4000, outMs:4000, rounds:4 },
+  { id:"wellen", level:1, icon:"🌊", title:"Wellen-Atmung", desc:"Ruhig ein- und ausatmen wie sanfte Wellen", type:"breath", inLabel:"Einatmen …", outLabel:"Ausatmen …", inMs:4000, outMs:4000, rounds:4 },
   { id:"biene", level:2, icon:"🐝", title:"Bienen-Atmung", desc:"Leise summen beim Ausatmen", type:"breath", inLabel:"Einatmen …", outLabel:"Summmm …", inMs:3000, outMs:4000, rounds:4 },
-  { id:"ballon", level:3, icon:"🎈", title:"Ballon-Bauch", desc:"Den Bauch wie einen Ballon füllen und leeren", type:"breath", inLabel:"Bauch füllt sich …", outLabel:"Bauch wird leicht …", inMs:4000, outMs:5000, rounds:4 },
-  { id:"kuscheltier", level:3, icon:"🧸", title:"Kuscheltier-Atmung", desc:"Ein Kuscheltier auf dem Bauch beim Wippen beobachten", type:"breath", inLabel:"Kuscheltier steigt …", outLabel:"Kuscheltier sinkt …", inMs:4000, outMs:4000, rounds:4 },
-  { id:"sinne", level:4, icon:"🔎", title:"5-Sinne-Pause", desc:"Die Welt um dich herum entdecken", type:"grounding" },
-  { id:"wackeln", level:4, icon:"🍃", title:"Anspannen & Loslassen", desc:"Muskeln kurz anspannen, dann locker lassen", type:"muscle" },
-  { id:"wolkenreise", level:1, icon:"☁️", title:"Wolkenreise", desc:"Mit den Augen einer Wolke am Himmel folgen", type:"breath", inLabel:"Wolke schwebt hoch …", outLabel:"Wolke sinkt sanft …", inMs:3500, outMs:3500, rounds:4 },
-  { id:"mondschein", level:2, icon:"🌙", title:"Mondschein-Atmung", desc:"Ruhig werden wie eine stille Nacht", type:"breath", inLabel:"Mond geht auf …", outLabel:"Mond sinkt …", inMs:4000, outMs:5000, rounds:4 },
+  { id:"ballon", level:2, icon:"🎈", title:"Ballon-Bauch", desc:"Den Bauch wie einen Ballon füllen und leeren", type:"breath", inLabel:"Bauch füllt sich …", outLabel:"Bauch wird leicht …", inMs:4000, outMs:5000, rounds:4 },
+  { id:"mondschein", level:3, icon:"🌙", title:"Mondschein-Atmung", desc:"Ruhig werden wie eine stille Nacht", type:"breath", inLabel:"Mond geht auf …", outLabel:"Mond sinkt …", inMs:4000, outMs:5000, rounds:4 },
   { id:"rakete", level:3, icon:"🚀", title:"Raketen-Countdown", desc:"Mit einem Countdown zur Ruhe starten", type:"breath", inLabel:"Countdown … einatmen", outLabel:"Start! Ausatmen", inMs:3000, outMs:3000, rounds:5 },
   { id:"bremsweg", level:4, icon:"🚗", title:"Sanft bremsen", desc:"Wie ein Auto langsam zum Stehen kommen", type:"breath", inLabel:"Gas geben … einatmen", outLabel:"Sanft bremsen … ausatmen", inMs:4000, outMs:4500, rounds:5 },
-  { id:"schmetterling", level:1, icon:"🦋", title:"Schmetterlings-Atmung", desc:"Flügel sanft auf- und zuklappen", type:"breath", inLabel:"Flügel öffnen …", outLabel:"Flügel schließen …", inMs:3000, outMs:3000, rounds:3 },
-  { id:"blume", level:1, icon:"🌸", title:"Blumen-Duft", desc:"An einer Blume schnuppern, dann eine Kerze auspusten", type:"breath", inLabel:"An der Blume riechen …", outLabel:"Kerze auspusten …", inMs:3000, outMs:2500, rounds:3 },
-  { id:"teddy", level:1, icon:"🧸", title:"Teddy-Wiege", desc:"Den Teddy sanft in den Armen wiegen", type:"breath", inLabel:"Teddy hoch wiegen …", outLabel:"Teddy sanft senken …", inMs:3500, outMs:3500, rounds:3 },
-  { id:"hupe", level:1, icon:"🚙", title:"Auto-Hupe", desc:"Sanft ein- und ausatmen wie eine kleine Hupe", type:"breath", inLabel:"Luft holen …", outLabel:"Hup, hup …", inMs:3000, outMs:3000, rounds:3 },
-  { id:"schnecke", level:1, icon:"🐌", title:"Schnecken-Tempo", desc:"Ganz langsam wie eine Schnecke atmen", type:"breath", inLabel:"Langsam einatmen …", outLabel:"Langsam ausatmen …", inMs:4000, outMs:4000, rounds:3 },
-  { id:"stern", level:1, icon:"⭐", title:"Stern-Funkeln", desc:"Wie ein Stern sanft auf- und abschimmern", type:"breath", inLabel:"Funkeln …", outLabel:"Sanft verblassen …", inMs:3200, outMs:3200, rounds:3 },
-  { id:"muschel", level:1, icon:"🐚", title:"Muschel-Rauschen", desc:"Wie das Meer sanft rauschen", type:"breath", inLabel:"Welle kommt …", outLabel:"Welle geht …", inMs:3500, outMs:3500, rounds:3 },
+
+  { id:"entdeckung", level:1, icon:"👀", title:"Kleine Entdeckung", desc:"Die Welt um dich herum entdecken", type:"steps",
+    steps:["Schau dich um: Was siehst du gerade Buntes?","Hör mal ganz genau hin: Was hörst du?","Fühl mal: Ist der Boden hart oder weich unter dir?","Gut gemacht! Du hast die Welt um dich herum entdeckt."] },
+  { id:"rundgang", level:3, icon:"🔎", title:"Ruhe-Rundgang", desc:"In Gedanken auf Entdeckungstour gehen", type:"steps",
+    steps:["Nenne 3 Dinge, die du gerade siehst.","Nenne 2 Geräusche, die du gerade hörst.","Spüre deinen Atem, wie er ein- und ausströmt.","Atme einmal tief ein und aus. Du bist gerade hier, und das ist gut so."] },
+
+  { id:"tierwackeln", level:1, icon:"🦒", title:"Tier-Wackeln", desc:"Wie verschiedene Tiere bewegen", type:"steps",
+    steps:["Streck dich groß wie eine Giraffe.","Wackle wie ein Fisch im Wasser.","Kuschle dich klein zusammen wie eine Schnecke.","Schüttle dich locker aus wie ein Hund nach dem Baden."] },
+  { id:"yogareise", level:3, icon:"🧘", title:"Kleine Yoga-Reise", desc:"Ruhige Posen wie in einer kleinen Reise", type:"steps",
+    steps:["Strecke dich groß wie ein Baum, die Arme wie Äste nach oben.","Roll dich klein zusammen wie ein Igel.","Steh fest und ruhig wie ein Berg.","Atme tief durch und lächle — du bist stark und ruhig."] },
+  { id:"wackelpudding", level:4, icon:"🍮", title:"Wackelpudding", desc:"Spannung abschütteln wie ein Pudding", type:"steps",
+    steps:["Balle beide Hände fest zu Fäusten … und lass sie locker.","Zieh die Schultern hoch zu den Ohren … und lass sie sinken.","Schüttle Arme und Beine locker aus wie Wackelpudding.","Bleib ganz still stehen und spüre die Ruhe danach."] },
+
+  { id:"wolkenreise", level:2, icon:"☁️", title:"Wolkenreise", desc:"Eine ruhige Reise auf einer Wolke", type:"steps",
+    steps:["Stell dir vor, du liegst auf einer weichen Wolke.","Die Wolke schwebt ganz langsam über grüne Wiesen.","Unter dir hörst du leise Vogelgezwitscher.","Die Wolke bringt dich sanft zurück, und du fühlst dich ruhig."] },
+  { id:"sternenreise", level:4, icon:"🌌", title:"Sternenreise", desc:"Eine ruhige Reise durch die Nacht", type:"steps",
+    steps:["Stell dir vor, du fliegst sanft zwischen den Sternen.","Jeder Stern leuchtet ruhig und gleichmäßig.","Du schwebst ganz langsam zurück zur Erde.","Du landest sanft und fühlst dich geborgen."] },
+
+  { id:"seifenblasen-pop", level:1, icon:"🫧", title:"Seifenblasen zerplatzen", desc:"Tippe nacheinander alle Seifenblasen an", type:"tap", emoji:"🫧", poppedEmoji:"✨", count:6 },
+  { id:"sterne-sammeln", level:2, icon:"⭐", title:"Sterne sammeln", desc:"Tippe die Sterne an, bis alle funkeln", type:"tap", emoji:"☆", poppedEmoji:"⭐", count:8 },
 ];
 
-const GROUNDING_STEPS = [
-  "Schau dich um: Nenne 3 Dinge, die du gerade siehst.",
-  "Lausche kurz: Welche 2 Geräusche hörst du gerade?",
-  "Spüre deinen Körper: Wie fühlt sich der Boden unter deinen Füßen an?",
-  "Atme einmal tief ein und aus. Du bist gerade hier und das ist gut so.",
-];
-const MUSCLE_STEPS = [
-  { label:"Balle beide Hände fest zu Fäusten … und lass sie locker.", ms:4000 },
-  { label:"Zieh die Schultern hoch zu den Ohren … und lass sie sinken.", ms:4000 },
-  { label:"Drück die Fußsohlen fest auf den Boden … und entspanne sie.", ms:4000 },
-  { label:"Runzle kurz die Stirn … und lass das Gesicht ganz weich werden.", ms:4000 },
-];
+/* Schritt-für-Schritt-Übungen (type:"steps") nutzen exercise.steps direkt, keine globalen Listen mehr nötig. */
 
 /* ---------- Geschichten ---------- */
 const STORIES = [
@@ -1565,8 +1566,8 @@ function renderCalmMenu(){
 function startCalmExercise(id){
   const ex = CALM_EXERCISES.find(e=>e.id===id);
   if(ex.type==="breath") renderBreathing(ex);
-  else if(ex.type==="grounding") renderGrounding();
-  else if(ex.type==="muscle") renderMuscle();
+  else if(ex.type==="steps") renderSteps(ex);
+  else if(ex.type==="tap") renderTap(ex);
 }
 
 let breathTimer=null, breathCount=0, currentExercise=null;
@@ -1614,65 +1615,80 @@ function breathStep(){
   }, ex.inMs);
 }
 
-let groundIdx = 0;
-function renderGrounding(){
-  groundIdx = 0;
-  showGroundingStep();
+/* Generische Schritt-für-Schritt-Übung: wird für Beobachten, Bewegen und Vorstellen genutzt,
+   jede Übung bringt aber eigene, ganz unterschiedliche Inhalte mit (ex.steps). */
+let stepIdx = 0, currentSteps = null;
+function renderSteps(ex){
+  currentSteps = ex; stepIdx = 0;
+  showStep();
 }
-function showGroundingStep(){
-  if(groundIdx >= GROUNDING_STEPS.length){
+function showStep(){
+  const ex = currentSteps;
+  if(stepIdx >= ex.steps.length){
     profile.progress.calmSessions++;
     if(profile.progress.calmSessions>=5) unlockSticker("calm5");
     addStars(2);
     viewEl.innerHTML = `
       ${backBtn("calm")}
       <div class="stage">
-        <div class="mascot-lg">🔎</div>
+        <div class="mascot-lg">${ex.icon}</div>
         <h2>Gut gemacht!</h2>
-        <p style="margin-top:8px; color:var(--ink-soft); font-weight:700;">Du bist jetzt ganz im Moment angekommen.</p>
+        <p style="margin-top:8px; color:var(--ink-soft); font-weight:700;">Du bist jetzt ganz ruhig angekommen.</p>
         <button class="btn" style="margin-top:20px;" onclick="navigate('home')">Zurück zur Insel</button>
       </div>`;
     return;
   }
   viewEl.innerHTML = `
     ${backBtn("calm")}
-    <div class="progress-track"><div class="progress-fill" style="width:${(groundIdx/GROUNDING_STEPS.length)*100}%"></div></div>
+    <div class="progress-track"><div class="progress-fill" style="width:${(stepIdx/ex.steps.length)*100}%"></div></div>
     <div class="card stage">
-      <div class="mascot-lg" style="font-size:3rem;">🔎</div>
-      <p style="font-family:'Baloo 2'; font-weight:700; font-size:1.1rem;">${GROUNDING_STEPS[groundIdx]}</p>
-      <button class="btn" style="margin-top:20px;" onclick="groundIdx++; showGroundingStep();">Weiter</button>
+      <div class="mascot-lg" style="font-size:3rem;">${ex.icon}</div>
+      <p style="font-family:'Baloo 2'; font-weight:700; font-size:1.1rem;">${ex.steps[stepIdx]}</p>
+      <button class="btn" style="margin-top:20px;" onclick="stepIdx++; showStep();">Weiter</button>
     </div>`;
 }
 
-let muscleIdx = 0, muscleTimer = null;
-function renderMuscle(){
-  muscleIdx = 0;
-  showMuscleStep();
+/* Tipp-Übung: aktives Antippen statt nur Zuschauen — eine eigene, spürbar andere Mechanik. */
+let tapState = null;
+function renderTap(ex){
+  tapState = { ex, popped: new Array(ex.count).fill(false) };
+  showTap();
 }
-function showMuscleStep(){
-  if(muscleIdx >= MUSCLE_STEPS.length){
+function showTap(){
+  const { ex, popped } = tapState;
+  const doneCount = popped.filter(Boolean).length;
+  if(doneCount === ex.count){
     profile.progress.calmSessions++;
     if(profile.progress.calmSessions>=5) unlockSticker("calm5");
     addStars(2);
     viewEl.innerHTML = `
       ${backBtn("calm")}
       <div class="stage">
-        <div class="mascot-lg">🍃</div>
-        <h2>Schön locker!</h2>
-        <p style="margin-top:8px; color:var(--ink-soft); font-weight:700;">Dein Körper ist jetzt schön entspannt.</p>
+        <div class="mascot-lg">${ex.poppedEmoji}</div>
+        <h2>Alle geschafft!</h2>
+        <p style="margin-top:8px; color:var(--ink-soft); font-weight:700;">Schön ruhig geworden, oder?</p>
         <button class="btn" style="margin-top:20px;" onclick="navigate('home')">Zurück zur Insel</button>
       </div>`;
     return;
   }
-  const step = MUSCLE_STEPS[muscleIdx];
   viewEl.innerHTML = `
     ${backBtn("calm")}
-    <div class="progress-track"><div class="progress-fill" style="width:${(muscleIdx/MUSCLE_STEPS.length)*100}%"></div></div>
-    <div class="card stage">
-      <div class="mascot-lg" style="font-size:3rem;">🍃</div>
-      <p style="font-family:'Baloo 2'; font-weight:700; font-size:1.1rem;">${step.label}</p>
-      <button class="btn" style="margin-top:20px;" onclick="muscleIdx++; showMuscleStep();">Weiter</button>
+    <div class="stage">
+      <h2>${ex.icon} ${ex.title}</h2>
+      <p style="color:var(--ink-soft); font-weight:600; margin:6px 0 18px;">Tippe der Reihe nach auf jedes Symbol.</p>
+      <div class="tap-grid">
+        ${popped.map((done,i)=>`
+          <button class="tap-item ${done?'popped':''}" ${done?'disabled':''} onclick="popTap(${i})" aria-label="Element ${i+1}">
+            ${done ? ex.poppedEmoji : ex.emoji}
+          </button>`).join("")}
+      </div>
+      <p style="margin-top:14px; font-weight:800; color:var(--ink-soft);">${doneCount} / ${ex.count}</p>
     </div>`;
+}
+function popTap(i){
+  if(tapState.popped[i]) return;
+  tapState.popped[i] = true;
+  showTap();
 }
 
 /* ============================================================
