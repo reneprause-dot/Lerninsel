@@ -8,6 +8,31 @@
 
 const STORAGE_KEY = "mutmach-insel-profile-v1";
 
+/* ---------- Sprachausgabe (Vorlesen für Kinder, die noch nicht lesen können) ---------- */
+let currentSpeakText = "";
+function speak(text){
+  if(!text || !("speechSynthesis" in window)) return;
+  try{
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "de-DE";
+    u.rate = 0.92;
+    u.pitch = 1.05;
+    window.speechSynthesis.speak(u);
+  }catch(e){ /* Sprachausgabe im Browser nicht verfügbar - kein Problem, still weitermachen */ }
+}
+function speakerBtn(extraStyle){
+  return `<button class="speak-btn" style="${extraStyle||''}" onclick="speak(currentSpeakText)" aria-label="Vorlesen">🔊</button>`;
+}
+/* Merkt sich den Text und liest ihn bei jüngeren Kindern (die meist noch nicht
+   lesen können) automatisch vor, sofern im Elternbereich nicht deaktiviert. */
+function setSpeakText(text){
+  currentSpeakText = text;
+  if(profile && profile.autoRead !== false && currentLevel() <= 2){
+    speak(text);
+  }
+}
+
 /* ---------- Altersstufen ---------- */
 const AGE_ORDER = ["2-3","3-4","5-6","7-8","9-10"];
 function ageLevel(age){
@@ -1009,6 +1034,22 @@ const VEHICLE_ITEMS = [
   { level:3, icon:"🏗️", text:"Wie heißt dieses Fahrzeug?", correct:"bagger" },
 ];
 
+/* ---------- Modul: Mal-Werkstatt (mit dem Finger nachzeichnen) ---------- */
+const TRACE_ITEMS = [
+  { level:1, glyph:"●", label:"Kreis" },
+  { level:1, glyph:"▲", label:"Dreieck" },
+  { level:1, glyph:"■", label:"Quadrat" },
+  { level:1, glyph:"—", label:"Linie" },
+  { level:2, glyph:"★", label:"Stern" },
+  { level:2, glyph:"♥", label:"Herz" },
+  { level:2, glyph:"O", label:"Buchstabe O" },
+  { level:3, glyph:"1", label:"Zahl 1" },
+  { level:3, glyph:"2", label:"Zahl 2" },
+  { level:3, glyph:"S", label:"Buchstabe S" },
+  { level:4, glyph:"A", label:"Buchstabe A" },
+  { level:4, glyph:"L", label:"Buchstabe L" },
+];
+
 const STICKER_DEFS = [
   { id:"first_feeling", emoji:"🌟", label:"Gefühle-Entdecker" },
   { id:"first_words",   emoji:"💬", label:"Klar gesagt" },
@@ -1030,6 +1071,7 @@ const STICKER_DEFS = [
   { id:"all_sounds",    emoji:"🦁", label:"Tier-Meister" },
   { id:"first_vehicle", emoji:"🚦", label:"Fahrzeug-Fan" },
   { id:"all_vehicles",  emoji:"🏁", label:"Fahrzeug-Profi" },
+  { id:"first_trace",   emoji:"✏️", label:"Mal-Talent" },
 ];
 
 const AVATARS = ["🚗","🚙","🚕","🏎️","🚓","🚑","🚒","🏍️"];
@@ -1048,8 +1090,8 @@ function saveProfile(p){ localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); }
 function freshProfile(){
   return {
     name:"", age:"", avatar:"🚗", color:"peach",
-    stars:0, stickers:[], lastVisit:null, streak:0, toddlerSet:"primary", toddlerRandomSet:[],
-    progress:{ feelingsDone:0, wordsGood:0, wordsTotal:0, calmSessions:0, storiesDone:[], stressGood:0, stressTotal:0, colorsGood:0, colorsTotal:0, shapesGood:0, shapesTotal:0, countGood:0, countTotal:0, soundsGood:0, soundsTotal:0, vehiclesGood:0, vehiclesTotal:0 },
+    stars:0, stickers:[], lastVisit:null, streak:0, toddlerSet:"primary", toddlerRandomSet:[], autoRead:true,
+    progress:{ feelingsDone:0, wordsGood:0, wordsTotal:0, calmSessions:0, storiesDone:[], stressGood:0, stressTotal:0, colorsGood:0, colorsTotal:0, shapesGood:0, shapesTotal:0, countGood:0, countTotal:0, soundsGood:0, soundsTotal:0, vehiclesGood:0, vehiclesTotal:0, tracesDone:0 },
   };
 }
 let profile = loadProfile();
@@ -1105,6 +1147,7 @@ function navigate(name, param){
     case "count": setNavActive(""); renderCountGame(); break;
     case "sounds": setNavActive(""); renderSoundGame(); break;
     case "vehicles": setNavActive(""); renderVehicleGame(); break;
+    case "trace": setNavActive(""); renderTraceGame(); break;
     case "calm": setNavActive(""); renderCalmMenu(); break;
     case "stories": setNavActive(""); renderStoriesList(); break;
     case "story": setNavActive(""); renderStoryPlayer(param); break;
@@ -1117,8 +1160,8 @@ function backBtn(target){
 }
 function surpriseMe(){
   const choices = currentLevel()>=2
-    ? ["feelings","words","stress","calm","stories","colors","shapes","count","sounds","vehicles"]
-    : ["feelings","calm","stories","colors","shapes","count","sounds","vehicles"];
+    ? ["feelings","words","stress","calm","stories","colors","shapes","count","sounds","vehicles","trace"]
+    : ["feelings","calm","stories","colors","shapes","count","sounds","vehicles","trace"];
   navigate(choices[Math.floor(Math.random()*choices.length)]);
   unlockSticker("explorer");
 }
@@ -1209,6 +1252,7 @@ const STATIONS = [
   { key:"count",    icon:"🔢", label:"Zähl-Werkstatt",       bubble:"var(--berry-deep)", x:8,  y:54, minLevel:1 },
   { key:"shapes",   icon:"🔺", label:"Formen-Werkstatt",     bubble:"var(--sky-deep)",   x:9,  y:31, minLevel:1 },
   { key:"stories",  icon:"🛣️", label:"Geschichten-Autobahn", bubble:"var(--sun)",        x:28, y:13, minLevel:1 },
+  { key:"trace",    icon:"✏️", label:"Mal-Werkstatt",        bubble:"var(--sky)",        x:60, y:45, minLevel:1 },
 ];
 
 /* Erzeugt einen sanft geschwungenen, gepunkteten Pfad, der GENAU die
@@ -1351,7 +1395,7 @@ function showFeelingScene(){
     ${backBtn("home")}
     <div class="progress-track"><div class="progress-fill" style="width:${(feelingIdx/feelingRoundOrder.length)*100}%"></div></div>
     <div class="card">
-      <p class="section-title" style="font-size:1.1rem;">${scene.text}</p>
+      <div class="title-row"><p class="section-title" style="font-size:1.1rem;">${scene.text}</p>${speakerBtn()}</div>
       <p class="section-sub">Wie fühlt sich die Person wohl?</p>
       <div class="choice-grid" id="choices">
         ${options.map(o=>`
@@ -1361,6 +1405,7 @@ function showFeelingScene(){
       </div>
       <div id="feelingFeedback"></div>
     </div>`;
+  setSpeakText(scene.text);
 }
 function pickFeeling(pickedId, correctId){
   const buttons = document.querySelectorAll("#choices .choice");
@@ -1412,7 +1457,7 @@ function showWordScene(){
     ${backBtn("home")}
     <div class="progress-track"><div class="progress-fill" style="width:${(wordIdx/wordRoundOrder.length)*100}%"></div></div>
     <div class="card">
-      <p class="section-title" style="font-size:1.1rem;">${scene.text}</p>
+      <div class="title-row"><p class="section-title" style="font-size:1.1rem;">${scene.text}</p>${speakerBtn()}</div>
       <p class="section-sub">Was sagst du?</p>
       <div id="wordChoices" style="display:flex; flex-direction:column; gap:12px;">
         ${options.map(o=>`
@@ -1422,6 +1467,7 @@ function showWordScene(){
       </div>
       <div id="wordFeedback"></div>
     </div>`;
+  setSpeakText(scene.text);
 }
 function pickWord(idx, good){
   const buttons = document.querySelectorAll("#wordChoices .choice");
@@ -1472,7 +1518,7 @@ function showStressScene(){
     ${backBtn("home")}
     <div class="progress-track"><div class="progress-fill" style="width:${(stressIdx/stressRoundOrder.length)*100}%"></div></div>
     <div class="card">
-      <p class="section-title" style="font-size:1.1rem;">${scene.text}</p>
+      <div class="title-row"><p class="section-title" style="font-size:1.1rem;">${scene.text}</p>${speakerBtn()}</div>
       <p class="section-sub">Was hilft dir gerade am meisten?</p>
       <div id="stressChoices" style="display:flex; flex-direction:column; gap:12px;">
         ${options.map(o=>`
@@ -1482,6 +1528,7 @@ function showStressScene(){
       </div>
       <div id="stressFeedback"></div>
     </div>`;
+  setSpeakText(scene.text);
 }
 function pickStress(idx, good){
   const buttons = document.querySelectorAll("#stressChoices .choice");
@@ -1541,7 +1588,7 @@ function showColorScene(){
     <div class="progress-track"><div class="progress-fill" style="width:${(colorIdx/colorRoundOrder.length)*100}%"></div></div>
     <div class="card" style="text-align:center;">
       <div style="font-size:3.4rem; margin-bottom:6px;">${scene.icon}</div>
-      <p class="section-title" style="font-size:1.1rem;">${scene.text}</p>
+      <div class="title-row"><p class="section-title" style="font-size:1.1rem;">${scene.text}</p>${speakerBtn()}</div>
       <p class="section-sub">Ein Farbrand verrät einen Tipp! 🎨</p>
       <div class="choice-grid" id="colorChoices">
         ${options.map(o=>`
@@ -1551,6 +1598,7 @@ function showColorScene(){
       </div>
       <div id="colorFeedback"></div>
     </div>`;
+  setSpeakText(scene.text);
 }
 function pickColor(pickedId, correctId){
   const buttons = document.querySelectorAll("#colorChoices .choice");
@@ -1609,7 +1657,7 @@ function showShapeScene(){
     <div class="progress-track"><div class="progress-fill" style="width:${(shapeIdx/shapeRoundOrder.length)*100}%"></div></div>
     <div class="card" style="text-align:center;">
       <div style="font-size:3.4rem; margin-bottom:6px;">${scene.icon}</div>
-      <p class="section-title" style="font-size:1.1rem;">${scene.text}</p>
+      <div class="title-row"><p class="section-title" style="font-size:1.1rem;">${scene.text}</p>${speakerBtn()}</div>
       <div class="choice-grid" id="shapeChoices">
         ${optionIds.map(id=>`
           <button class="choice" data-id="${id}" onclick="pickShape('${id}','${correctId}')">
@@ -1618,6 +1666,7 @@ function showShapeScene(){
       </div>
       <div id="shapeFeedback"></div>
     </div>`;
+  setSpeakText(scene.text);
 }
 function pickShape(pickedId, correctId){
   const buttons = document.querySelectorAll("#shapeChoices .choice");
@@ -1672,12 +1721,13 @@ function showCountScene(){
   const distractors = shuffle(pool).slice(0, optionCountForLevel()-1);
   const options = shuffle([correct, ...distractors]);
   const row = Array(correct).fill(scene.emoji).join(" ");
+  const questionText = `Wie viele ${scene.noun} siehst du?`;
   viewEl.innerHTML = `
     ${backBtn("home")}
     <div class="progress-track"><div class="progress-fill" style="width:${(countIdx/countRoundOrder.length)*100}%"></div></div>
     <div class="card" style="text-align:center;">
       <div style="font-size:2.4rem; line-height:1.5; margin-bottom:10px; word-spacing:6px;">${row}</div>
-      <p class="section-title" style="font-size:1.1rem;">Wie viele ${scene.noun} siehst du?</p>
+      <div class="title-row"><p class="section-title" style="font-size:1.1rem;">${questionText}</p>${speakerBtn()}</div>
       <div class="choice-grid" id="countChoices">
         ${options.map(n=>`
           <button class="choice" data-id="${n}" onclick="pickCount(${n},${correct})">
@@ -1686,6 +1736,7 @@ function showCountScene(){
       </div>
       <div id="countFeedback"></div>
     </div>`;
+  setSpeakText(questionText);
 }
 function pickCount(pickedN, correctN){
   const buttons = document.querySelectorAll("#countChoices .choice");
@@ -1743,7 +1794,7 @@ function showSoundScene(){
     <div class="progress-track"><div class="progress-fill" style="width:${(soundIdx/soundRoundOrder.length)*100}%"></div></div>
     <div class="card" style="text-align:center;">
       <div style="font-size:2.6rem; margin-bottom:6px;">🔊</div>
-      <p class="section-title" style="font-size:1.3rem;">${scene.sound}</p>
+      <div class="title-row"><p class="section-title" style="font-size:1.3rem;">${scene.sound}</p>${speakerBtn()}</div>
       <p class="section-sub">Wer sagt das?</p>
       <div class="choice-grid" id="soundChoices">
         ${optionIds.map(id=>`
@@ -1753,6 +1804,7 @@ function showSoundScene(){
       </div>
       <div id="soundFeedback"></div>
     </div>`;
+  setSpeakText(scene.sound.replace(/[„“]/g,""));
 }
 function pickSound(pickedId, correctId){
   const buttons = document.querySelectorAll("#soundChoices .choice");
@@ -1810,7 +1862,7 @@ function showVehicleScene(){
     <div class="progress-track"><div class="progress-fill" style="width:${(vehicleIdx/vehicleRoundOrder.length)*100}%"></div></div>
     <div class="card" style="text-align:center;">
       <div style="font-size:3.4rem; margin-bottom:6px;">${scene.icon}</div>
-      <p class="section-title" style="font-size:1.1rem;">${scene.text}</p>
+      <div class="title-row"><p class="section-title" style="font-size:1.1rem;">${scene.text}</p>${speakerBtn()}</div>
       <div class="choice-grid" id="vehicleChoices">
         ${optionIds.map(id=>`
           <button class="choice" data-id="${id}" onclick="pickVehicle('${id}','${correctId}')">
@@ -1819,6 +1871,7 @@ function showVehicleScene(){
       </div>
       <div id="vehicleFeedback"></div>
     </div>`;
+  setSpeakText(scene.text);
 }
 function pickVehicle(pickedId, correctId){
   const buttons = document.querySelectorAll("#vehicleChoices .choice");
@@ -1834,6 +1887,114 @@ function pickVehicle(pickedId, correctId){
       ${isCorrect ? "🎉 Genau richtig!" : `Das ist ein „${VEHICLE_NAMES[correctId].label}“.`}
     </div>
     <button class="btn block" style="margin-top:14px;" onclick="vehicleIdx++; showVehicleScene();">Weiter</button>`;
+}
+
+/* ============================================================
+   MODUL: MAL-WERKSTATT (mit dem Finger nachzeichnen)
+   ============================================================ */
+let traceIdx=0, traceRoundOrder=[], traceCtx=null, traceDrawColor="";
+function renderTraceGame(){
+  traceIdx=0;
+  const pool = byLevel(TRACE_ITEMS);
+  traceRoundOrder = shuffle(pool).slice(0, Math.min(4, pool.length));
+  showTraceScene();
+}
+function showTraceScene(){
+  if(traceIdx >= traceRoundOrder.length){
+    profile.progress.tracesDone += traceRoundOrder.length;
+    unlockSticker("first_trace");
+    addStars(traceRoundOrder.length);
+    viewEl.innerHTML = `
+      ${backBtn("home")}
+      <div class="stage">
+        <div class="mascot-lg">${profile.avatar}</div>
+        <h2>Super gemalt!</h2>
+        <p style="margin-top:8px; color:var(--ink-soft); font-weight:700;">Du hast ${traceRoundOrder.length} Formen nachgezeichnet.</p>
+        <div style="display:flex; gap:10px; justify-content:center; margin-top:20px; flex-wrap:wrap;">
+          <button class="btn secondary" onclick="renderTraceGame()">Nochmal, neue Formen</button>
+          <button class="btn" onclick="navigate('home')">Zurück zur Insel</button>
+        </div>
+      </div>`;
+    return;
+  }
+  const item = traceRoundOrder[traceIdx];
+  const prompt = `Fahr mit dem Finger über die ${item.label}`;
+  viewEl.innerHTML = `
+    ${backBtn("home")}
+    <div class="progress-track"><div class="progress-fill" style="width:${(traceIdx/traceRoundOrder.length)*100}%"></div></div>
+    <div class="card" style="text-align:center;">
+      <div class="title-row"><p class="section-title" style="font-size:1.1rem;">${prompt}</p>${speakerBtn()}</div>
+      <div class="trace-wrap">
+        <canvas id="traceCanvas" class="trace-canvas"></canvas>
+      </div>
+      <div style="display:flex; gap:10px; justify-content:center; margin-top:16px; flex-wrap:wrap;">
+        <button class="btn secondary" onclick="clearTraceCanvas()">🧽 Löschen</button>
+        <button class="btn" onclick="finishTrace()">✅ Fertig</button>
+      </div>
+    </div>`;
+  setSpeakText(prompt);
+  setupTraceCanvas(item);
+}
+function drawTraceGuide(item, size){
+  const ctx = traceCtx;
+  if(!ctx) return;
+  ctx.clearRect(0,0,size,size);
+  ctx.fillStyle = "rgba(74,67,88,0.18)";
+  ctx.font = `${Math.floor(size*0.6)}px 'Baloo 2', sans-serif`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(item.glyph, size/2, size/2 + size*0.03);
+}
+function setupTraceCanvas(item){
+  const canvas = document.getElementById("traceCanvas");
+  if(!canvas) return;
+  const ratio = window.devicePixelRatio || 1;
+  const size = canvas.clientWidth || 300;
+  canvas.width = size*ratio;
+  canvas.height = size*ratio;
+  const ctx = canvas.getContext("2d");
+  ctx.scale(ratio, ratio);
+  traceCtx = ctx;
+  drawTraceGuide(item, size);
+  const c = THEME_COLORS.find(t=>t.id===profile.color) || THEME_COLORS[0];
+  traceDrawColor = c.hex;
+
+  let drawing=false, last=null;
+  function pos(e){
+    const rect = canvas.getBoundingClientRect();
+    return { x: e.clientX-rect.left, y: e.clientY-rect.top };
+  }
+  function start(e){ drawing=true; last=pos(e); canvas.setPointerCapture && canvas.setPointerCapture(e.pointerId); }
+  function move(e){
+    if(!drawing) return;
+    const p = pos(e);
+    ctx.strokeStyle = traceDrawColor;
+    ctx.lineWidth = 14;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.beginPath();
+    ctx.moveTo(last.x, last.y);
+    ctx.lineTo(p.x, p.y);
+    ctx.stroke();
+    last = p;
+  }
+  function end(){ drawing=false; last=null; }
+
+  canvas.onpointerdown = start;
+  canvas.onpointermove = move;
+  canvas.onpointerup = end;
+  canvas.onpointerleave = end;
+  canvas.onpointercancel = end;
+}
+function clearTraceCanvas(){
+  const item = traceRoundOrder[traceIdx];
+  const canvas = document.getElementById("traceCanvas");
+  if(!canvas) return;
+  drawTraceGuide(item, canvas.clientWidth);
+}
+function finishTrace(){
+  traceIdx++;
+  showTraceScene();
 }
 
 /* ============================================================
@@ -2018,11 +2179,12 @@ function showStoryPage(){
       ${backBtn("stories")}
       <div class="card storypage">
         <div class="scene">${p.scene}</div>
-        <p>${p.text}</p>
+        <div class="title-row"><p>${p.text}</p>${speakerBtn()}</div>
         <button class="btn" style="margin-top:22px;" onclick="storyState.page++; showStoryPage();">
           ${storyState.page === s.pages.length-1 ? "Weiter" : "Weiter →"}
         </button>
       </div>`;
+    setSpeakText(p.text);
     return;
   }
   const emoPool = byLevel(EMOTIONS);
@@ -2031,7 +2193,7 @@ function showStoryPage(){
   viewEl.innerHTML = `
     ${backBtn("stories")}
     <div class="card">
-      <p class="section-title" style="font-size:1.1rem;">${s.question}</p>
+      <div class="title-row"><p class="section-title" style="font-size:1.1rem;">${s.question}</p>${speakerBtn()}</div>
       <div class="choice-grid" id="storyChoices" style="margin-top:14px;">
         ${finalOpts.map(o=>`
           <button class="choice" data-id="${o.id}" onclick="pickStoryAnswer('${o.id}','${s.correct}')">
@@ -2040,6 +2202,7 @@ function showStoryPage(){
       </div>
       <div id="storyFeedback"></div>
     </div>`;
+  setSpeakText(s.question);
 }
 function pickStoryAnswer(pickedId, correctId){
   document.querySelectorAll("#storyChoices .choice").forEach(b=>{
@@ -2099,12 +2262,26 @@ function renderParents(){
       </div>
       ${profile.toddlerSet==='random' ? `<button class="btn secondary" style="margin-top:14px;" onclick="reshuffleToddlerSet()">🔀 Neu mischen</button>` : ``}
     </div>` : ``;
+  const speechToggle = `
+    <div class="card parent-block">
+      <h3>🔊 Fragen vorlesen</h3>
+      <p>Bei 2-3 und 3-4 Jahren werden Fragen automatisch laut vorgelesen, da Kinder in dem Alter meist noch nicht lesen können. Ab 5-6 Jahren gibt's weiterhin einen 🔊-Knopf zum manuellen Vorlesen, falls gewünscht. Falls dein Gerät keine Sprachausgabe unterstützt, bleibt der Knopf einfach ohne Wirkung.</p>
+      <div style="display:flex; align-items:center; gap:14px; margin-top:14px; flex-wrap:wrap;">
+        <button class="toggle-track ${profile.autoRead!==false?'on':''}" onclick="toggleAutoRead()" aria-label="Automatisches Vorlesen umschalten" aria-pressed="${profile.autoRead!==false}">
+          <span class="toggle-thumb"></span>
+        </button>
+        <div style="font-weight:700; font-size:0.85rem; color:var(--ink-soft);">
+          ${profile.autoRead!==false ? "Automatisches Vorlesen ist an" : "Automatisches Vorlesen ist aus"}
+        </div>
+      </div>
+    </div>`;
   viewEl.innerHTML = `
     <div class="card parent-block">
       <h3>💛 Willkommen im Elternbereich</h3>
       <p>Leo's Lerninsel hilft Kindern spielerisch dabei, Gefühle zu erkennen, sie in Worte zu fassen und mit Stress umzugehen — in kurzen, ruhigen Einheiten ohne hektische Effekte oder Zeitdruck. Inhalte und Schwierigkeit passen sich automatisch der eingestellten Altersstufe an, und jede Runde wird neu gemischt.</p>
     </div>
     ${toddlerToggle}
+    ${speechToggle}
     <div class="card parent-block">
       <h3>📊 Fortschritt von ${profile.name} (${profile.age||"–"} Jahre)</h3>
       <p>Gefühle-Runden gespielt: ${profile.progress.feelingsDone}<br>
@@ -2115,6 +2292,7 @@ function renderParents(){
       Richtig gezählt: ${profile.progress.countGood} von ${profile.progress.countTotal}<br>
       Tierlaute erkannt: ${profile.progress.soundsGood} von ${profile.progress.soundsTotal}<br>
       Fahrzeuge erkannt: ${profile.progress.vehiclesGood} von ${profile.progress.vehiclesTotal}<br>
+      Formen nachgezeichnet: ${profile.progress.tracesDone}<br>
       Ruheübungen abgeschlossen: ${profile.progress.calmSessions}<br>
       Geschichten gelesen: ${profile.progress.storiesDone.length} von ${STORIES.length}</p>
     </div>
@@ -2171,6 +2349,11 @@ function toggleToddlerSet(){
 }
 function reshuffleToddlerSet(){
   profile.toddlerRandomSet = pickRandomToddlerSet();
+  persist();
+  renderParents();
+}
+function toggleAutoRead(){
+  profile.autoRead = profile.autoRead === false ? true : false;
   persist();
   renderParents();
 }
