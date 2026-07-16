@@ -7,7 +7,7 @@
    ============================================================ */
 
 const STORAGE_KEY = "mutmach-insel-profile-v1";
-const APP_VERSION = "v19"; // manuell synchron zu CACHE_NAME in sw.js halten
+const APP_VERSION = "v20"; // manuell synchron zu CACHE_NAME in sw.js halten
 
 /* ---------- Sprachausgabe (Vorlesen für Kinder, die noch nicht lesen können) ---------- */
 let currentSpeakText = "";
@@ -2395,7 +2395,36 @@ async function checkForUpdates(){
    INIT
    ============================================================ */
 if("serviceWorker" in navigator){
-  window.addEventListener("load", ()=>{ navigator.serviceWorker.register("sw.js").catch(()=>{}); });
+  window.addEventListener("load", ()=>{
+    navigator.serviceWorker.register("sw.js").then(reg=>{
+      // Ein bereits wartender neuer Service Worker (z.B. von einem vorherigen Tab) -> sofort Hinweis zeigen
+      if(reg.waiting && navigator.serviceWorker.controller){ showUpdateBanner(); }
+      reg.addEventListener("updatefound", ()=>{
+        const newWorker = reg.installing;
+        if(!newWorker) return;
+        newWorker.addEventListener("statechange", ()=>{
+          if(newWorker.state === "installed" && navigator.serviceWorker.controller){
+            showUpdateBanner();
+          }
+        });
+      });
+      // Beim Öffnen der App aktiv nachfragen, ob es etwas Neues gibt (statt nur passiv zu warten)
+      reg.update().catch(()=>{});
+      // Solange die App offen bleibt, alle 30 Minuten erneut nachfragen
+      setInterval(()=>{ reg.update().catch(()=>{}); }, 30*60*1000);
+    }).catch(()=>{});
+  });
+}
+function showUpdateBanner(){
+  if(document.getElementById("updateBanner")) return; // schon sichtbar
+  const el = document.createElement("div");
+  el.id = "updateBanner";
+  el.className = "update-banner";
+  el.innerHTML = `
+    <span>🎉 Eine neue Version ist da!</span>
+    <button onclick="checkForUpdates()">Jetzt aktualisieren</button>
+    <button class="dismiss" onclick="document.getElementById('updateBanner').remove()" aria-label="Schließen">✕</button>`;
+  document.body.appendChild(el);
 }
 // Aufräumen: den ?refresh=... Parameter (von der Update-Prüfung) wieder aus der Adresszeile entfernen
 if(window.location.search.includes("refresh=") && window.history && window.history.replaceState){
