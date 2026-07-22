@@ -7,7 +7,7 @@
    ============================================================ */
 
 const STORAGE_KEY = "mutmach-insel-profile-v1";
-const APP_VERSION = "v24"; // manuell synchron zu CACHE_NAME in sw.js halten
+const APP_VERSION = "v25"; // manuell synchron zu CACHE_NAME in sw.js halten
 
 /* ---------- Sprachausgabe (Vorlesen für Kinder, die noch nicht lesen können) ---------- */
 let currentSpeakText = "";
@@ -39,6 +39,30 @@ function setSpeakText(text){
   if(profile && profile.autoRead !== false && currentLevel() <= 2){
     speak(text);
   }
+}
+
+/* ---------- Zwei-Tipp-Bestätigung für Kleinkinder (2-3 und 3-4 Jahre) ----------
+   Der erste Tipp auf eine Antwort wertet noch nichts, sondern markiert sie nur
+   und liest sie vor. Erst ein zweiter Tipp auf DIESELBE Antwort zählt final.
+   Ältere Kinder (ab 5-6 Jahre) behalten das direkte Ein-Tipp-Verhalten. */
+let pendingChoice = null; // { moduleKey, id }
+function needsConfirmTap(moduleKey, id){
+  if(currentLevel() > 2) return true; // kein Vorschau-Modus für ältere Kinder
+  if(pendingChoice && pendingChoice.moduleKey === moduleKey && pendingChoice.id === String(id)){
+    pendingChoice = null;
+    return true; // zweiter Tipp auf dieselbe Antwort -> jetzt auswerten
+  }
+  pendingChoice = { moduleKey, id: String(id) };
+  return false; // erster Tipp (oder Wechsel der Auswahl) -> nur Vorschau
+}
+function previewPick(containerId, dataAttr, value){
+  document.querySelectorAll(`#${containerId} .choice`).forEach(b=>{
+    b.classList.toggle("preview-pick", b.dataset[dataAttr] === String(value));
+  });
+}
+function showConfirmHint(feedbackElId){
+  const el = document.getElementById(feedbackElId);
+  if(el) el.innerHTML = `<div class="feedback-banner preview">👆 Nochmal antippen zum Bestätigen</div>`;
 }
 
 /* ---------- Altersstufen ---------- */
@@ -1181,6 +1205,7 @@ function setNavActive(name){
 }
 function navigate(name, param){
   window.scrollTo({top:0, behavior:"instant"});
+  pendingChoice = null;
   if(!profile || !profile.name){ renderOnboarding(); return; }
   bottomNav.classList.remove("hidden");
   topbar.classList.remove("hidden");
@@ -1418,6 +1443,7 @@ function assignHintBorders(options, correctId){
 }
 
 function showFeelingScene(){
+  pendingChoice = null;
   if(feelingIdx >= feelingRoundOrder.length){
     profile.progress.feelingsDone++;
     unlockSticker("first_feeling");
@@ -1458,6 +1484,12 @@ function showFeelingScene(){
   setSpeakText(scene.text);
 }
 function pickFeeling(pickedId, correctId){
+  if(!needsConfirmTap('feelings', pickedId)){
+    previewPick('choices', 'id', pickedId);
+    speak(emotionById(pickedId).label);
+    showConfirmHint('feelingFeedback');
+    return;
+  }
   const buttons = document.querySelectorAll("#choices .choice");
   buttons.forEach(b=> b.onclick=null);
   const isCorrect = pickedId === correctId;
@@ -1482,6 +1514,7 @@ function renderWordsGame(){
   showWordScene();
 }
 function showWordScene(){
+  pendingChoice = null;
   if(wordIdx >= wordRoundOrder.length){
     profile.progress.wordsGood += wordGoodCount;
     profile.progress.wordsTotal += wordRoundOrder.length;
@@ -1520,6 +1553,12 @@ function showWordScene(){
   setSpeakText(scene.text);
 }
 function pickWord(idx, good){
+  if(!needsConfirmTap('words', idx)){
+    previewPick('wordChoices', 'idx', idx);
+    speak(wordRoundOrder[wordIdx].options[idx].text);
+    showConfirmHint('wordFeedback');
+    return;
+  }
   const buttons = document.querySelectorAll("#wordChoices .choice");
   buttons.forEach(b=> b.onclick=null);
   buttons.forEach(b=>{
@@ -1544,6 +1583,7 @@ function renderStressGame(){
   showStressScene();
 }
 function showStressScene(){
+  pendingChoice = null;
   if(stressIdx >= stressRoundOrder.length){
     profile.progress.stressGood += stressGoodCount;
     profile.progress.stressTotal += stressRoundOrder.length;
@@ -1581,6 +1621,12 @@ function showStressScene(){
   setSpeakText(scene.text);
 }
 function pickStress(idx, good){
+  if(!needsConfirmTap('stress', idx)){
+    previewPick('stressChoices', 'idx', idx);
+    speak(stressRoundOrder[stressIdx].options[idx].text);
+    showConfirmHint('stressFeedback');
+    return;
+  }
   const buttons = document.querySelectorAll("#stressChoices .choice");
   buttons.forEach(b=> b.onclick=null);
   buttons.forEach(b=>{
@@ -1607,6 +1653,7 @@ function renderColorGame(){
   showColorScene();
 }
 function showColorScene(){
+  pendingChoice = null;
   if(colorIdx >= colorRoundOrder.length){
     profile.progress.colorsGood += colorGoodCount;
     profile.progress.colorsTotal += colorRoundOrder.length;
@@ -1651,6 +1698,12 @@ function showColorScene(){
   setSpeakText(scene.text);
 }
 function pickColor(pickedId, correctId){
+  if(!needsConfirmTap('colors', pickedId)){
+    previewPick('colorChoices', 'id', pickedId);
+    speak(COLOR_NAMES[pickedId].label);
+    showConfirmHint('colorFeedback');
+    return;
+  }
   const buttons = document.querySelectorAll("#colorChoices .choice");
   buttons.forEach(b=> b.onclick=null);
   const isCorrect = pickedId === correctId;
@@ -1678,6 +1731,7 @@ function renderShapeGame(){
   showShapeScene();
 }
 function showShapeScene(){
+  pendingChoice = null;
   if(shapeIdx >= shapeRoundOrder.length){
     profile.progress.shapesGood += shapeGoodCount;
     profile.progress.shapesTotal += shapeRoundOrder.length;
@@ -1719,6 +1773,12 @@ function showShapeScene(){
   setSpeakText(scene.text);
 }
 function pickShape(pickedId, correctId){
+  if(!needsConfirmTap('shapes', pickedId)){
+    previewPick('shapeChoices', 'id', pickedId);
+    speak(SHAPE_NAMES[pickedId].label);
+    showConfirmHint('shapeFeedback');
+    return;
+  }
   const buttons = document.querySelectorAll("#shapeChoices .choice");
   buttons.forEach(b=> b.onclick=null);
   const isCorrect = pickedId === correctId;
@@ -1745,6 +1805,7 @@ function renderCountGame(){
   showCountScene();
 }
 function showCountScene(){
+  pendingChoice = null;
   if(countIdx >= countRoundOrder.length){
     profile.progress.countGood += countGoodCount;
     profile.progress.countTotal += countRoundOrder.length;
@@ -1789,6 +1850,12 @@ function showCountScene(){
   setSpeakText(questionText);
 }
 function pickCount(pickedN, correctN){
+  if(!needsConfirmTap('count', pickedN)){
+    previewPick('countChoices', 'id', pickedN);
+    speak(String(pickedN));
+    showConfirmHint('countFeedback');
+    return;
+  }
   const buttons = document.querySelectorAll("#countChoices .choice");
   buttons.forEach(b=> b.onclick=null);
   const isCorrect = pickedN === correctN;
@@ -1815,6 +1882,7 @@ function renderSoundGame(){
   showSoundScene();
 }
 function showSoundScene(){
+  pendingChoice = null;
   if(soundIdx >= soundRoundOrder.length){
     profile.progress.soundsGood += soundGoodCount;
     profile.progress.soundsTotal += soundRoundOrder.length;
@@ -1857,6 +1925,12 @@ function showSoundScene(){
   setSpeakText(scene.sound.replace(/[„“]/g,""));
 }
 function pickSound(pickedId, correctId){
+  if(!needsConfirmTap('sounds', pickedId)){
+    previewPick('soundChoices', 'id', pickedId);
+    speak(ANIMAL_SOUNDS[pickedId].label);
+    showConfirmHint('soundFeedback');
+    return;
+  }
   const buttons = document.querySelectorAll("#soundChoices .choice");
   buttons.forEach(b=> b.onclick=null);
   const isCorrect = pickedId === correctId;
@@ -1883,6 +1957,7 @@ function renderVehicleGame(){
   showVehicleScene();
 }
 function showVehicleScene(){
+  pendingChoice = null;
   if(vehicleIdx >= vehicleRoundOrder.length){
     profile.progress.vehiclesGood += vehicleGoodCount;
     profile.progress.vehiclesTotal += vehicleRoundOrder.length;
@@ -1924,6 +1999,12 @@ function showVehicleScene(){
   setSpeakText(scene.text);
 }
 function pickVehicle(pickedId, correctId){
+  if(!needsConfirmTap('vehicles', pickedId)){
+    previewPick('vehicleChoices', 'id', pickedId);
+    speak(VEHICLE_NAMES[pickedId].label);
+    showConfirmHint('vehicleFeedback');
+    return;
+  }
   const buttons = document.querySelectorAll("#vehicleChoices .choice");
   buttons.forEach(b=> b.onclick=null);
   const isCorrect = pickedId === correctId;
@@ -2240,6 +2321,7 @@ function showStoryPage(){
   const emoPool = byLevel(EMOTIONS);
   const opts = s.options.map(id=>emotionById(id)).filter(Boolean);
   const finalOpts = shuffle(opts.length>=2 ? opts : shuffle(emoPool).slice(0,3));
+  pendingChoice = null;
   viewEl.innerHTML = `
     ${backBtn("stories")}
     <div class="card">
@@ -2255,6 +2337,12 @@ function showStoryPage(){
   setSpeakText(s.question);
 }
 function pickStoryAnswer(pickedId, correctId){
+  if(!needsConfirmTap('story', pickedId)){
+    previewPick('storyChoices', 'id', pickedId);
+    speak(emotionById(pickedId).label);
+    showConfirmHint('storyFeedback');
+    return;
+  }
   document.querySelectorAll("#storyChoices .choice").forEach(b=>{
     b.onclick=null;
     if(b.dataset.id===correctId) b.classList.add("correct");
