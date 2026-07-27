@@ -7,7 +7,7 @@
    ============================================================ */
 
 const STORAGE_KEY = "mutmach-insel-profile-v1";
-const APP_VERSION = "v25"; // manuell synchron zu CACHE_NAME in sw.js halten
+const APP_VERSION = "v27"; // manuell synchron zu CACHE_NAME in sw.js halten
 
 /* ---------- Sprachausgabe (Vorlesen für Kinder, die noch nicht lesen können) ---------- */
 let currentSpeakText = "";
@@ -47,7 +47,7 @@ function setSpeakText(text){
    Ältere Kinder (ab 5-6 Jahre) behalten das direkte Ein-Tipp-Verhalten. */
 let pendingChoice = null; // { moduleKey, id }
 function needsConfirmTap(moduleKey, id){
-  if(currentLevel() > 2) return true; // kein Vorschau-Modus für ältere Kinder
+  if(currentLevel() > 3) return true; // kein Vorschau-Modus für ältere Kinder (ab 7-8 Jahre)
   if(pendingChoice && pendingChoice.moduleKey === moduleKey && pendingChoice.id === String(id)){
     pendingChoice = null;
     return true; // zweiter Tipp auf dieselbe Antwort -> jetzt auswerten
@@ -63,6 +63,19 @@ function previewPick(containerId, dataAttr, value){
 function showConfirmHint(feedbackElId){
   const el = document.getElementById(feedbackElId);
   if(el) el.innerHTML = `<div class="feedback-banner preview">👆 Nochmal antippen zum Bestätigen</div>`;
+}
+
+/* Spricht nach jeder Antwort das Ergebnis: bei richtig zufällig eine von mehreren
+   Lob-Formulierungen, bei falsch immer denselben ruhigen Hinweis. */
+const PRAISE_PHRASES = ["Super gemacht!", "Klasse!", "Spitze!", "Weiter so!"];
+function speakResult(isCorrect){
+  if(!profile || profile.autoRead === false) return;
+  if(isCorrect){
+    const phrase = PRAISE_PHRASES[Math.floor(Math.random()*PRAISE_PHRASES.length)];
+    speak(phrase);
+  } else {
+    speak("Das war nicht richtig.");
+  }
 }
 
 /* ---------- Altersstufen ---------- */
@@ -1498,6 +1511,7 @@ function pickFeeling(pickedId, correctId){
     else if(b.dataset.id===pickedId) b.classList.add("wrong");
   });
   if(isCorrect) feelingCorrectCount++;
+  speakResult(isCorrect);
   document.getElementById("feelingFeedback").innerHTML = `
     <div class="feedback-banner ${isCorrect?'good':'gentle'}">
       ${isCorrect ? "🎉 Genau richtig!" : `Fast! Das nennt man „${emotionById(correctId).label}“.`}
@@ -1567,6 +1581,7 @@ function pickWord(idx, good){
     else if(parseInt(b.dataset.idx)===idx) b.classList.add("wrong");
   });
   if(good) wordGoodCount++;
+  speakResult(good);
   document.getElementById("wordFeedback").innerHTML = `
     <div class="feedback-banner ${good?'good':'gentle'}">
       ${good ? "🎉 Das war klar und freundlich gesagt!" : "Es gibt eine Art, es noch klarer zu sagen — schau sie dir an!"}
@@ -1635,6 +1650,7 @@ function pickStress(idx, good){
     else if(parseInt(b.dataset.idx)===idx) b.classList.add("wrong");
   });
   if(good) stressGoodCount++;
+  speakResult(good);
   document.getElementById("stressFeedback").innerHTML = `
     <div class="feedback-banner ${good?'good':'gentle'}">
       ${good ? "💪 Guter Weg, damit umzugehen!" : "Es gibt einen Weg, der dir noch besser hilft — schau ihn dir an!"}
@@ -1713,6 +1729,7 @@ function pickColor(pickedId, correctId){
     else if(b.dataset.id===pickedId) b.classList.add("wrong");
   });
   if(isCorrect) colorGoodCount++;
+  speakResult(isCorrect);
   document.getElementById("colorFeedback").innerHTML = `
     <div class="feedback-banner ${isCorrect?'good':'gentle'}">
       ${isCorrect ? "🎉 Genau richtig!" : `Das ist eigentlich „${COLOR_NAMES[correctId].label}“.`}
@@ -1787,6 +1804,7 @@ function pickShape(pickedId, correctId){
     else if(b.dataset.id===pickedId) b.classList.add("wrong");
   });
   if(isCorrect) shapeGoodCount++;
+  speakResult(isCorrect);
   document.getElementById("shapeFeedback").innerHTML = `
     <div class="feedback-banner ${isCorrect?'good':'gentle'}">
       ${isCorrect ? "🎉 Genau richtig!" : `Das ist eigentlich ein „${SHAPE_NAMES[correctId].label}“.`}
@@ -1864,6 +1882,7 @@ function pickCount(pickedN, correctN){
     else if(parseInt(b.dataset.id)===pickedN) b.classList.add("wrong");
   });
   if(isCorrect) countGoodCount++;
+  speakResult(isCorrect);
   document.getElementById("countFeedback").innerHTML = `
     <div class="feedback-banner ${isCorrect?'good':'gentle'}">
       ${isCorrect ? "🎉 Genau richtig gezählt!" : `Es waren genau ${correctN}.`}
@@ -1939,6 +1958,7 @@ function pickSound(pickedId, correctId){
     else if(b.dataset.id===pickedId) b.classList.add("wrong");
   });
   if(isCorrect) soundGoodCount++;
+  speakResult(isCorrect);
   document.getElementById("soundFeedback").innerHTML = `
     <div class="feedback-banner ${isCorrect?'good':'gentle'}">
       ${isCorrect ? "🎉 Genau richtig!" : `Das war „${ANIMAL_SOUNDS[correctId].label}“.`}
@@ -2013,6 +2033,7 @@ function pickVehicle(pickedId, correctId){
     else if(b.dataset.id===pickedId) b.classList.add("wrong");
   });
   if(isCorrect) vehicleGoodCount++;
+  speakResult(isCorrect);
   document.getElementById("vehicleFeedback").innerHTML = `
     <div class="feedback-banner ${isCorrect?'good':'gentle'}">
       ${isCorrect ? "🎉 Genau richtig!" : `Das ist ein „${VEHICLE_NAMES[correctId].label}“.`}
@@ -2348,6 +2369,7 @@ function pickStoryAnswer(pickedId, correctId){
     if(b.dataset.id===correctId) b.classList.add("correct");
     else if(b.dataset.id===pickedId) b.classList.add("wrong");
   });
+  speakResult(pickedId === correctId);
   const s = storyState.story;
   if(!profile.progress.storiesDone.includes(s.id)){
     profile.progress.storiesDone.push(s.id);
