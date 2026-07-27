@@ -7,7 +7,7 @@
    ============================================================ */
 
 const STORAGE_KEY = "mutmach-insel-profile-v1";
-const APP_VERSION = "v27"; // manuell synchron zu CACHE_NAME in sw.js halten
+const APP_VERSION = "v28"; // manuell synchron zu CACHE_NAME in sw.js halten
 
 /* ---------- Sprachausgabe (Vorlesen für Kinder, die noch nicht lesen können) ---------- */
 let currentSpeakText = "";
@@ -67,14 +67,15 @@ function showConfirmHint(feedbackElId){
 
 /* Spricht nach jeder Antwort das Ergebnis: bei richtig zufällig eine von mehreren
    Lob-Formulierungen, bei falsch immer denselben ruhigen Hinweis. */
-const PRAISE_PHRASES = ["Super gemacht!", "Klasse!", "Spitze!", "Weiter so!"];
-function speakResult(isCorrect){
+const PRAISE_PHRASES = ["Super gemacht", "Klasse", "Spitze", "Weiter so"];
+function speakResult(isCorrect, correctLabel){
   if(!profile || profile.autoRead === false) return;
   if(isCorrect){
+    const name = profile.name ? ` ${profile.name}` : "";
     const phrase = PRAISE_PHRASES[Math.floor(Math.random()*PRAISE_PHRASES.length)];
-    speak(phrase);
+    speak(`${phrase}${name}!`);
   } else {
-    speak("Das war nicht richtig.");
+    speak(`Das war leider nicht richtig. Die korrekte Antwort ist ${correctLabel||""}.`);
   }
 }
 
@@ -1425,7 +1426,7 @@ function renderHome(){
    Generischer Quiz-Ablauf (für Gefühle, Worte, Stress)
    ============================================================ */
 function roundCountForLevel(){
-  return [3,4,5,6,7][currentLevel()-1];
+  return 5; // immer 5 Aufgaben pro Runde, unabhängig von der Altersstufe
 }
 function optionCountForLevel(){
   return [2,3,4,4,4][currentLevel()-1];
@@ -1511,7 +1512,7 @@ function pickFeeling(pickedId, correctId){
     else if(b.dataset.id===pickedId) b.classList.add("wrong");
   });
   if(isCorrect) feelingCorrectCount++;
-  speakResult(isCorrect);
+  speakResult(isCorrect, emotionById(correctId).label);
   document.getElementById("feelingFeedback").innerHTML = `
     <div class="feedback-banner ${isCorrect?'good':'gentle'}">
       ${isCorrect ? "🎉 Genau richtig!" : `Fast! Das nennt man „${emotionById(correctId).label}“.`}
@@ -1581,7 +1582,7 @@ function pickWord(idx, good){
     else if(parseInt(b.dataset.idx)===idx) b.classList.add("wrong");
   });
   if(good) wordGoodCount++;
-  speakResult(good);
+  speakResult(good, wordRoundOrder[wordIdx].options.find(o=>o.good).text);
   document.getElementById("wordFeedback").innerHTML = `
     <div class="feedback-banner ${good?'good':'gentle'}">
       ${good ? "🎉 Das war klar und freundlich gesagt!" : "Es gibt eine Art, es noch klarer zu sagen — schau sie dir an!"}
@@ -1650,7 +1651,7 @@ function pickStress(idx, good){
     else if(parseInt(b.dataset.idx)===idx) b.classList.add("wrong");
   });
   if(good) stressGoodCount++;
-  speakResult(good);
+  speakResult(good, stressRoundOrder[stressIdx].options.find(o=>o.good).text);
   document.getElementById("stressFeedback").innerHTML = `
     <div class="feedback-banner ${good?'good':'gentle'}">
       ${good ? "💪 Guter Weg, damit umzugehen!" : "Es gibt einen Weg, der dir noch besser hilft — schau ihn dir an!"}
@@ -1729,7 +1730,7 @@ function pickColor(pickedId, correctId){
     else if(b.dataset.id===pickedId) b.classList.add("wrong");
   });
   if(isCorrect) colorGoodCount++;
-  speakResult(isCorrect);
+  speakResult(isCorrect, COLOR_NAMES[correctId].label);
   document.getElementById("colorFeedback").innerHTML = `
     <div class="feedback-banner ${isCorrect?'good':'gentle'}">
       ${isCorrect ? "🎉 Genau richtig!" : `Das ist eigentlich „${COLOR_NAMES[correctId].label}“.`}
@@ -1804,7 +1805,7 @@ function pickShape(pickedId, correctId){
     else if(b.dataset.id===pickedId) b.classList.add("wrong");
   });
   if(isCorrect) shapeGoodCount++;
-  speakResult(isCorrect);
+  speakResult(isCorrect, SHAPE_NAMES[correctId].label);
   document.getElementById("shapeFeedback").innerHTML = `
     <div class="feedback-banner ${isCorrect?'good':'gentle'}">
       ${isCorrect ? "🎉 Genau richtig!" : `Das ist eigentlich ein „${SHAPE_NAMES[correctId].label}“.`}
@@ -1882,7 +1883,7 @@ function pickCount(pickedN, correctN){
     else if(parseInt(b.dataset.id)===pickedN) b.classList.add("wrong");
   });
   if(isCorrect) countGoodCount++;
-  speakResult(isCorrect);
+  speakResult(isCorrect, String(correctN));
   document.getElementById("countFeedback").innerHTML = `
     <div class="feedback-banner ${isCorrect?'good':'gentle'}">
       ${isCorrect ? "🎉 Genau richtig gezählt!" : `Es waren genau ${correctN}.`}
@@ -1958,7 +1959,7 @@ function pickSound(pickedId, correctId){
     else if(b.dataset.id===pickedId) b.classList.add("wrong");
   });
   if(isCorrect) soundGoodCount++;
-  speakResult(isCorrect);
+  speakResult(isCorrect, ANIMAL_SOUNDS[correctId].label);
   document.getElementById("soundFeedback").innerHTML = `
     <div class="feedback-banner ${isCorrect?'good':'gentle'}">
       ${isCorrect ? "🎉 Genau richtig!" : `Das war „${ANIMAL_SOUNDS[correctId].label}“.`}
@@ -2033,7 +2034,7 @@ function pickVehicle(pickedId, correctId){
     else if(b.dataset.id===pickedId) b.classList.add("wrong");
   });
   if(isCorrect) vehicleGoodCount++;
-  speakResult(isCorrect);
+  speakResult(isCorrect, VEHICLE_NAMES[correctId].label);
   document.getElementById("vehicleFeedback").innerHTML = `
     <div class="feedback-banner ${isCorrect?'good':'gentle'}">
       ${isCorrect ? "🎉 Genau richtig!" : `Das ist ein „${VEHICLE_NAMES[correctId].label}“.`}
@@ -2183,12 +2184,13 @@ function renderBreathing(ex){
   viewEl.innerHTML = `
     ${backBtn("calm")}
     <div class="stage">
-      <h2>${ex.icon} ${ex.title}</h2>
+      <div class="title-row"><h2>${ex.icon} ${ex.title}</h2>${speakerBtn()}</div>
       <p style="color:var(--ink-soft); font-weight:600; margin-top:6px;">Folge dem Kreis: einatmen, wenn er wächst — ausatmen, wenn er kleiner wird.</p>
       <div class="breath-circle" id="breathCircle">Bereit?</div>
       <p id="breathCounter" style="font-weight:800; color:var(--ink-soft);">0 / ${ex.rounds} Atemzüge</p>
       <button class="btn" id="breathStart" onclick="startBreathing()">Los geht's</button>
     </div>`;
+  setSpeakText(`${ex.title}. Folge dem Kreis: einatmen, wenn er wächst, ausatmen, wenn er kleiner wird.`);
 }
 function startBreathing(){
   document.getElementById("breathStart").classList.add("hidden");
@@ -2211,9 +2213,11 @@ function breathStep(){
   }
   circle.classList.remove("out"); circle.classList.add("in");
   circle.textContent = ex.inLabel;
+  if(profile.autoRead !== false) speak(ex.inLabel);
   breathTimer = setTimeout(()=>{
     circle.classList.remove("in"); circle.classList.add("out");
     circle.textContent = ex.outLabel;
+    if(profile.autoRead !== false) speak(ex.outLabel);
     breathTimer = setTimeout(()=>{
       breathCount++;
       counter.textContent = `${breathCount} / ${ex.rounds} Atemzüge`;
@@ -2250,9 +2254,10 @@ function showStep(){
     <div class="progress-track"><div class="progress-fill" style="width:${(stepIdx/ex.steps.length)*100}%"></div></div>
     <div class="card stage">
       <div class="mascot-lg" style="font-size:3rem;">${ex.icon}</div>
-      <p style="font-family:'Baloo 2'; font-weight:700; font-size:1.1rem;">${ex.steps[stepIdx]}</p>
+      <div class="title-row"><p style="font-family:'Baloo 2'; font-weight:700; font-size:1.1rem;">${ex.steps[stepIdx]}</p>${speakerBtn()}</div>
       <button class="btn" style="margin-top:20px;" onclick="stepIdx++; showStep();">Weiter</button>
     </div>`;
+  setSpeakText(ex.steps[stepIdx]);
 }
 
 /* Tipp-Übung: aktives Antippen statt nur Zuschauen — eine eigene, spürbar andere Mechanik. */
@@ -2281,7 +2286,7 @@ function showTap(){
   viewEl.innerHTML = `
     ${backBtn("calm")}
     <div class="stage">
-      <h2>${ex.icon} ${ex.title}</h2>
+      <div class="title-row"><h2>${ex.icon} ${ex.title}</h2>${speakerBtn()}</div>
       <p style="color:var(--ink-soft); font-weight:600; margin:6px 0 18px;">Tippe der Reihe nach auf jedes Symbol.</p>
       <div class="tap-grid">
         ${popped.map((done,i)=>`
@@ -2369,7 +2374,7 @@ function pickStoryAnswer(pickedId, correctId){
     if(b.dataset.id===correctId) b.classList.add("correct");
     else if(b.dataset.id===pickedId) b.classList.add("wrong");
   });
-  speakResult(pickedId === correctId);
+  speakResult(pickedId === correctId, emotionById(correctId).label);
   const s = storyState.story;
   if(!profile.progress.storiesDone.includes(s.id)){
     profile.progress.storiesDone.push(s.id);
