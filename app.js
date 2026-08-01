@@ -7,7 +7,7 @@
    ============================================================ */
 
 const STORAGE_KEY = "mutmach-insel-profile-v1";
-const APP_VERSION = "v28"; // manuell synchron zu CACHE_NAME in sw.js halten
+const APP_VERSION = "v29"; // manuell synchron zu CACHE_NAME in sw.js halten
 
 /* ---------- Sprachausgabe (Vorlesen für Kinder, die noch nicht lesen können) ---------- */
 let currentSpeakText = "";
@@ -1140,7 +1140,7 @@ const STICKER_DEFS = [
   { id:"first_trace",   emoji:"✏️", label:"Mal-Talent" },
 ];
 
-const AVATARS = ["🚗","🚙","🚕","🏎️","🚓","🚑","🚒","🏍️"];
+const AVATARS = ["🚗","🚙","🚕","🏎️","🚓","🚑","🚒","🏍️","🛵","🚲","✈️","🚁","⛵","🚤","🚂","🚀","🚜","🚐","🛺","🚌"];
 const THEME_COLORS = [
   { id:"peach", hex:"#FFC79A" }, { id:"sky", hex:"#8FCBE0" },
   { id:"mint", hex:"#A6DCBB" }, { id:"sun", hex:"#FFE178" },

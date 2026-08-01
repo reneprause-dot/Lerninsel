@@ -1,4 +1,4 @@
-const CACHE_NAME = "leo-lerninsel-v28";
+const CACHE_NAME = "leo-lerninsel-v29";
 const ASSETS = [
   "./",
   "./index.html",
