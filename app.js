@@ -7,7 +7,7 @@
    ============================================================ */
 
 const STORAGE_KEY = "mutmach-insel-profile-v1";
-const APP_VERSION = "v30"; // manuell synchron zu CACHE_NAME in sw.js halten
+const APP_VERSION = "v31"; // manuell synchron zu CACHE_NAME in sw.js halten
 
 /* ---------- Sprachausgabe (Vorlesen für Kinder, die noch nicht lesen können) ---------- */
 let currentSpeakText = "";
@@ -1121,11 +1121,11 @@ const TRACE_ITEMS = [
    langsam mit der Zeit, aber nie unter ein noch-okay-Niveau. Füttern/Spielen
    macht das Haustier jederzeit wieder froh — nichts kann dauerhaft "kaputt" gehen. */
 const PETS = [
-  { id:"hund",  name:"Bello",    emoji:"🐶" },
-  { id:"katze", name:"Mia",      emoji:"🐱" },
-  { id:"hase",  name:"Flauschi", emoji:"🐰" },
-  { id:"panda", name:"Bao",      emoji:"🐼" },
-  { id:"fuchs", name:"Finn",     emoji:"🦊" },
+  { id:"hund",  name:"Bello",    emoji:"🐶", body:"#D9A574", belly:"#F3E3C7", accent:"#B97E4B" },
+  { id:"katze", name:"Mia",      emoji:"🐱", body:"#E7B25A", belly:"#FBEBC9", accent:"#C98A34" },
+  { id:"hase",  name:"Flauschi", emoji:"🐰", body:"#F6ECE4", belly:"#FFFFFF", accent:"#F3B6C6" },
+  { id:"panda", name:"Bao",      emoji:"🐼", body:"#FFFFFF", belly:"#FFFFFF", accent:"#2B2B33" },
+  { id:"fuchs", name:"Finn",     emoji:"🦊", body:"#F0894D", belly:"#FFF7EF", accent:"#F0894D" },
 ];
 const PET_STAT_FLOOR = 30; // Werte sinken nie unter dieses Niveau — kein "trauriges" Haustier
 
@@ -2171,6 +2171,65 @@ function finishTrace(){
 /* ============================================================
    MODUL: TIER-PFLEGE (sanftes virtuelles Haustier)
    ============================================================ */
+/* Baut ein kleines animierbares SVG-Wesen (statt eines starren Emojis).
+   Körper/Augen/Mund sind bei allen Tieren gleich aufgebaut (fürs Blinzeln, Kauen,
+   Hüpfen per CSS), nur Ohren/Extras unterscheiden sich je nach Tierart. */
+function petSVG(petId){
+  const def = PETS.find(p=>p.id===petId) || PETS[0];
+  let ears = "", extras = "", overlay = "";
+  if(petId === "hund"){
+    ears = `<ellipse cx="24" cy="52" rx="12" ry="20" fill="${def.accent}" transform="rotate(-25 24 52)"/>
+            <ellipse cx="96" cy="52" rx="12" ry="20" fill="${def.accent}" transform="rotate(25 96 52)"/>`;
+    extras = `<ellipse class="pet-tail" cx="102" cy="86" rx="8" ry="14" fill="${def.accent}" transform="rotate(35 102 86)"/>`;
+  } else if(petId === "katze"){
+    ears = `<polygon points="30,38 42,18 50,42" fill="${def.body}"/>
+            <polygon points="90,38 78,18 70,42" fill="${def.body}"/>
+            <polygon points="33,38 40,26 45,40" fill="${def.accent}"/>
+            <polygon points="87,38 80,26 75,40" fill="${def.accent}"/>`;
+    extras = `<g class="pet-whiskers" stroke="${def.accent}" stroke-width="1.6" stroke-linecap="round">
+            <line x1="18" y1="70" x2="38" y2="67"/><line x1="18" y1="76" x2="38" y2="76"/>
+            <line x1="102" y1="70" x2="82" y2="67"/><line x1="102" y1="76" x2="82" y2="76"/>
+            </g>
+            <ellipse class="pet-tail" cx="100" cy="90" rx="7" ry="16" fill="${def.body}" transform="rotate(25 100 90)"/>`;
+  } else if(petId === "hase"){
+    ears = `<ellipse cx="46" cy="26" rx="8" ry="22" fill="${def.body}"/>
+            <ellipse cx="74" cy="26" rx="8" ry="22" fill="${def.body}"/>
+            <ellipse cx="46" cy="27" rx="4" ry="15" fill="${def.accent}"/>
+            <ellipse cx="74" cy="27" rx="4" ry="15" fill="${def.accent}"/>`;
+    extras = `<circle class="pet-tail" cx="104" cy="92" r="7" fill="#fff" stroke="#eee"/>`;
+  } else if(petId === "panda"){
+    ears = `<circle cx="28" cy="30" r="14" fill="${def.accent}"/>
+            <circle cx="92" cy="30" r="14" fill="${def.accent}"/>`;
+    overlay = `<ellipse cx="46" cy="58" rx="11" ry="14" fill="${def.accent}" opacity="0.85"/>
+            <ellipse cx="74" cy="58" rx="11" ry="14" fill="${def.accent}" opacity="0.85"/>
+            <ellipse cx="48" cy="58" rx="6" ry="8" fill="#fff"/>
+            <ellipse cx="72" cy="58" rx="6" ry="8" fill="#fff"/>`;
+  } else { // fuchs
+    ears = `<polygon points="26,40 40,10 52,42" fill="${def.body}"/>
+            <polygon points="94,40 80,10 68,42" fill="${def.body}"/>
+            <polygon points="30,38 39,20 45,40" fill="#fff"/>
+            <polygon points="90,38 81,20 75,40" fill="#fff"/>`;
+    extras = `<path class="pet-tail" d="M100,88 Q118,82 112,62 Q109,78 96,82 Z" fill="${def.body}"/>
+            <path d="M107,68 Q114,70 110,77 Z" fill="#fff"/>`;
+  }
+  return `
+  <svg viewBox="0 0 120 120" class="pet-svg" aria-hidden="true">
+    <g class="pet-body-group">
+      ${extras}
+      ${ears}
+      <ellipse cx="60" cy="70" rx="40" ry="34" fill="${def.body}"/>
+      <ellipse cx="60" cy="82" rx="20" ry="15" fill="${def.belly}"/>
+      ${overlay}
+      <ellipse cx="42" cy="70" rx="6" ry="5" fill="#FFB3A7" opacity="0.55"/>
+      <ellipse cx="78" cy="70" rx="6" ry="5" fill="#FFB3A7" opacity="0.55"/>
+      <ellipse class="pet-eye" cx="48" cy="58" rx="5" ry="7" fill="#332B27"/>
+      <ellipse class="pet-eye" cx="72" cy="58" rx="5" ry="7" fill="#332B27"/>
+      <path class="pet-mouth-smile" d="M52,78 Q60,84 68,78" stroke="#332B27" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <ellipse class="pet-mouth-open" cx="60" cy="79" rx="6" ry="4" fill="#7A4B3A"/>
+    </g>
+  </svg>`;
+}
+
 function renderPetGame(){
   if(!profile.pet){ renderPetSelect(); return; }
   renderPetHome();
@@ -2185,7 +2244,7 @@ function renderPetSelect(){
     <div class="pet-pick-grid">
       ${PETS.map(p=>`
         <button class="pet-pick" onclick="choosePet('${p.id}')">
-          <span class="pet-pick-emoji">${p.emoji}</span>
+          <span class="pet-pick-preview pet-stage idle">${petSVG(p.id)}</span>
           <span class="pet-pick-name">${p.name}</span>
         </button>`).join("")}
     </div>`;
@@ -2219,12 +2278,15 @@ function petMood(pet){
 function renderPetHome(){
   updatePetDecay();
   const pet = profile.pet;
-  const def = PETS.find(p=>p.id===pet.id) || PETS[0];
   const moodText = `${pet.name} ${petMood(pet)}`;
   viewEl.innerHTML = `
     ${backBtn("home")}
     <div class="card stage">
-      <div class="mascot-lg" id="petEmoji">${def.emoji}</div>
+      <div class="tama-shell">
+        <div class="tama-screen">
+          <div class="pet-stage idle" id="petStage" style="position:relative;">${petSVG(pet.id)}</div>
+        </div>
+      </div>
       <div class="title-row"><h2>${pet.name}</h2>${speakerBtn()}</div>
       <p id="petMoodText" style="color:var(--ink-soft); font-weight:700; margin-top:4px;">${moodText}</p>
 
@@ -2248,6 +2310,32 @@ function petCareFeedback(text){
   if(el) el.textContent = text;
   speak(text);
 }
+let petAnimTimer = null;
+function triggerPetAnim(state, ms){
+  const stage = document.getElementById("petStage");
+  if(!stage) return;
+  stage.classList.remove("idle","eating","playing");
+  stage.classList.add(state);
+  clearTimeout(petAnimTimer);
+  petAnimTimer = setTimeout(()=>{
+    stage.classList.remove(state);
+    stage.classList.add("idle");
+  }, ms);
+}
+function spawnPetParticles(emoji, count){
+  const stage = document.getElementById("petStage");
+  if(!stage) return;
+  for(let i=0;i<count;i++){
+    const span = document.createElement("span");
+    span.className = "pet-particle";
+    span.textContent = emoji;
+    span.style.left = (36 + Math.random()*28) + "%";
+    span.style.bottom = "38%";
+    span.style.animationDelay = (i*0.12) + "s";
+    stage.appendChild(span);
+    setTimeout(()=> span.remove(), 1700 + i*120);
+  }
+}
 function feedPet(){
   const pet = profile.pet;
   if(!pet) return;
@@ -2258,6 +2346,8 @@ function feedPet(){
   persist();
   const bar = document.getElementById("hungerBar");
   if(bar) bar.style.width = pet.hunger + "%";
+  triggerPetAnim("eating", 1700);
+  spawnPetParticles("🍖", 1);
   petCareFeedback(`Lecker! ${pet.name} hat gegessen und freut sich.`);
 }
 function playPet(){
@@ -2270,6 +2360,8 @@ function playPet(){
   persist();
   const bar = document.getElementById("happinessBar");
   if(bar) bar.style.width = pet.happiness + "%";
+  triggerPetAnim("playing", 1700);
+  spawnPetParticles("✨", 3);
   petCareFeedback(`${pet.name} hatte viel Spaß beim Spielen!`);
 }
 function changePet(){

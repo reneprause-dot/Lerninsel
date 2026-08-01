@@ -331,6 +331,61 @@ main#view{
 .pet-pick:active{transform:scale(0.95);}
 .pet-pick-emoji{font-size:2.6rem;}
 .pet-pick-name{font-family:'Baloo 2'; font-weight:700; font-size:0.95rem; color:var(--ink);}
+.pet-pick-preview{ width:64px; display:block; }
+.pet-pick-preview .pet-svg{ width:100%; }
+
+/* ---- Tamagotchi-Gehäuse und animiertes Wesen ---- */
+.tama-shell{
+  width:220px; margin:14px auto 6px; padding:16px;
+  background:linear-gradient(160deg, var(--accent), var(--accent-deep));
+  border-radius:50% 50% 46% 46% / 58% 58% 42% 42%;
+  box-shadow: var(--shadow), inset 0 -6px 0 rgba(0,0,0,0.08);
+}
+.tama-screen{
+  background:radial-gradient(circle at 35% 30%, #EAF6EC, #CFE8D4);
+  border-radius:50%;
+  box-shadow: inset 0 4px 14px rgba(0,0,0,0.18);
+  padding:10px;
+  overflow:hidden;
+}
+.pet-svg{ width:100%; height:auto; display:block; }
+
+.pet-eye{ animation: petBlink 4.5s ease-in-out infinite; transform-origin:center; transform-box: fill-box; }
+@keyframes petBlink{ 0%,90%,100%{transform:scaleY(1);} 93%,96%{transform:scaleY(0.12);} }
+
+.pet-mouth-open{ opacity:0; transform-origin:center; transform-box: fill-box; }
+
+.pet-stage.idle .pet-body-group{ animation: petBob 2.6s ease-in-out infinite; transform-box: fill-box; transform-origin:center; }
+@keyframes petBob{ 0%,100%{transform:translateY(0) rotate(0deg);} 50%{transform:translateY(-4px) rotate(-1.5deg);} }
+
+.pet-stage.eating .pet-mouth-smile{ opacity:0; }
+.pet-stage.eating .pet-mouth-open{ opacity:1; animation: petChomp 0.32s ease-in-out 5; }
+@keyframes petChomp{ 0%,100%{transform:scaleY(1);} 50%{transform:scaleY(2.4);} }
+.pet-stage.eating .pet-body-group{ animation: petNod 0.32s ease-in-out 5; transform-box: fill-box; transform-origin:center; }
+@keyframes petNod{ 0%,100%{transform:translateY(0);} 50%{transform:translateY(3px);} }
+
+.pet-stage.playing .pet-body-group{ animation: petJump 0.85s ease-in-out 2; transform-box: fill-box; transform-origin:center; }
+@keyframes petJump{
+  0%,100%{ transform:translateY(0) scale(1,1) rotate(0deg); }
+  25%{ transform:translateY(-20px) scale(0.94,1.08) rotate(-4deg); }
+  50%{ transform:translateY(2px) scale(1.08,0.9) rotate(0deg); }
+  75%{ transform:translateY(-10px) scale(0.98,1.03) rotate(4deg); }
+}
+
+.pet-tail{ transform-origin:right center; transform-box: fill-box; animation: tailWag 0.55s ease-in-out infinite; }
+@keyframes tailWag{ 0%,100%{transform:rotate(-10deg);} 50%{transform:rotate(14deg);} }
+
+.pet-particle{ position:absolute; font-size:1.5rem; pointer-events:none; animation: petParticleFloat 1.5s ease-out forwards; }
+@keyframes petParticleFloat{
+  0%{ transform:translateY(0) scale(0.5); opacity:0; }
+  15%{ opacity:1; transform:translateY(-8px) scale(1); }
+  100%{ transform:translateY(-80px) scale(1.1); opacity:0; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .pet-eye, .pet-stage.idle .pet-body-group, .pet-stage.eating .pet-mouth-open,
+  .pet-stage.eating .pet-body-group, .pet-stage.playing .pet-body-group, .pet-tail{ animation:none; }
+}
 
 .color-grid{display:flex; gap:12px; flex-wrap:wrap;}
 .color-pick{width:46px; height:46px; border-radius:50%; border:3px solid transparent; cursor:pointer;}
