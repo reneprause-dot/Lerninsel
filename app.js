@@ -7,7 +7,7 @@
    ============================================================ */
 
 const STORAGE_KEY = "mutmach-insel-profile-v1";
-const APP_VERSION = "v29"; // manuell synchron zu CACHE_NAME in sw.js halten
+const APP_VERSION = "v30"; // manuell synchron zu CACHE_NAME in sw.js halten
 
 /* ---------- Sprachausgabe (Vorlesen für Kinder, die noch nicht lesen können) ---------- */
 let currentSpeakText = "";
@@ -1116,6 +1116,19 @@ const TRACE_ITEMS = [
   { level:4, glyph:"E", label:"Buchstabe E", akk:"den Buchstaben E" },
 ];
 
+/* ---------- Modul: Tier-Pflege (sanftes virtuelles Haustier) ----------
+   Bewusst OHNE "Sterben" oder traurige/verängstigende Zustände: Werte sinken
+   langsam mit der Zeit, aber nie unter ein noch-okay-Niveau. Füttern/Spielen
+   macht das Haustier jederzeit wieder froh — nichts kann dauerhaft "kaputt" gehen. */
+const PETS = [
+  { id:"hund",  name:"Bello",    emoji:"🐶" },
+  { id:"katze", name:"Mia",      emoji:"🐱" },
+  { id:"hase",  name:"Flauschi", emoji:"🐰" },
+  { id:"panda", name:"Bao",      emoji:"🐼" },
+  { id:"fuchs", name:"Finn",     emoji:"🦊" },
+];
+const PET_STAT_FLOOR = 30; // Werte sinken nie unter dieses Niveau — kein "trauriges" Haustier
+
 const STICKER_DEFS = [
   { id:"first_feeling", emoji:"🌟", label:"Gefühle-Entdecker" },
   { id:"first_words",   emoji:"💬", label:"Klar gesagt" },
@@ -1138,6 +1151,8 @@ const STICKER_DEFS = [
   { id:"first_vehicle", emoji:"🚦", label:"Fahrzeug-Fan" },
   { id:"all_vehicles",  emoji:"🏁", label:"Fahrzeug-Profi" },
   { id:"first_trace",   emoji:"✏️", label:"Mal-Talent" },
+  { id:"first_pet",     emoji:"🐾", label:"Tierfreund" },
+  { id:"pet_caretaker", emoji:"💞", label:"Tier-Profi" },
 ];
 
 const AVATARS = ["🚗","🚙","🚕","🏎️","🚓","🚑","🚒","🏍️","🛵","🚲","✈️","🚁","⛵","🚤","🚂","🚀","🚜","🚐","🛺","🚌"];
@@ -1159,6 +1174,7 @@ function freshProfile(){
     stars:0, stickers:[], lastVisit:null, streak:0, toddlerSet:"primary", toddlerRandomSet:[], autoRead:true, speechRate:0.92, reviewMode:"week",
     progress:{ feelingsDone:0, wordsGood:0, wordsTotal:0, calmSessions:0, storiesDone:[], stressGood:0, stressTotal:0, colorsGood:0, colorsTotal:0, shapesGood:0, shapesTotal:0, countGood:0, countTotal:0, soundsGood:0, soundsTotal:0, vehiclesGood:0, vehiclesTotal:0, tracesDone:0 },
     activityLog:{}, // { "YYYY-MM-DD": { stars:Zahl, sessions:Zahl } } - fürs Wochen-/Monatsrückblick
+    pet:null, // { id, name, hunger, happiness, lastUpdate, careCount } - erst gesetzt, sobald ein Haustier gewählt wurde
   };
 }
 let profile = loadProfile();
@@ -1237,6 +1253,7 @@ function navigate(name, param){
     case "sounds": setNavActive(""); renderSoundGame(); break;
     case "vehicles": setNavActive(""); renderVehicleGame(); break;
     case "trace": setNavActive(""); renderTraceGame(); break;
+    case "pet": setNavActive(""); renderPetGame(); break;
     case "calm": setNavActive(""); renderCalmMenu(); break;
     case "stories": setNavActive(""); renderStoriesList(); break;
     case "story": setNavActive(""); renderStoryPlayer(param); break;
@@ -1342,6 +1359,7 @@ const STATIONS = [
   { key:"shapes",   icon:"🔺", label:"Formen-Werkstatt",     bubble:"var(--sky-deep)",   x:9,  y:31, minLevel:1 },
   { key:"stories",  icon:"🛣️", label:"Geschichten-Autobahn", bubble:"var(--sun)",        x:28, y:13, minLevel:1 },
   { key:"trace",    icon:"✏️", label:"Mal-Werkstatt",        bubble:"var(--sky)",        x:60, y:45, minLevel:1 },
+  { key:"pet",      icon:"🐾", label:"Tier-Pflege",          bubble:"var(--mint-deep)",  x:35, y:60, minLevel:1 },
 ];
 
 /* Erzeugt einen sanft geschwungenen, gepunkteten Pfad, der GENAU die
@@ -2151,6 +2169,118 @@ function finishTrace(){
 }
 
 /* ============================================================
+   MODUL: TIER-PFLEGE (sanftes virtuelles Haustier)
+   ============================================================ */
+function renderPetGame(){
+  if(!profile.pet){ renderPetSelect(); return; }
+  renderPetHome();
+}
+function renderPetSelect(){
+  viewEl.innerHTML = `
+    ${backBtn("home")}
+    <div class="stage" style="margin-bottom:16px;">
+      <h2>Wähl dein Haustier</h2>
+      <p style="color:var(--ink-soft); font-weight:600; margin-top:6px;">Du kannst es füttern, mit ihm spielen — und es bleibt immer bei dir.</p>
+    </div>
+    <div class="pet-pick-grid">
+      ${PETS.map(p=>`
+        <button class="pet-pick" onclick="choosePet('${p.id}')">
+          <span class="pet-pick-emoji">${p.emoji}</span>
+          <span class="pet-pick-name">${p.name}</span>
+        </button>`).join("")}
+    </div>`;
+}
+function choosePet(id){
+  const p = PETS.find(x=>x.id===id);
+  if(!p) return;
+  profile.pet = { id:p.id, name:p.name, hunger:80, happiness:80, lastUpdate:Date.now(), careCount:0 };
+  unlockSticker("first_pet");
+  persist();
+  renderPetHome();
+}
+function updatePetDecay(){
+  if(!profile.pet) return;
+  const now = Date.now();
+  const elapsedMin = (now - (profile.pet.lastUpdate || now)) / 60000;
+  const decay = Math.floor(elapsedMin / 30); // 1 Punkt alle 30 Minuten
+  if(decay > 0){
+    profile.pet.hunger = Math.max(PET_STAT_FLOOR, profile.pet.hunger - decay);
+    profile.pet.happiness = Math.max(PET_STAT_FLOOR, profile.pet.happiness - decay);
+    profile.pet.lastUpdate = now;
+    persist();
+  }
+}
+function petMood(pet){
+  const avg = (pet.hunger + pet.happiness) / 2;
+  if(avg >= 75) return "ist super drauf!";
+  if(avg >= 50) return "fühlt sich wohl.";
+  return "freut sich über ein bisschen Aufmerksamkeit.";
+}
+function renderPetHome(){
+  updatePetDecay();
+  const pet = profile.pet;
+  const def = PETS.find(p=>p.id===pet.id) || PETS[0];
+  const moodText = `${pet.name} ${petMood(pet)}`;
+  viewEl.innerHTML = `
+    ${backBtn("home")}
+    <div class="card stage">
+      <div class="mascot-lg" id="petEmoji">${def.emoji}</div>
+      <div class="title-row"><h2>${pet.name}</h2>${speakerBtn()}</div>
+      <p id="petMoodText" style="color:var(--ink-soft); font-weight:700; margin-top:4px;">${moodText}</p>
+
+      <div style="text-align:left; margin-top:22px;">
+        <span class="field-label" style="margin-bottom:4px;">🍖 Hunger</span>
+        <div class="progress-track"><div class="progress-fill" id="hungerBar" style="width:${pet.hunger}%; background:var(--peach-deep);"></div></div>
+        <span class="field-label" style="margin:14px 0 4px;">🎾 Freude</span>
+        <div class="progress-track"><div class="progress-fill" id="happinessBar" style="width:${pet.happiness}%;"></div></div>
+      </div>
+
+      <div style="display:flex; gap:12px; justify-content:center; margin-top:22px; flex-wrap:wrap;">
+        <button class="btn" onclick="feedPet()">🍖 Füttern</button>
+        <button class="btn" onclick="playPet()">🎾 Spielen</button>
+      </div>
+      <button class="btn secondary" style="margin-top:16px; font-size:0.8rem; padding:8px 16px;" onclick="changePet()">Anderes Haustier wählen</button>
+    </div>`;
+  setSpeakText(moodText);
+}
+function petCareFeedback(text){
+  const el = document.getElementById("petMoodText");
+  if(el) el.textContent = text;
+  speak(text);
+}
+function feedPet(){
+  const pet = profile.pet;
+  if(!pet) return;
+  pet.hunger = Math.min(100, pet.hunger + 25);
+  pet.careCount = (pet.careCount||0) + 1;
+  if(pet.careCount === 1 || pet.careCount % 10 === 0) addStars(1);
+  if(pet.careCount >= 20) unlockSticker("pet_caretaker");
+  persist();
+  const bar = document.getElementById("hungerBar");
+  if(bar) bar.style.width = pet.hunger + "%";
+  petCareFeedback(`Lecker! ${pet.name} hat gegessen und freut sich.`);
+}
+function playPet(){
+  const pet = profile.pet;
+  if(!pet) return;
+  pet.happiness = Math.min(100, pet.happiness + 25);
+  pet.careCount = (pet.careCount||0) + 1;
+  if(pet.careCount === 1 || pet.careCount % 10 === 0) addStars(1);
+  if(pet.careCount >= 20) unlockSticker("pet_caretaker");
+  persist();
+  const bar = document.getElementById("happinessBar");
+  if(bar) bar.style.width = pet.happiness + "%";
+  petCareFeedback(`${pet.name} hatte viel Spaß beim Spielen!`);
+}
+function changePet(){
+  if(confirm("Wirklich ein anderes Haustier wählen? Dein aktuelles Haustier bleibt in Erinnerung, aber du fängst mit einem neuen frisch an.")){
+    profile.pet = null;
+    persist();
+    renderPetSelect();
+  }
+}
+
+/* ============================================================
    MODUL: RUHE-OASE (mehrere Übungen zur Auswahl)
    ============================================================ */
 function renderCalmMenu(){
@@ -2485,6 +2615,7 @@ function renderParents(){
       Tierlaute erkannt: ${profile.progress.soundsGood} von ${profile.progress.soundsTotal}<br>
       Fahrzeuge erkannt: ${profile.progress.vehiclesGood} von ${profile.progress.vehiclesTotal}<br>
       Formen nachgezeichnet: ${profile.progress.tracesDone}<br>
+      Haustier: ${profile.pet ? `${profile.pet.name} (${profile.pet.careCount||0}x versorgt)` : "noch nicht ausgewählt"}<br>
       Ruheübungen abgeschlossen: ${profile.progress.calmSessions}<br>
       Geschichten gelesen: ${profile.progress.storiesDone.length} von ${STORIES.length}</p>
     </div>
