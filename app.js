@@ -7,7 +7,7 @@
    ============================================================ */
 
 const STORAGE_KEY = "mutmach-insel-profile-v1";
-const APP_VERSION = "v31"; // manuell synchron zu CACHE_NAME in sw.js halten
+const APP_VERSION = "v32"; // manuell synchron zu CACHE_NAME in sw.js halten
 
 /* ---------- Sprachausgabe (Vorlesen für Kinder, die noch nicht lesen können) ---------- */
 let currentSpeakText = "";
@@ -68,6 +68,15 @@ function showConfirmHint(feedbackElId){
 /* Spricht nach jeder Antwort das Ergebnis: bei richtig zufällig eine von mehreren
    Lob-Formulierungen, bei falsch immer denselben ruhigen Hinweis. */
 const PRAISE_PHRASES = ["Super gemacht", "Klasse", "Spitze", "Weiter so"];
+/* Ersetzt den Namen der Geschichten-Hauptfigur ("Leo") durch den Profilnamen des Kindes,
+   inklusive des Genitivs ("Leos" -> "{Name}s"). Ohne Profilname bleibt "Leo" stehen. */
+function personalizeStoryText(text){
+  if(!text || !profile || !profile.name) return text;
+  return text
+    .replace(/\bLeos\b/g, profile.name + "s")
+    .replace(/\bLeo\b/g, profile.name);
+}
+
 function speakResult(isCorrect, correctLabel){
   if(!profile || profile.autoRead === false) return;
   if(isCorrect){
@@ -2532,12 +2541,12 @@ function renderStoriesList(){
   const stories = shuffle(byLevel(STORIES));
   viewEl.innerHTML = `
     ${backBtn("home")}
-    <h2 class="section-title" style="margin-bottom:14px;">Leos Geschichten</h2>
+    <h2 class="section-title" style="margin-bottom:14px;">${personalizeStoryText("Leos Geschichten")}</h2>
     ${stories.map(s=>`
       <div class="module-card" style="background:#fff;" onclick="navigate('story','${s.id}')">
         <div class="module-icon" style="background:var(--sun)">${s.cover}</div>
         <div>
-          <div class="module-title">${s.title}</div>
+          <div class="module-title">${personalizeStoryText(s.title)}</div>
           <div class="module-desc">${profile.progress.storiesDone.includes(s.id) ? "✓ Gelesen" : "Noch nicht gelesen"}</div>
         </div>
         <div class="chevron">›</div>
@@ -2554,26 +2563,28 @@ function showStoryPage(){
   const s = storyState.story;
   if(storyState.page < s.pages.length){
     const p = s.pages[storyState.page];
+    const pageText = personalizeStoryText(p.text);
     viewEl.innerHTML = `
       ${backBtn("stories")}
       <div class="card storypage">
         <div class="scene">${p.scene}</div>
-        <div class="title-row"><p>${p.text}</p>${speakerBtn()}</div>
+        <div class="title-row"><p>${pageText}</p>${speakerBtn()}</div>
         <button class="btn" style="margin-top:22px;" onclick="storyState.page++; showStoryPage();">
           ${storyState.page === s.pages.length-1 ? "Weiter" : "Weiter →"}
         </button>
       </div>`;
-    setSpeakText(p.text);
+    setSpeakText(pageText);
     return;
   }
   const emoPool = byLevel(EMOTIONS);
   const opts = s.options.map(id=>emotionById(id)).filter(Boolean);
   const finalOpts = shuffle(opts.length>=2 ? opts : shuffle(emoPool).slice(0,3));
   pendingChoice = null;
+  const questionText = personalizeStoryText(s.question);
   viewEl.innerHTML = `
     ${backBtn("stories")}
     <div class="card">
-      <div class="title-row"><p class="section-title" style="font-size:1.1rem;">${s.question}</p>${speakerBtn()}</div>
+      <div class="title-row"><p class="section-title" style="font-size:1.1rem;">${questionText}</p>${speakerBtn()}</div>
       <div class="choice-grid" id="storyChoices" style="margin-top:14px;">
         ${finalOpts.map(o=>`
           <button class="choice" data-id="${o.id}" onclick="pickStoryAnswer('${o.id}','${s.correct}')">
@@ -2605,7 +2616,7 @@ function pickStoryAnswer(pickedId, correctId){
     addStars(3);
   }
   document.getElementById("storyFeedback").innerHTML = `
-    <div class="tip-box">💡 ${s.tip}</div>
+    <div class="tip-box">💡 ${personalizeStoryText(s.tip)}</div>
     <button class="btn block" style="margin-top:16px;" onclick="navigate('stories')">Zu den Geschichten</button>`;
 }
 
