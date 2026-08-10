@@ -7,7 +7,7 @@
    ============================================================ */
 
 const STORAGE_KEY = "mutmach-insel-profile-v1";
-const APP_VERSION = "v32"; // manuell synchron zu CACHE_NAME in sw.js halten
+const APP_VERSION = "v33"; // manuell synchron zu CACHE_NAME in sw.js halten
 
 /* ---------- Sprachausgabe (Vorlesen für Kinder, die noch nicht lesen können) ---------- */
 let currentSpeakText = "";
@@ -1138,6 +1138,19 @@ const PETS = [
 ];
 const PET_STAT_FLOOR = 30; // Werte sinken nie unter dieses Niveau — kein "trauriges" Haustier
 
+/* ---------- Minispiel: Frosch-Kreuzung ----------
+   "Frogger", aber umgekehrt: Man steuert das Auto und muss den hüpfenden
+   Fröschen ausweichen. Schwierigkeit (Spuren, Tempo) steigt mit der Altersstufe.
+   Keine "Game Over"-Bestrafung — bei einem Treffer hüpft der Frosch einfach
+   erschrocken, aber unverletzt weiter, das Spiel läuft normal weiter. */
+const CARGAME_CONFIG = [
+  { lanes:2, fallMs:6500, spawnMs:2800 }, // 2-3 Jahre: sehr langsam, wenig Spuren
+  { lanes:2, fallMs:5200, spawnMs:2300 }, // 3-4 Jahre
+  { lanes:3, fallMs:4200, spawnMs:1900 }, // 5-6 Jahre
+  { lanes:3, fallMs:3300, spawnMs:1500 }, // 7-8 Jahre
+  { lanes:4, fallMs:2600, spawnMs:1200 }, // 9-10 Jahre: schnell, viele Spuren
+];
+
 const STICKER_DEFS = [
   { id:"first_feeling", emoji:"🌟", label:"Gefühle-Entdecker" },
   { id:"first_words",   emoji:"💬", label:"Klar gesagt" },
@@ -1162,6 +1175,8 @@ const STICKER_DEFS = [
   { id:"first_trace",   emoji:"✏️", label:"Mal-Talent" },
   { id:"first_pet",     emoji:"🐾", label:"Tierfreund" },
   { id:"pet_caretaker", emoji:"💞", label:"Tier-Profi" },
+  { id:"first_cargame", emoji:"🐸", label:"Vorsichtiger Fahrer" },
+  { id:"all_cargame",   emoji:"🏆", label:"Frosch-Retter" },
 ];
 
 const AVATARS = ["🚗","🚙","🚕","🏎️","🚓","🚑","🚒","🏍️","🛵","🚲","✈️","🚁","⛵","🚤","🚂","🚀","🚜","🚐","🛺","🚌"];
@@ -1184,6 +1199,7 @@ function freshProfile(){
     progress:{ feelingsDone:0, wordsGood:0, wordsTotal:0, calmSessions:0, storiesDone:[], stressGood:0, stressTotal:0, colorsGood:0, colorsTotal:0, shapesGood:0, shapesTotal:0, countGood:0, countTotal:0, soundsGood:0, soundsTotal:0, vehiclesGood:0, vehiclesTotal:0, tracesDone:0 },
     activityLog:{}, // { "YYYY-MM-DD": { stars:Zahl, sessions:Zahl } } - fürs Wochen-/Monatsrückblick
     pet:null, // { id, name, hunger, happiness, lastUpdate, careCount } - erst gesetzt, sobald ein Haustier gewählt wurde
+    carGameBest:0, // beste Anzahl sicher vorbeigelassener Frösche in einer Runde
   };
 }
 let profile = loadProfile();
@@ -1245,6 +1261,11 @@ function setNavActive(name){
 function navigate(name, param){
   window.scrollTo({top:0, behavior:"instant"});
   pendingChoice = null;
+  if(carGame){
+    clearInterval(carGame.spawnTimer);
+    clearInterval(carGame.checkTimer);
+    carGame = null;
+  }
   if(!profile || !profile.name){ renderOnboarding(); return; }
   bottomNav.classList.remove("hidden");
   topbar.classList.remove("hidden");
@@ -1263,6 +1284,7 @@ function navigate(name, param){
     case "vehicles": setNavActive(""); renderVehicleGame(); break;
     case "trace": setNavActive(""); renderTraceGame(); break;
     case "pet": setNavActive(""); renderPetGame(); break;
+    case "cargame": setNavActive(""); renderCarGame(); break;
     case "calm": setNavActive(""); renderCalmMenu(); break;
     case "stories": setNavActive(""); renderStoriesList(); break;
     case "story": setNavActive(""); renderStoryPlayer(param); break;
@@ -1275,8 +1297,8 @@ function backBtn(target){
 }
 function surpriseMe(){
   const choices = currentLevel()>=2
-    ? ["feelings","words","stress","calm","stories","colors","shapes","count","sounds","vehicles","trace"]
-    : ["feelings","calm","stories","colors","shapes","count","sounds","vehicles","trace"];
+    ? ["feelings","words","stress","calm","stories","colors","shapes","count","sounds","vehicles","trace","cargame"]
+    : ["feelings","calm","stories","colors","shapes","count","sounds","vehicles","trace","cargame"];
   navigate(choices[Math.floor(Math.random()*choices.length)]);
   unlockSticker("explorer");
 }
@@ -1369,6 +1391,7 @@ const STATIONS = [
   { key:"stories",  icon:"🛣️", label:"Geschichten-Autobahn", bubble:"var(--sun)",        x:28, y:13, minLevel:1 },
   { key:"trace",    icon:"✏️", label:"Mal-Werkstatt",        bubble:"var(--sky)",        x:60, y:45, minLevel:1 },
   { key:"pet",      icon:"🐾", label:"Tier-Pflege",          bubble:"var(--mint-deep)",  x:35, y:60, minLevel:1 },
+  { key:"cargame",  icon:"🐸", label:"Frosch-Kreuzung",      bubble:"var(--sun-deep)",   x:40, y:34, minLevel:1 },
 ];
 
 /* Erzeugt einen sanft geschwungenen, gepunkteten Pfad, der GENAU die
@@ -2382,6 +2405,136 @@ function changePet(){
 }
 
 /* ============================================================
+   MINISPIEL: FROSCH-KREUZUNG
+   ============================================================ */
+let carGame = null; // { lanes, carLane, fallMs, spawnMs, target, spawned, resolved, dodged, spawnTimer, checkTimer, active }
+
+function renderCarGame(){
+  const cfg = CARGAME_CONFIG[currentLevel()-1];
+  const laneXs = Array.from({length:cfg.lanes}, (_,i) => (100/cfg.lanes) * (i+0.5));
+  carGame = {
+    lanes: cfg.lanes, laneXs, carLane: Math.floor(cfg.lanes/2),
+    fallMs: cfg.fallMs, spawnMs: cfg.spawnMs,
+    target: 5, spawned: 0, resolved: 0, dodged: 0,
+    spawnTimer: null, checkTimer: null, active: false,
+  };
+  viewEl.innerHTML = `
+    ${backBtn("home")}
+    <div class="stage" style="margin-bottom:10px;">
+      <h2>🐸 Frosch-Kreuzung</h2>
+      <p style="color:var(--ink-soft); font-weight:600; margin-top:4px;">Weich den hüpfenden Fröschen aus! Mit den Pfeilen die Spur wechseln.</p>
+    </div>
+    <div class="car-game-wrap">
+      <div class="car-game-road" id="carGameRoad" style="--lanes:${cfg.lanes};">
+        ${laneXs.slice(1).map(x=>`<div class="car-game-laneline" style="left:${(x - (50/cfg.lanes))}%;"></div>`).join("")}
+        <div class="car-game-car" id="carGameCar" style="left:${laneXs[carGame.carLane]}%;">🚗</div>
+      </div>
+    </div>
+    <p id="carGameStatus" style="text-align:center; font-weight:800; color:var(--ink-soft); margin-top:10px;">0 / ${carGame.target} Frösche sicher vorbeigelassen</p>
+    <div class="car-game-controls">
+      <button class="btn secondary" id="carGameLeftBtn" onclick="moveCarGame(-1)" aria-label="Nach links">⬅️</button>
+      <button class="btn" id="carGameStartBtn" onclick="startCarGame()">Los geht's</button>
+      <button class="btn secondary" id="carGameRightBtn" onclick="moveCarGame(1)" aria-label="Nach rechts">➡️</button>
+    </div>`;
+  setSpeakText("Weich den hüpfenden Fröschen aus! Mit den Pfeilen wechselst du die Spur.");
+}
+
+function moveCarGame(dir){
+  if(!carGame) return;
+  carGame.carLane = Math.max(0, Math.min(carGame.lanes-1, carGame.carLane + dir));
+  const car = document.getElementById("carGameCar");
+  if(car) car.style.left = carGame.laneXs[carGame.carLane] + "%";
+}
+
+function startCarGame(){
+  if(!carGame || carGame.active) return;
+  carGame.active = true;
+  const startBtn = document.getElementById("carGameStartBtn");
+  if(startBtn) startBtn.classList.add("hidden");
+  spawnFrog();
+  carGame.spawnTimer = setInterval(spawnFrog, carGame.spawnMs);
+  carGame.checkTimer = setInterval(checkCarGameCollisions, 100);
+}
+
+function spawnFrog(){
+  if(!carGame || carGame.spawned >= carGame.target) return;
+  carGame.spawned++;
+  const lane = Math.floor(Math.random()*carGame.lanes);
+  const road = document.getElementById("carGameRoad");
+  if(!road) return;
+  const frog = document.createElement("div");
+  frog.className = "car-game-frog";
+  frog.textContent = "🐸";
+  frog.style.left = carGame.laneXs[lane] + "%";
+  frog.style.animationDuration = carGame.fallMs + "ms";
+  frog.dataset.lane = lane;
+  frog.dataset.hit = "0";
+  road.appendChild(frog);
+  frog.addEventListener("animationend", ()=> resolveFrog(frog, true));
+  if(carGame.spawned >= carGame.target){
+    clearInterval(carGame.spawnTimer);
+  }
+}
+
+function checkCarGameCollisions(){
+  if(!carGame) return;
+  const road = document.getElementById("carGameRoad");
+  const car = document.getElementById("carGameCar");
+  if(!road || !car) return;
+  const carRect = car.getBoundingClientRect();
+  road.querySelectorAll(".car-game-frog").forEach(frog=>{
+    if(frog.dataset.hit === "1") return;
+    if(parseInt(frog.dataset.lane) !== carGame.carLane) return;
+    const fr = frog.getBoundingClientRect();
+    const overlapY = fr.bottom > carRect.top + carRect.height*0.25 && fr.top < carRect.bottom;
+    if(overlapY){
+      frog.dataset.hit = "1";
+      frog.classList.add("boing");
+      speak("Autsch, vorsichtig!");
+      setTimeout(()=> resolveFrog(frog, false), 350);
+    }
+  });
+}
+
+function resolveFrog(frog, dodged){
+  if(!carGame || frog.dataset.resolved === "1") return;
+  frog.dataset.resolved = "1";
+  frog.remove();
+  carGame.resolved++;
+  if(dodged) carGame.dodged++;
+  const statusEl = document.getElementById("carGameStatus");
+  if(statusEl) statusEl.textContent = `${carGame.dodged} / ${carGame.target} Frösche sicher vorbeigelassen`;
+  if(carGame.resolved >= carGame.target){
+    finishCarGame();
+  }
+}
+
+function finishCarGame(){
+  clearInterval(carGame.spawnTimer);
+  clearInterval(carGame.checkTimer);
+  carGame.active = false;
+  const dodged = carGame.dodged, target = carGame.target;
+  unlockSticker("first_cargame");
+  if(dodged === target) unlockSticker("all_cargame");
+  if(dodged > (profile.carGameBest||0)) profile.carGameBest = dodged;
+  addStars(dodged);
+  persist();
+  const resultText = `${dodged} von ${target} Fröschen sicher vorbeigelassen!`;
+  viewEl.innerHTML = `
+    ${backBtn("home")}
+    <div class="stage">
+      <div class="mascot-lg">${profile.avatar}</div>
+      <h2>Gut gefahren!</h2>
+      <p style="margin-top:8px; color:var(--ink-soft); font-weight:700;">${resultText}</p>
+      <div style="display:flex; gap:10px; justify-content:center; margin-top:20px; flex-wrap:wrap;">
+        <button class="btn secondary" onclick="renderCarGame()">Nochmal fahren</button>
+        <button class="btn" onclick="navigate('home')">Zurück zur Insel</button>
+      </div>
+    </div>`;
+  setSpeakText(resultText);
+}
+
+/* ============================================================
    MODUL: RUHE-OASE (mehrere Übungen zur Auswahl)
    ============================================================ */
 function renderCalmMenu(){
@@ -2719,6 +2872,7 @@ function renderParents(){
       Fahrzeuge erkannt: ${profile.progress.vehiclesGood} von ${profile.progress.vehiclesTotal}<br>
       Formen nachgezeichnet: ${profile.progress.tracesDone}<br>
       Haustier: ${profile.pet ? `${profile.pet.name} (${profile.pet.careCount||0}x versorgt)` : "noch nicht ausgewählt"}<br>
+      Frosch-Kreuzung Bestwert: ${profile.carGameBest||0} von 5 sicher vorbeigelassen<br>
       Ruheübungen abgeschlossen: ${profile.progress.calmSessions}<br>
       Geschichten gelesen: ${profile.progress.storiesDone.length} von ${STORIES.length}</p>
     </div>
