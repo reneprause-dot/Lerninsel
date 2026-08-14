@@ -7,7 +7,7 @@
    ============================================================ */
 
 const STORAGE_KEY = "mutmach-insel-profile-v1";
-const APP_VERSION = "v33"; // manuell synchron zu CACHE_NAME in sw.js halten
+const APP_VERSION = "v34"; // manuell synchron zu CACHE_NAME in sw.js halten
 
 /* ---------- Sprachausgabe (Vorlesen für Kinder, die noch nicht lesen können) ---------- */
 let currentSpeakText = "";
@@ -1143,6 +1143,8 @@ const PET_STAT_FLOOR = 30; // Werte sinken nie unter dieses Niveau — kein "tra
    Fröschen ausweichen. Schwierigkeit (Spuren, Tempo) steigt mit der Altersstufe.
    Keine "Game Over"-Bestrafung — bei einem Treffer hüpft der Frosch einfach
    erschrocken, aber unverletzt weiter, das Spiel läuft normal weiter. */
+const MEMORY_PAIR_COUNT = 8; // gleich für alle Altersstufen, bewusst ohne Alters-Skalierung
+
 const CARGAME_CONFIG = [
   { lanes:2, fallMs:6500, spawnMs:2800 }, // 2-3 Jahre: sehr langsam, wenig Spuren
   { lanes:2, fallMs:5200, spawnMs:2300 }, // 3-4 Jahre
@@ -1177,6 +1179,7 @@ const STICKER_DEFS = [
   { id:"pet_caretaker", emoji:"💞", label:"Tier-Profi" },
   { id:"first_cargame", emoji:"🐸", label:"Vorsichtiger Fahrer" },
   { id:"all_cargame",   emoji:"🏆", label:"Frosch-Retter" },
+  { id:"first_memory",  emoji:"🧠", label:"Merk-Talent" },
 ];
 
 const AVATARS = ["🚗","🚙","🚕","🏎️","🚓","🚑","🚒","🏍️","🛵","🚲","✈️","🚁","⛵","🚤","🚂","🚀","🚜","🚐","🛺","🚌"];
@@ -1200,6 +1203,7 @@ function freshProfile(){
     activityLog:{}, // { "YYYY-MM-DD": { stars:Zahl, sessions:Zahl } } - fürs Wochen-/Monatsrückblick
     pet:null, // { id, name, hunger, happiness, lastUpdate, careCount } - erst gesetzt, sobald ein Haustier gewählt wurde
     carGameBest:0, // beste Anzahl sicher vorbeigelassener Frösche in einer Runde
+    memoryRounds:0, // Anzahl abgeschlossener Memory-Runden
   };
 }
 let profile = loadProfile();
@@ -1266,6 +1270,7 @@ function navigate(name, param){
     clearInterval(carGame.checkTimer);
     carGame = null;
   }
+  memoryGame = null;
   if(!profile || !profile.name){ renderOnboarding(); return; }
   bottomNav.classList.remove("hidden");
   topbar.classList.remove("hidden");
@@ -1285,6 +1290,7 @@ function navigate(name, param){
     case "trace": setNavActive(""); renderTraceGame(); break;
     case "pet": setNavActive(""); renderPetGame(); break;
     case "cargame": setNavActive(""); renderCarGame(); break;
+    case "memory": setNavActive(""); renderMemoryGame(); break;
     case "calm": setNavActive(""); renderCalmMenu(); break;
     case "stories": setNavActive(""); renderStoriesList(); break;
     case "story": setNavActive(""); renderStoryPlayer(param); break;
@@ -1297,8 +1303,8 @@ function backBtn(target){
 }
 function surpriseMe(){
   const choices = currentLevel()>=2
-    ? ["feelings","words","stress","calm","stories","colors","shapes","count","sounds","vehicles","trace","cargame"]
-    : ["feelings","calm","stories","colors","shapes","count","sounds","vehicles","trace","cargame"];
+    ? ["feelings","words","stress","calm","stories","colors","shapes","count","sounds","vehicles","trace","cargame","memory"]
+    : ["feelings","calm","stories","colors","shapes","count","sounds","vehicles","trace","cargame","memory"];
   navigate(choices[Math.floor(Math.random()*choices.length)]);
   unlockSticker("explorer");
 }
@@ -1392,6 +1398,7 @@ const STATIONS = [
   { key:"trace",    icon:"✏️", label:"Mal-Werkstatt",        bubble:"var(--sky)",        x:60, y:45, minLevel:1 },
   { key:"pet",      icon:"🐾", label:"Tier-Pflege",          bubble:"var(--mint-deep)",  x:35, y:60, minLevel:1 },
   { key:"cargame",  icon:"🐸", label:"Frosch-Kreuzung",      bubble:"var(--sun-deep)",   x:40, y:34, minLevel:1 },
+  { key:"memory",   icon:"🧠", label:"Memory-Spiel",         bubble:"var(--berry)",      x:88, y:88, minLevel:1 },
 ];
 
 /* Erzeugt einen sanft geschwungenen, gepunkteten Pfad, der GENAU die
@@ -2535,6 +2542,121 @@ function finishCarGame(){
 }
 
 /* ============================================================
+   MINISPIEL: MEMORY (Motiv wählbar: Tiere oder Fahrzeuge)
+   ============================================================ */
+let memoryGame = null;
+
+function renderMemoryGame(){
+  renderMemoryThemePicker();
+}
+function renderMemoryThemePicker(){
+  viewEl.innerHTML = `
+    ${backBtn("home")}
+    <div class="stage" style="margin-bottom:16px;">
+      <h2>🧠 Memory-Spiel</h2>
+      <p style="color:var(--ink-soft); font-weight:600; margin-top:6px;">Welche Motive möchtest du finden?</p>
+    </div>
+    <div class="pet-pick-grid">
+      <button class="pet-pick" onclick="startMemoryGame('tiere')">
+        <span class="pet-pick-emoji">🐶</span>
+        <span class="pet-pick-name">Tiere</span>
+      </button>
+      <button class="pet-pick" onclick="startMemoryGame('fahrzeuge')">
+        <span class="pet-pick-emoji">🚗</span>
+        <span class="pet-pick-name">Fahrzeuge</span>
+      </button>
+    </div>`;
+  setSpeakText("Welche Motive möchtest du finden? Tiere oder Fahrzeuge?");
+}
+function startMemoryGame(theme){
+  const pool = theme === "fahrzeuge"
+    ? Object.values(VEHICLE_NAMES).map(v=>v.emoji)
+    : Object.values(ANIMAL_SOUNDS).map(a=>a.emoji);
+  const chosen = shuffle(pool).slice(0, MEMORY_PAIR_COUNT);
+  const deck = shuffle([...chosen, ...chosen]).map((symbol,i)=>({ id:i, symbol, matched:false, flipped:false }));
+  memoryGame = { theme, deck, flippedIdx:[], matches:0, moves:0, busy:false };
+  renderMemoryBoard();
+}
+function renderMemoryBoard(){
+  const g = memoryGame;
+  viewEl.innerHTML = `
+    ${backBtn("home")}
+    <div class="stage" style="margin-bottom:10px;">
+      <h2>🧠 Memory-Spiel</h2>
+      <p id="memoryStatus" style="color:var(--ink-soft); font-weight:700;">${g.matches} / ${MEMORY_PAIR_COUNT} Paare gefunden</p>
+    </div>
+    <div class="memory-grid">
+      ${g.deck.map(c=>`
+        <button class="memory-card" onclick="flipMemoryCard(${c.id})" aria-label="Karte">
+          <span class="memory-card-inner">
+            <span class="memory-card-back">❓</span>
+            <span class="memory-card-front">${c.symbol}</span>
+          </span>
+        </button>`).join("")}
+    </div>`;
+}
+function updateMemoryStatus(){
+  const el = document.getElementById("memoryStatus");
+  if(el) el.textContent = `${memoryGame.matches} / ${MEMORY_PAIR_COUNT} Paare gefunden`;
+}
+function flipMemoryCard(i){
+  const g = memoryGame;
+  if(!g || g.busy) return;
+  const card = g.deck[i];
+  if(card.flipped || card.matched) return;
+  card.flipped = true;
+  const cards = document.querySelectorAll(".memory-card");
+  cards[i].classList.add("flipped");
+  g.flippedIdx.push(i);
+  if(g.flippedIdx.length < 2) return;
+  g.busy = true;
+  g.moves++;
+  const [a,b] = g.flippedIdx;
+  if(g.deck[a].symbol === g.deck[b].symbol){
+    g.deck[a].matched = true; g.deck[b].matched = true;
+    g.matches++;
+    g.flippedIdx = [];
+    g.busy = false;
+    cards[a].classList.add("matched");
+    cards[b].classList.add("matched");
+    updateMemoryStatus();
+    if(profile.autoRead !== false) speak("Gefunden!");
+    if(g.matches >= MEMORY_PAIR_COUNT){
+      setTimeout(finishMemoryGame, 700);
+    }
+  } else {
+    setTimeout(()=>{
+      if(!memoryGame) return; // Modul evtl. schon verlassen
+      g.deck[a].flipped = false; g.deck[b].flipped = false;
+      const cardsNow = document.querySelectorAll(".memory-card");
+      if(cardsNow[a]) cardsNow[a].classList.remove("flipped");
+      if(cardsNow[b]) cardsNow[b].classList.remove("flipped");
+      g.flippedIdx = [];
+      g.busy = false;
+    }, 900);
+  }
+}
+function finishMemoryGame(){
+  profile.progress.memoryRounds = (profile.progress.memoryRounds||0) + 1;
+  unlockSticker("first_memory");
+  addStars(3);
+  persist();
+  const resultText = `Super gemacht! Du hast alle ${MEMORY_PAIR_COUNT} Paare gefunden.`;
+  viewEl.innerHTML = `
+    ${backBtn("home")}
+    <div class="stage">
+      <div class="mascot-lg">${profile.avatar}</div>
+      <h2>Klasse gemacht!</h2>
+      <p style="margin-top:8px; color:var(--ink-soft); font-weight:700;">${resultText}</p>
+      <div style="display:flex; gap:10px; justify-content:center; margin-top:20px; flex-wrap:wrap;">
+        <button class="btn secondary" onclick="renderMemoryThemePicker()">Nochmal spielen</button>
+        <button class="btn" onclick="navigate('home')">Zurück zur Insel</button>
+      </div>
+    </div>`;
+  setSpeakText(resultText);
+}
+
+/* ============================================================
    MODUL: RUHE-OASE (mehrere Übungen zur Auswahl)
    ============================================================ */
 function renderCalmMenu(){
@@ -2873,6 +2995,7 @@ function renderParents(){
       Formen nachgezeichnet: ${profile.progress.tracesDone}<br>
       Haustier: ${profile.pet ? `${profile.pet.name} (${profile.pet.careCount||0}x versorgt)` : "noch nicht ausgewählt"}<br>
       Frosch-Kreuzung Bestwert: ${profile.carGameBest||0} von 5 sicher vorbeigelassen<br>
+      Memory-Runden abgeschlossen: ${profile.progress.memoryRounds||0}<br>
       Ruheübungen abgeschlossen: ${profile.progress.calmSessions}<br>
       Geschichten gelesen: ${profile.progress.storiesDone.length} von ${STORIES.length}</p>
     </div>
