@@ -7,7 +7,7 @@
    ============================================================ */
 
 const STORAGE_KEY = "mutmach-insel-profile-v1";
-const APP_VERSION = "v34"; // manuell synchron zu CACHE_NAME in sw.js halten
+const APP_VERSION = "v35"; // manuell synchron zu CACHE_NAME in sw.js halten
 
 /* ---------- Sprachausgabe (Vorlesen für Kinder, die noch nicht lesen können) ---------- */
 let currentSpeakText = "";
@@ -1143,7 +1143,14 @@ const PET_STAT_FLOOR = 30; // Werte sinken nie unter dieses Niveau — kein "tra
    Fröschen ausweichen. Schwierigkeit (Spuren, Tempo) steigt mit der Altersstufe.
    Keine "Game Over"-Bestrafung — bei einem Treffer hüpft der Frosch einfach
    erschrocken, aber unverletzt weiter, das Spiel läuft normal weiter. */
-const MEMORY_PAIR_COUNT = 8; // gleich für alle Altersstufen, bewusst ohne Alters-Skalierung
+// Paaranzahl steigt mit der Altersstufe: 2-3 Jahre = 3 Paare, ... 9-10 Jahre = 10 Paare
+const MEMORY_PAIRS_BY_LEVEL = [3, 4, 6, 8, 10];
+function memoryPairCount(){ return MEMORY_PAIRS_BY_LEVEL[currentLevel()-1]; }
+function memoryColumns(pairCount){
+  const cardCount = pairCount*2;
+  if(cardCount <= 6) return 3;
+  return 4;
+}
 
 const CARGAME_CONFIG = [
   { lanes:2, fallMs:6500, spawnMs:2800 }, // 2-3 Jahre: sehr langsam, wenig Spuren
@@ -2569,12 +2576,13 @@ function renderMemoryThemePicker(){
   setSpeakText("Welche Motive möchtest du finden? Tiere oder Fahrzeuge?");
 }
 function startMemoryGame(theme){
+  const pairCount = memoryPairCount();
   const pool = theme === "fahrzeuge"
     ? Object.values(VEHICLE_NAMES).map(v=>v.emoji)
     : Object.values(ANIMAL_SOUNDS).map(a=>a.emoji);
-  const chosen = shuffle(pool).slice(0, MEMORY_PAIR_COUNT);
+  const chosen = shuffle(pool).slice(0, pairCount);
   const deck = shuffle([...chosen, ...chosen]).map((symbol,i)=>({ id:i, symbol, matched:false, flipped:false }));
-  memoryGame = { theme, deck, flippedIdx:[], matches:0, moves:0, busy:false };
+  memoryGame = { theme, pairCount, deck, flippedIdx:[], matches:0, moves:0, busy:false };
   renderMemoryBoard();
 }
 function renderMemoryBoard(){
@@ -2583,9 +2591,9 @@ function renderMemoryBoard(){
     ${backBtn("home")}
     <div class="stage" style="margin-bottom:10px;">
       <h2>🧠 Memory-Spiel</h2>
-      <p id="memoryStatus" style="color:var(--ink-soft); font-weight:700;">${g.matches} / ${MEMORY_PAIR_COUNT} Paare gefunden</p>
+      <p id="memoryStatus" style="color:var(--ink-soft); font-weight:700;">${g.matches} / ${g.pairCount} Paare gefunden</p>
     </div>
-    <div class="memory-grid">
+    <div class="memory-grid" style="grid-template-columns:repeat(${memoryColumns(g.pairCount)},1fr);">
       ${g.deck.map(c=>`
         <button class="memory-card" onclick="flipMemoryCard(${c.id})" aria-label="Karte">
           <span class="memory-card-inner">
@@ -2597,7 +2605,7 @@ function renderMemoryBoard(){
 }
 function updateMemoryStatus(){
   const el = document.getElementById("memoryStatus");
-  if(el) el.textContent = `${memoryGame.matches} / ${MEMORY_PAIR_COUNT} Paare gefunden`;
+  if(el) el.textContent = `${memoryGame.matches} / ${memoryGame.pairCount} Paare gefunden`;
 }
 function flipMemoryCard(i){
   const g = memoryGame;
@@ -2621,7 +2629,7 @@ function flipMemoryCard(i){
     cards[b].classList.add("matched");
     updateMemoryStatus();
     if(profile.autoRead !== false) speak("Gefunden!");
-    if(g.matches >= MEMORY_PAIR_COUNT){
+    if(g.matches >= g.pairCount){
       setTimeout(finishMemoryGame, 700);
     }
   } else {
@@ -2641,7 +2649,7 @@ function finishMemoryGame(){
   unlockSticker("first_memory");
   addStars(3);
   persist();
-  const resultText = `Super gemacht! Du hast alle ${MEMORY_PAIR_COUNT} Paare gefunden.`;
+  const resultText = `Super gemacht! Du hast alle ${memoryGame.pairCount} Paare gefunden.`;
   viewEl.innerHTML = `
     ${backBtn("home")}
     <div class="stage">
