@@ -7,7 +7,7 @@
    ============================================================ */
 
 const STORAGE_KEY = "mutmach-insel-profile-v1";
-const APP_VERSION = "v35"; // manuell synchron zu CACHE_NAME in sw.js halten
+const APP_VERSION = "v36"; // manuell synchron zu CACHE_NAME in sw.js halten
 
 /* ---------- Sprachausgabe (Vorlesen für Kinder, die noch nicht lesen können) ---------- */
 let currentSpeakText = "";
@@ -1144,6 +1144,17 @@ const PET_STAT_FLOOR = 30; // Werte sinken nie unter dieses Niveau — kein "tra
    Keine "Game Over"-Bestrafung — bei einem Treffer hüpft der Frosch einfach
    erschrocken, aber unverletzt weiter, das Spiel läuft normal weiter. */
 // Paaranzahl steigt mit der Altersstufe: 2-3 Jahre = 3 Paare, ... 9-10 Jahre = 10 Paare
+/* ---------- Modul: Kunst-Studio (Bild nachmalen oder komplett frei malen) ---------- */
+const PICTURES = [
+  { id:"haus",  label:"Haus",   icon:"🏠", akk:"das Haus" },
+  { id:"sonne", label:"Sonne",  icon:"☀️", akk:"die Sonne" },
+  { id:"blume", label:"Blume",  icon:"🌸", akk:"die Blume" },
+  { id:"baum",  label:"Baum",   icon:"🌳", akk:"den Baum" },
+  { id:"boot",  label:"Boot",   icon:"⛵", akk:"das Boot" },
+  { id:"fisch", label:"Fisch",  icon:"🐟", akk:"den Fisch" },
+];
+const PAINT_COLORS = ["#FF6F61","#FFA45B","#FFD966","#7FD8A6","#6FB8E0","#B39DDB","#F7A8C4","#4A4358"];
+
 const MEMORY_PAIRS_BY_LEVEL = [3, 4, 6, 8, 10];
 function memoryPairCount(){ return MEMORY_PAIRS_BY_LEVEL[currentLevel()-1]; }
 function memoryColumns(pairCount){
@@ -1187,6 +1198,7 @@ const STICKER_DEFS = [
   { id:"first_cargame", emoji:"🐸", label:"Vorsichtiger Fahrer" },
   { id:"all_cargame",   emoji:"🏆", label:"Frosch-Retter" },
   { id:"first_memory",  emoji:"🧠", label:"Merk-Talent" },
+  { id:"first_artwork",  emoji:"🖼️", label:"Kleiner Künstler" },
 ];
 
 const AVATARS = ["🚗","🚙","🚕","🏎️","🚓","🚑","🚒","🏍️","🛵","🚲","✈️","🚁","⛵","🚤","🚂","🚀","🚜","🚐","🛺","🚌"];
@@ -1211,6 +1223,7 @@ function freshProfile(){
     pet:null, // { id, name, hunger, happiness, lastUpdate, careCount } - erst gesetzt, sobald ein Haustier gewählt wurde
     carGameBest:0, // beste Anzahl sicher vorbeigelassener Frösche in einer Runde
     memoryRounds:0, // Anzahl abgeschlossener Memory-Runden
+    artworksCount:0, // Anzahl abgeschlossener Bilder im Kunst-Studio
   };
 }
 let profile = loadProfile();
@@ -1298,6 +1311,9 @@ function navigate(name, param){
     case "pet": setNavActive(""); renderPetGame(); break;
     case "cargame": setNavActive(""); renderCarGame(); break;
     case "memory": setNavActive(""); renderMemoryGame(); break;
+    case "artstudio": setNavActive(""); renderArtStudio(); break;
+    case "artgallery": setNavActive(""); renderArtGallery(); break;
+    case "freedraw": setNavActive(""); renderFreeDraw(); break;
     case "calm": setNavActive(""); renderCalmMenu(); break;
     case "stories": setNavActive(""); renderStoriesList(); break;
     case "story": setNavActive(""); renderStoryPlayer(param); break;
@@ -1310,8 +1326,8 @@ function backBtn(target){
 }
 function surpriseMe(){
   const choices = currentLevel()>=2
-    ? ["feelings","words","stress","calm","stories","colors","shapes","count","sounds","vehicles","trace","cargame","memory"]
-    : ["feelings","calm","stories","colors","shapes","count","sounds","vehicles","trace","cargame","memory"];
+    ? ["feelings","words","stress","calm","stories","colors","shapes","count","sounds","vehicles","trace","cargame","memory","artstudio"]
+    : ["feelings","calm","stories","colors","shapes","count","sounds","vehicles","trace","cargame","memory","artstudio"];
   navigate(choices[Math.floor(Math.random()*choices.length)]);
   unlockSticker("explorer");
 }
@@ -1406,6 +1422,7 @@ const STATIONS = [
   { key:"pet",      icon:"🐾", label:"Tier-Pflege",          bubble:"var(--mint-deep)",  x:35, y:60, minLevel:1 },
   { key:"cargame",  icon:"🐸", label:"Frosch-Kreuzung",      bubble:"var(--sun-deep)",   x:40, y:34, minLevel:1 },
   { key:"memory",   icon:"🧠", label:"Memory-Spiel",         bubble:"var(--berry)",      x:88, y:88, minLevel:1 },
+  { key:"artstudio",icon:"🖌️", label:"Kunst-Studio",         bubble:"var(--mint)",       x:52, y:66, minLevel:1 },
 ];
 
 /* Erzeugt einen sanft geschwungenen, gepunkteten Pfad, der GENAU die
@@ -2665,6 +2682,208 @@ function finishMemoryGame(){
 }
 
 /* ============================================================
+   MODUL: MAL-STUDIO (Bild nachmalen oder komplett frei malen)
+   ============================================================ */
+function renderArtStudio(){
+  viewEl.innerHTML = `
+    ${backBtn("home")}
+    <div class="stage" style="margin-bottom:16px;">
+      <h2>🖌️ Kunst-Studio</h2>
+      <p style="color:var(--ink-soft); font-weight:600; margin-top:6px;">Wie möchtest du malen?</p>
+    </div>
+    <div class="pet-pick-grid">
+      <button class="pet-pick" onclick="navigate('artgallery')">
+        <span class="pet-pick-emoji">🖼️</span>
+        <span class="pet-pick-name">Bild nachmalen</span>
+      </button>
+      <button class="pet-pick" onclick="navigate('freedraw')">
+        <span class="pet-pick-emoji">🎨</span>
+        <span class="pet-pick-name">Frei malen</span>
+      </button>
+    </div>`;
+  setSpeakText("Wie möchtest du malen? Ein Bild nachmalen oder komplett frei malen?");
+}
+
+/* ---- Modus 1: Ein Bild nachmalen (größere Vorlage als in der Mal-Werkstatt) ---- */
+let pictureCtx = null, pictureDrawColor = "", currentPicture = null;
+function renderArtGallery(){
+  viewEl.innerHTML = `
+    ${backBtn("artstudio")}
+    <h2 class="section-title" style="margin-bottom:14px;">Welches Bild malst du nach?</h2>
+    <div class="pet-pick-grid">
+      ${PICTURES.map(p=>`
+        <button class="pet-pick" onclick="startPictureTrace('${p.id}')">
+          <span class="pet-pick-emoji">${p.icon}</span>
+          <span class="pet-pick-name">${p.label}</span>
+        </button>`).join("")}
+    </div>`;
+}
+function startPictureTrace(id){
+  currentPicture = PICTURES.find(p=>p.id===id) || PICTURES[0];
+  const prompt = `Mal ${currentPicture.akk} nach`;
+  viewEl.innerHTML = `
+    ${backBtn("artgallery")}
+    <div class="card" style="text-align:center;">
+      <div class="title-row"><p class="section-title" style="font-size:1.1rem;">${prompt}</p>${speakerBtn()}</div>
+      <div class="trace-wrap" style="max-width:340px;">
+        <canvas id="pictureCanvas" class="trace-canvas"></canvas>
+      </div>
+      <div style="display:flex; gap:10px; justify-content:center; margin-top:16px; flex-wrap:wrap;">
+        <button class="btn secondary" onclick="clearPictureCanvas()">🧽 Löschen</button>
+        <button class="btn" onclick="finishPictureTrace()">✅ Fertig</button>
+      </div>
+    </div>`;
+  setSpeakText(prompt);
+  setupPictureCanvas();
+}
+function drawGuidePicture(ctx, id, s){
+  ctx.save();
+  ctx.strokeStyle = "rgba(74,67,88,0.32)";
+  ctx.lineWidth = Math.max(3, s*0.018);
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  if(id === "haus"){
+    ctx.strokeRect(s*0.25, s*0.5, s*0.5, s*0.35);
+    ctx.beginPath(); ctx.moveTo(s*0.18,s*0.5); ctx.lineTo(s*0.5,s*0.2); ctx.lineTo(s*0.82,s*0.5); ctx.stroke();
+    ctx.strokeRect(s*0.44, s*0.65, s*0.13, s*0.2);
+    ctx.strokeRect(s*0.62, s*0.57, s*0.12, s*0.12);
+  } else if(id === "sonne"){
+    ctx.beginPath(); ctx.arc(s*0.5, s*0.5, s*0.17, 0, Math.PI*2); ctx.stroke();
+    for(let i=0;i<8;i++){
+      const a = (Math.PI*2/8)*i;
+      ctx.beginPath();
+      ctx.moveTo(s*0.5+Math.cos(a)*s*0.24, s*0.5+Math.sin(a)*s*0.24);
+      ctx.lineTo(s*0.5+Math.cos(a)*s*0.34, s*0.5+Math.sin(a)*s*0.34);
+      ctx.stroke();
+    }
+  } else if(id === "blume"){
+    ctx.beginPath(); ctx.moveTo(s*0.5,s*0.55); ctx.lineTo(s*0.5,s*0.86); ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(s*0.4,s*0.72,s*0.07,s*0.03,-0.4,0,Math.PI*2); ctx.stroke();
+    [[0.5,0.33],[0.63,0.41],[0.63,0.55],[0.5,0.63],[0.37,0.55],[0.37,0.41]].forEach(([px,py])=>{
+      ctx.beginPath(); ctx.arc(s*px, s*py, s*0.07, 0, Math.PI*2); ctx.stroke();
+    });
+    ctx.beginPath(); ctx.arc(s*0.5, s*0.48, s*0.06, 0, Math.PI*2); ctx.stroke();
+  } else if(id === "baum"){
+    ctx.strokeRect(s*0.44, s*0.6, s*0.12, s*0.26);
+    ctx.beginPath(); ctx.arc(s*0.5, s*0.4, s*0.25, 0, Math.PI*2); ctx.stroke();
+  } else if(id === "boot"){
+    ctx.beginPath();
+    ctx.moveTo(s*0.2,s*0.66); ctx.lineTo(s*0.8,s*0.66); ctx.lineTo(s*0.65,s*0.82); ctx.lineTo(s*0.35,s*0.82); ctx.closePath();
+    ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(s*0.5,s*0.66); ctx.lineTo(s*0.5,s*0.22); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(s*0.5,s*0.26); ctx.lineTo(s*0.74,s*0.5); ctx.lineTo(s*0.5,s*0.5); ctx.closePath(); ctx.stroke();
+  } else if(id === "fisch"){
+    ctx.beginPath(); ctx.ellipse(s*0.44, s*0.5, s*0.23, s*0.15, 0, 0, Math.PI*2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(s*0.67,s*0.5); ctx.lineTo(s*0.84,s*0.36); ctx.lineTo(s*0.84,s*0.64); ctx.closePath(); ctx.stroke();
+    ctx.beginPath(); ctx.arc(s*0.33, s*0.46, s*0.018, 0, Math.PI*2); ctx.stroke();
+  }
+  ctx.restore();
+}
+function setupPictureCanvas(){
+  const canvas = document.getElementById("pictureCanvas");
+  if(!canvas) return;
+  const ratio = window.devicePixelRatio || 1;
+  const size = canvas.clientWidth || 300;
+  canvas.width = size*ratio; canvas.height = size*ratio;
+  const ctx = canvas.getContext("2d");
+  ctx.scale(ratio, ratio);
+  pictureCtx = ctx;
+  drawGuidePicture(ctx, currentPicture.id, size);
+  const c = THEME_COLORS.find(t=>t.id===profile.color) || THEME_COLORS[0];
+  pictureDrawColor = c.hex;
+
+  let drawing=false, last=null;
+  function pos(e){ const rect = canvas.getBoundingClientRect(); return { x:e.clientX-rect.left, y:e.clientY-rect.top }; }
+  function start(e){ drawing=true; last=pos(e); canvas.setPointerCapture && canvas.setPointerCapture(e.pointerId); }
+  function move(e){
+    if(!drawing) return;
+    const p = pos(e);
+    ctx.strokeStyle = pictureDrawColor; ctx.lineWidth = 12; ctx.lineCap="round"; ctx.lineJoin="round";
+    ctx.beginPath(); ctx.moveTo(last.x,last.y); ctx.lineTo(p.x,p.y); ctx.stroke();
+    last = p;
+  }
+  function end(){ drawing=false; last=null; }
+  canvas.onpointerdown = start; canvas.onpointermove = move;
+  canvas.onpointerup = end; canvas.onpointerleave = end; canvas.onpointercancel = end;
+}
+function clearPictureCanvas(){
+  const canvas = document.getElementById("pictureCanvas");
+  if(!canvas || !currentPicture) return;
+  drawGuidePicture(pictureCtx, currentPicture.id, canvas.clientWidth);
+}
+function finishPictureTrace(){
+  profile.progress.artworksCount = (profile.progress.artworksCount||0) + 1;
+  unlockSticker("first_artwork");
+  addStars(2);
+  persist();
+  navigate("artgallery");
+}
+
+/* ---- Modus 2: Komplett frei malen, große Fläche ---- */
+let freeDrawCtx = null, freeDrawColor = "";
+function renderFreeDraw(){
+  viewEl.innerHTML = `
+    ${backBtn("artstudio")}
+    <div class="stage" style="margin-bottom:8px;">
+      <h2>🎨 Frei malen</h2>
+    </div>
+    <div class="freedraw-wrap">
+      <canvas id="freeDrawCanvas" class="freedraw-canvas"></canvas>
+    </div>
+    <div class="freedraw-palette" id="freeDrawPalette">
+      ${PAINT_COLORS.map((c,i)=>`<button class="freedraw-swatch ${i===0?'on':''}" style="background:${c};" onclick="setFreeDrawColor('${c}', this)" aria-label="Farbe wählen"></button>`).join("")}
+    </div>
+    <div style="display:flex; gap:10px; justify-content:center; margin-top:14px; flex-wrap:wrap;">
+      <button class="btn secondary" onclick="clearFreeDraw()">🧽 Löschen</button>
+      <button class="btn" onclick="finishFreeDraw()">✅ Fertig</button>
+    </div>`;
+  setSpeakText("Mal, was du möchtest! Wähl unten eine Farbe aus.");
+  setupFreeDrawCanvas();
+}
+function setFreeDrawColor(hex, btn){
+  freeDrawColor = hex;
+  document.querySelectorAll(".freedraw-swatch").forEach(b=> b.classList.remove("on"));
+  if(btn) btn.classList.add("on");
+}
+function setupFreeDrawCanvas(){
+  const canvas = document.getElementById("freeDrawCanvas");
+  if(!canvas) return;
+  const ratio = window.devicePixelRatio || 1;
+  const w = canvas.clientWidth || 320, h = canvas.clientHeight || 400;
+  canvas.width = w*ratio; canvas.height = h*ratio;
+  const ctx = canvas.getContext("2d");
+  ctx.scale(ratio, ratio);
+  freeDrawCtx = ctx;
+  freeDrawColor = PAINT_COLORS[0];
+
+  let drawing=false, last=null;
+  function pos(e){ const rect = canvas.getBoundingClientRect(); return { x:e.clientX-rect.left, y:e.clientY-rect.top }; }
+  function start(e){ drawing=true; last=pos(e); canvas.setPointerCapture && canvas.setPointerCapture(e.pointerId); }
+  function move(e){
+    if(!drawing) return;
+    const p = pos(e);
+    ctx.strokeStyle = freeDrawColor; ctx.lineWidth = 10; ctx.lineCap="round"; ctx.lineJoin="round";
+    ctx.beginPath(); ctx.moveTo(last.x,last.y); ctx.lineTo(p.x,p.y); ctx.stroke();
+    last = p;
+  }
+  function end(){ drawing=false; last=null; }
+  canvas.onpointerdown = start; canvas.onpointermove = move;
+  canvas.onpointerup = end; canvas.onpointerleave = end; canvas.onpointercancel = end;
+}
+function clearFreeDraw(){
+  const canvas = document.getElementById("freeDrawCanvas");
+  if(!canvas || !freeDrawCtx) return;
+  freeDrawCtx.clearRect(0,0,canvas.clientWidth,canvas.clientHeight);
+}
+function finishFreeDraw(){
+  profile.progress.artworksCount = (profile.progress.artworksCount||0) + 1;
+  unlockSticker("first_artwork");
+  addStars(2);
+  persist();
+  navigate("artstudio");
+}
+
+/* ============================================================
    MODUL: RUHE-OASE (mehrere Übungen zur Auswahl)
    ============================================================ */
 function renderCalmMenu(){
@@ -3004,6 +3223,7 @@ function renderParents(){
       Haustier: ${profile.pet ? `${profile.pet.name} (${profile.pet.careCount||0}x versorgt)` : "noch nicht ausgewählt"}<br>
       Frosch-Kreuzung Bestwert: ${profile.carGameBest||0} von 5 sicher vorbeigelassen<br>
       Memory-Runden abgeschlossen: ${profile.progress.memoryRounds||0}<br>
+      Bilder im Kunst-Studio fertiggestellt: ${profile.progress.artworksCount||0}<br>
       Ruheübungen abgeschlossen: ${profile.progress.calmSessions}<br>
       Geschichten gelesen: ${profile.progress.storiesDone.length} von ${STORIES.length}</p>
     </div>
